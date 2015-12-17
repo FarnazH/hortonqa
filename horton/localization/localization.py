@@ -43,7 +43,9 @@ __all__ = [
 
 
 class Localization(object):
+
     '''Base class for all localization methods'''
+
     def __init__(self, lf, occ_model, projector):
         '''Localize canonical HF orbitals.
 
@@ -66,7 +68,7 @@ class Localization(object):
         self._proj = projector
         self._nocc = occ_model.noccs[0]
         self._nbasis = lf.default_nbasis
-        self._nvirt = (lf.default_nbasis-occ_model.noccs[0])
+        self._nvirt = (lf.default_nbasis - occ_model.noccs[0])
         self._cache = Cache()
         self._locblock = None
         self._popmatrix = None
@@ -130,15 +132,16 @@ class Localization(object):
                           ddl)
         '''
         if log.do_medium:
-            log('Performing localization of %s block' %(select))
+            log('Performing localization of %s block' % (select))
         log.cite('pipek1989', 'the Pipek-Mezey localization scheme')
         #
         # Assign default keyword arguements
         #
         names = []
-        def _helper(x,y):
+
+        def _helper(x, y):
             names.append(x)
-            return kwargs.get(x,y)
+            return kwargs.get(x, y)
         maxiter = _helper('maxiter', 2000)
         thresh = _helper('threshold', 1e-6)
         lshift = _helper('levelshift', 1e-8)
@@ -162,7 +165,7 @@ class Localization(object):
             if name not in names:
                 raise ValueError("Unknown keyword argument %s" % name)
             if value < 0:
-                raise ValueError('Illegal value for %s: %s' %(name, value))
+                raise ValueError('Illegal value for %s: %s' % (name, value))
 
         #
         # Update information about localization block
@@ -170,7 +173,7 @@ class Localization(object):
         self.update_locblock(select)
 
         if log.do_medium:
-            log('%3s  %12s  %10s' %('Iter', 'D(ObjectiveFunction)', 'Steplength'))
+            log('%3s  %12s  %10s' % ('Iter', 'D(ObjectiveFunction)', 'Steplength'))
         #
         # Initialize step search
         #
@@ -198,8 +201,8 @@ class Localization(object):
             # orbital rotation
             #
             stepsearch_(self, None, None, orb,
-                       **{'kappa': kappa, 'gradient': gradient, 'hessian': hessian
-                         })
+                        **{'kappa': kappa, 'gradient': gradient, 'hessian': hessian
+                           })
             #
             # update objective function
             #
@@ -209,12 +212,12 @@ class Localization(object):
             # Print localization progress
             #
             if log.do_medium:
-                log('%4i   %14.8f' %(it, abs(objfct-objfct_ref)))
+                log('%4i   %14.8f' % (it, abs(objfct - objfct_ref)))
             #
             # Check convergence
             #
-            maxThresh = abs(objfct-objfct_ref)>thresh
-            maxIter = it<maxiter
+            maxThresh = abs(objfct - objfct_ref) > thresh
+            maxIter = it < maxiter
             #
             # Prepare for new iteration
             #
@@ -222,12 +225,12 @@ class Localization(object):
         if maxThresh and not maxIter:
             if log.do_medium:
                 log(' ')
-                log('Warning: Orbital localization not converged in %i iteration' %(it-1))
+                log('Warning: Orbital localization not converged in %i iteration' % (it - 1))
                 log(' ')
         else:
             if log.do_medium:
                 log(' ')
-                log('Orbital localization converged in %i iteration' %(it-1))
+                log('Orbital localization converged in %i iteration' % (it - 1))
                 log(' ')
 
     def _get_nbasis(self):
@@ -333,6 +336,7 @@ class Localization(object):
 
 
 class PipekMezey(Localization):
+
     '''Perform Pipek-Mezey localization of occupied or virtual Hartree-Fock
        orbitals.
     '''
@@ -341,9 +345,9 @@ class PipekMezey(Localization):
         '''Get localization block. A OneIndex instance'''
         check_options('block', self.locblock, 'occ', 'virt')
         block = self.lf.create_one_index()
-        if self.locblock=='occ':
+        if self.locblock == 'occ':
             block.assign(1.0, end0=self.nocc)
-        elif self.locblock=='virt':
+        elif self.locblock == 'virt':
             block.assign(1.0, begin0=self.nocc)
         return block
 
@@ -362,7 +366,7 @@ class PipekMezey(Localization):
             #
             diag = pop.copy_diagonal()
             grad.iadd_contract_two_one('ab,a->ab', pop, diag, 4.0)
-            grad.iadd_contract_two_one('ab,b->ab', pop, diag,-4.0)
+            grad.iadd_contract_two_one('ab,b->ab', pop, diag, -4.0)
         grad.iscale(-1)
 
         ind = np.tril_indices(self.nbasis, -1)
@@ -398,7 +402,7 @@ class PipekMezey(Localization):
             #
             # H_kl += 8 pop_ll*pop_kk
             #
-            hessian.iadd_one_mult(diag, diag,-8.0, transpose0=True)
+            hessian.iadd_one_mult(diag, diag, -8.0, transpose0=True)
             #
             # H_kl += 8 pop_kl*pop_kl
             #
