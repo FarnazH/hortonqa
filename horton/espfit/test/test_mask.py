@@ -35,14 +35,14 @@ def get_fake_system():
     return coordinates, numbers, ugrid
 
 
-def test_mask_dens():
-    coordinates, numbers, ugrid = get_fake_system()
-    rho = np.zeros(ugrid.shape)
-    scan = np.arange(-2.0, -0.0001, 0.1)
-    rho[0,0,:] = 10**scan
-    weights = setup_weights(coordinates, numbers, ugrid, dens=(rho, -9, 0.8))
-    assert (weights[1,:,:] == 0.0).all()
-    assert abs(weights[0,0,:] - np.exp(-0.8*(np.log(rho[0,0,:])-(-9))**2)).max() < 1e-10
+# def test_mask_dens():
+#     coordinates, numbers, ugrid = get_fake_system()
+#     rho = np.zeros(ugrid.shape)
+#     scan = np.arange(-2.0, -0.0001, 0.1)
+#     rho[0,0,:] = 10**scan
+#     weights = setup_weights(coordinates, numbers, ugrid, dens=(rho, -9, 0.8))
+#     assert (weights[1,:,:] == 0.0).all()
+#     assert abs(weights[0,0,:] - np.exp(-0.8*(np.log(rho[0,0,:])-(-9))**2)).max() < 1e-10
 
 
 def test_mask_near1():
@@ -74,14 +74,14 @@ def test_mask_near3():
     assert abs(weights - weights1*weights2).max() < 1e-10
 
 
-def test_mask_far():
-    coordinates, numbers, ugrid = get_fake_system()
-    weights = setup_weights(coordinates, numbers, ugrid, far=(1.0, 0.5))
-    assert (weights >= 0.0).all()
-    assert (weights <= 1.0).all()
-    # find the point close to atom 2 and check that the weight is one
-    grid_cell = ugrid.get_grid_cell()
-    i = np.round(grid_cell.to_frac(coordinates[2] - ugrid.origin)).astype(int)
-    i[0] = i[0]%10
-    i[2] = i[2]%20
-    assert weights[i[0], i[1], i[2]] == 1.0
+# def test_mask_far():
+#     coordinates, numbers, ugrid = get_fake_system()
+#     weights = setup_weights(coordinates, numbers, ugrid, far=(1.0, 0.5))
+#     assert (weights >= 0.0).all()
+#     assert (weights <= 1.0).all()
+#     # find the point close to atom 2 and check that the weight is one
+#     grid_cell = ugrid.get_grid_cell()
+#     i = np.round(grid_cell.to_frac(coordinates[2] - ugrid.origin)).astype(int)
+#     i[0] = i[0]%10
+#     i[2] = i[2]%20
+#     assert weights[i[0], i[1], i[2]] == 1.0
