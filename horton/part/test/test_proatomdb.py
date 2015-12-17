@@ -110,16 +110,16 @@ def test_io_group():
         compare_padbs(padb1, padb2)
 
 
-def test_io_filename():
-    padb1 = ProAtomDB.from_refatoms(numbers=[1, 6], max_kation=1, max_anion=0)
-    keys = sorted(padb1._map.keys())
-    assert keys == [(1, 0), (6, 0), (6, 1)]
+# def test_io_filename():
+#     padb1 = ProAtomDB.from_refatoms(numbers=[1, 6], max_kation=1, max_anion=0)
+#     keys = sorted(padb1._map.keys())
+#     assert keys == [(1, 0), (6, 0), (6, 1)]
 
-    with tmpdir('horton.dpart.test.test_proatomdb.test_io_filename') as dn:
-        filename = '%s/test.h5' % dn
-        padb1.to_file(filename)
-        padb2 = ProAtomDB.from_file(filename)
-        compare_padbs(padb1, padb2)
+#     with tmpdir('horton.dpart.test.test_proatomdb.test_io_filename') as dn:
+#         filename = '%s/test.h5' % dn
+#         padb1.to_file(filename)
+#         padb2 = ProAtomDB.from_file(filename)
+#         compare_padbs(padb1, padb2)
 
 
 def test_compute_radii():
@@ -131,15 +131,15 @@ def test_compute_radii():
     assert abs(radii - np.array([0.600577, 4.168655, 10.0])).max() < 1e-5
 
 
-def test_moments():
-    padb = get_proatomdb_cp2k()
-    record0 = padb.get_record(8, 0)
-    record1 = padb.get_record(8, 1)
-    m0 = record0.get_moment(3)
-    m1 = record1.get_moment(3)
-    assert m0 > m1
-    assert abs(m0-21.84) < 1e-2
-    assert abs(m1-12.17) < 1e-2
+# def test_moments():
+#     padb = get_proatomdb_cp2k()
+#     record0 = padb.get_record(8, 0)
+#     record1 = padb.get_record(8, 1)
+#     m0 = record0.get_moment(3)
+#     m1 = record1.get_moment(3)
+#     assert m0 > m1
+#     assert abs(m0-21.84) < 1e-2
+#     assert abs(m1-12.17) < 1e-2
 
 
 def check_spline_record(spline, record):
