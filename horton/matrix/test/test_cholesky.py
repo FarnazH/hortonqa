@@ -20,7 +20,8 @@
 #--
 
 
-import numpy as np, h5py as h5
+import numpy as np
+import h5py as h5
 from nose.tools import assert_raises
 
 from horton import *
@@ -162,15 +163,15 @@ def test_four_index_iscale():
     op.randomize()
     tmp = op._array.copy()
     op.iscale(3.0)
-    assert abs(op._array - 3**0.5*tmp).max() < 1e-10
-    assert abs(op._array2 - 3**0.5*tmp).max() < 1e-10
+    assert abs(op._array - 3 ** 0.5 * tmp).max() < 1e-10
+    assert abs(op._array2 - 3 ** 0.5 * tmp).max() < 1e-10
     op.decouple_array2()
     op.randomize()
     tmp = op._array.copy()
     tmp2 = op._array2.copy()
     op.iscale(3.0)
-    assert abs(op._array - 3**0.5*tmp).max() < 1e-10
-    assert abs(op._array2 - 3**0.5*tmp2).max() < 1e-10
+    assert abs(op._array - 3 ** 0.5 * tmp).max() < 1e-10
+    assert abs(op._array2 - 3 ** 0.5 * tmp2).max() < 1e-10
 
 
 def test_four_index_get():
@@ -206,8 +207,8 @@ def test_four_index_symmetrize_order_of_operations():
         op.decouple_array2()
         # ugly hack to have matrix elements with very different order of
         # magnitudes
-        op._array[:] = 10**np.random.uniform(-20,20, (8,20,20))
-        op._array2[:] = 10**np.random.uniform(-20,20, (8,20,20))
+        op._array[:] = 10 ** np.random.uniform(-20, 20, (8, 20, 20))
+        op._array2[:] = 10 ** np.random.uniform(-20, 20, (8, 20, 20))
         op.symmetrize(symmetry)
         assert op.is_symmetric(symmetry, 0, 0)
 
@@ -313,7 +314,6 @@ def check_four_contract_two_to_two_direct(sym):
     dense.contract_two_to_two('abcd,bd->ac', dm, out_dense, factor, clear=False)
     cho.contract_two_to_two('abcd,bd->ac', dm, out_cho, factor, clear=False)
     assert np.allclose(out_dense._array, out_cho._array)
-
 
 
 def test_four_contract_two_to_two_direct_1():
@@ -431,6 +431,7 @@ def check_four_index_transform(sym_in, sym_exp, method):
 def symmetry_and(sym1, sym2):
     def to_mask(sym):
         return {1: 0, 2: 1, 4: 2, 8: 3}[sym]
+
     def from_mask(mask):
         return {0: 1, 1: 2, 2: 4, 3: 8}[mask]
     return from_mask(to_mask(sym1) & to_mask(sym2))

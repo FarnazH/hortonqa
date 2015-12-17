@@ -37,6 +37,7 @@ __all__ = [
 
 
 class CholeskyLinalgFactory(DenseLinalgFactory):
+
     @doc_inherit(DenseLinalgFactory)
     def create_four_index(self, nbasis=None, nvec=None, array=None, array2=None):
         nbasis = nbasis or self.default_nbasis
@@ -51,6 +52,7 @@ class CholeskyLinalgFactory(DenseLinalgFactory):
 
 
 class CholeskyFourIndex(FourIndex):
+
     """Cholesky symmetric four-dimensional matrix.
     """
 
@@ -243,12 +245,12 @@ class CholeskyFourIndex(FourIndex):
         self._array *= np.sqrt(factor)
 
         if self._array is not self._array2:
-            #arrays have been transformed
+            # arrays have been transformed
             self._array2 *= np.sqrt(factor)
 
     def get_element(self, i, j, k, l):
         '''Return a matrix element'''
-        return np.dot(self._array[:,i,k], self._array2[:,j,l])
+        return np.dot(self._array[:, i, k], self._array2[:, j, l])
 
     def set_element(self, i, j, k, l, value):
         '''This method is not supported due to the Cholesky decomposition.'''
@@ -315,9 +317,9 @@ class CholeskyFourIndex(FourIndex):
         if self.is_decoupled and symmetry in (2, 8):
             return False
         if symmetry in (4, 8):
-            if not np.allclose(self._array, self._array.swapaxes(1,2), rtol, atol):
+            if not np.allclose(self._array, self._array.swapaxes(1, 2), rtol, atol):
                 return False
-            if self.is_decoupled and not np.allclose(self._array2, self._array2.swapaxes(1,2), rtol, atol):
+            if self.is_decoupled and not np.allclose(self._array2, self._array2.swapaxes(1, 2), rtol, atol):
                 return False
         return True
 
@@ -329,9 +331,9 @@ class CholeskyFourIndex(FourIndex):
             self._array *= 0.5
             self.reset_array2()
         if symmetry in (4, 8):
-            self._array[:] = self._array + self._array.transpose(0,2,1)
+            self._array[:] = self._array + self._array.transpose(0, 2, 1)
             if self.is_decoupled:
-                self._array2[:] = self._array2 + self._array2.transpose(0,2,1)
+                self._array2[:] = self._array2 + self._array2.transpose(0, 2, 1)
 
     def itranspose(self):
         '''In-place transpose: ``0,1,2,3 -> 1,0,3,2``'''
@@ -340,7 +342,7 @@ class CholeskyFourIndex(FourIndex):
 
     def sum(self):
         '''Return the sum of all elements. EXPENSIVE!'''
-        return np.tensordot(self._array, self._array2,(0,0)).sum() #expensive!!
+        return np.tensordot(self._array, self._array2, (0, 0)).sum()  # expensive!!
 
     def iadd_exchange(self):
         '''In-place addition of its own exchange contribution'''
@@ -370,11 +372,11 @@ class CholeskyFourIndex(FourIndex):
                 out.clear()
         # Actual computation
         if subscripts == 'aabb->ab':
-            out._array[:] += factor*np.einsum('xab,xab->ab', self._array, self._array2)
+            out._array[:] += factor * np.einsum('xab,xab->ab', self._array, self._array2)
         elif subscripts == 'abab->ab':
-            out._array[:] += factor*np.einsum('xaa,xbb->ab', self._array, self._array2)
+            out._array[:] += factor * np.einsum('xaa,xbb->ab', self._array, self._array2)
         elif subscripts == 'abba->ab':
-            out._array[:] += factor*np.einsum('xab,xba->ab', self._array, self._array2)
+            out._array[:] += factor * np.einsum('xab,xba->ab', self._array, self._array2)
         return out
 
     def slice_to_three(self, subscripts, out=None, factor=1.0, clear=True):
@@ -407,7 +409,7 @@ class CholeskyFourIndex(FourIndex):
             slice_to_three_abcc_abc(self._array, self._array2, out._array, factor, clear)
         elif subscripts == 'abcb->abc':
             L_r = np.diagonal(self._array2, axis1=1, axis2=2)
-            out._array[:] += factor*np.tensordot(self._array, L_r, [(0,),(0,)]).swapaxes(1,2)
+            out._array[:] += factor * np.tensordot(self._array, L_r, [(0,), (0,)]).swapaxes(1, 2)
         return out
 
     def contract_two_to_four(self, subscripts, two, out=None, factor=1.0, clear=True):
@@ -432,10 +434,10 @@ class CholeskyFourIndex(FourIndex):
                 See :py:meth:`DenseLinalgFactory.einsum`
         '''
         check_options('subscripts', subscripts, 'abcd,cd->acbd',
-            'abcd,cd->acdb', 'abcd,cb->acdb', 'abcd,cb->acbd', 'abcd,ab->acbd',
-            'abcd,ab->acdb', 'abcd,ad->acbd', 'abcd,ad->acdb', 'abcd,ad->abcd',
-            'abcd,ad->abdc', 'abcd,bd->abcd', 'abcd,bd->abdc', 'abcd,bc->abdc',
-            'abcd,bc->abcd', 'abcd,ac->abcd', 'abcd,ac->abdc')
+                      'abcd,cd->acdb', 'abcd,cb->acdb', 'abcd,cb->acbd', 'abcd,ab->acbd',
+                      'abcd,ab->acdb', 'abcd,ad->acbd', 'abcd,ad->acdb', 'abcd,ad->abcd',
+                      'abcd,ad->abdc', 'abcd,bd->abcd', 'abcd,bd->abdc', 'abcd,bc->abdc',
+                      'abcd,bc->abcd', 'abcd,ac->abcd', 'abcd,ac->abdc')
         raise NotImplementedError
 
     def contract_two_to_two(self, subscripts, two, out=None, factor=1.0, clear=True):
@@ -462,11 +464,11 @@ class CholeskyFourIndex(FourIndex):
         else:
             check_type('out', out, DenseTwoIndex)
         if subscripts == 'abcd,bd->ac':
-            tmp = np.tensordot(self._array2, two._array, axes=([(1,2),(1,0)]))
-            out._array[:] += factor*np.tensordot(self._array, tmp, [0,0])
+            tmp = np.tensordot(self._array2, two._array, axes=([(1, 2), (1, 0)]))
+            out._array[:] += factor * np.tensordot(self._array, tmp, [0, 0])
         elif subscripts == 'abcd,cb->ad':
-            tmp = np.tensordot(self._array2, two._array, axes=([1,1]))
-            out._array[:] += factor*np.tensordot(self._array, tmp, ([0,2],[0,2]))
+            tmp = np.tensordot(self._array2, two._array, axes=([1, 1]))
+            out._array[:] += factor * np.tensordot(self._array, tmp, ([0, 2], [0, 2]))
         return out
 
     def assign_four_index_transform(self, ao_integrals, exp0, exp1=None, exp2=None, exp3=None, method='tensordot'):
@@ -490,7 +492,8 @@ class CholeskyFourIndex(FourIndex):
                 Either ``einsum`` or ``tensordot`` (default).
         '''
         check_type('ao_integrals', ao_integrals, CholeskyFourIndex)
-        exp0, exp1, exp2, exp3 = parse_four_index_transform_exps(exp0, exp1, exp2, exp3, DenseExpansion)
+        exp0, exp1, exp2, exp3 = parse_four_index_transform_exps(
+            exp0, exp1, exp2, exp3, DenseExpansion)
         if method == 'einsum':
             if ao_integrals.is_decoupled or not (exp0 is exp1 and exp2 is exp3):
                 self.decouple_array2()
@@ -501,9 +504,9 @@ class CholeskyFourIndex(FourIndex):
         elif method == 'tensordot':
             if ao_integrals.is_decoupled or not (exp0 is exp1 and exp2 is exp3):
                 self.decouple_array2()
-                self._array2[:] = np.tensordot(ao_integrals._array2, exp1.coeffs, axes=([1],[0]))
-                self._array2[:] = np.tensordot(self._array2, exp3.coeffs, axes=([1],[0]))
-            self._array[:] = np.tensordot(ao_integrals._array, exp0.coeffs, axes=([1],[0]))
-            self._array[:] = np.tensordot(self._array, exp2.coeffs, axes=([1],[0]))
+                self._array2[:] = np.tensordot(ao_integrals._array2, exp1.coeffs, axes=([1], [0]))
+                self._array2[:] = np.tensordot(self._array2, exp3.coeffs, axes=([1], [0]))
+            self._array[:] = np.tensordot(ao_integrals._array, exp0.coeffs, axes=([1], [0]))
+            self._array[:] = np.tensordot(self._array, exp2.coeffs, axes=([1], [0]))
         else:
             raise ValueError('The method must either be \'einsum\' or \'tensordot\'.')

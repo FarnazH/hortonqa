@@ -34,11 +34,13 @@ __all__ = [
 # Possible symmetries for four-index objects
 
 class LinalgFactory(object):
+
     """A collection of compatible matrix and linear algebra routines.
 
        This is just an abstract base class that serves as a template for
        specific implementations.
     """
+
     def __init__(self, default_nbasis=None):
         '''
            **Optional arguments:**
@@ -93,6 +95,7 @@ class LinalgFactory(object):
 
 
 class LinalgObject(object):
+
     def __check_init_args__(self, nbasis):
         raise NotImplementedError
 
@@ -133,6 +136,7 @@ class LinalgObject(object):
 
 
 class NIndexObject(LinalgObject):
+
     def __init__(self, nbasis):
         raise NotImplementedError
 
@@ -161,6 +165,7 @@ class NIndexObject(LinalgObject):
 
 
 class OneIndex(NIndexObject):
+
     def copy(self, begin=0, end=None):
         raise NotImplementedError
 
@@ -172,6 +177,7 @@ class OneIndex(NIndexObject):
 
 
 class Expansion(LinalgObject):
+
     def __init__(self, nbasis, nfn=None):
         raise NotImplementedError
 
@@ -183,6 +189,7 @@ class Expansion(LinalgObject):
 
 
 class TwoIndex(NIndexObject):
+
     def __init__(self, nbasis):
         raise NotImplementedError
 
@@ -209,6 +216,7 @@ class TwoIndex(NIndexObject):
 
 
 class ThreeIndex(NIndexObject):
+
     def copy(self, begin0=0, end0=None, begin1=None, end1=None, begin2=None, end2=None):
         raise NotImplementedError
 
@@ -220,6 +228,7 @@ class ThreeIndex(NIndexObject):
 
 
 class FourIndex(NIndexObject):
+
     def copy(self, begin=0, end=None):
         raise NotImplementedError
 
@@ -266,7 +275,8 @@ def parse_four_index_transform_exps(exp0, exp1, exp2, exp3, Class):
         exp3 = exp2
     elif exp1 is None or exp2 is None or exp3 is None:
         # the only other allowed case is no symmetry.
-        raise TypeError('It is not clear how to interpret the optional arguments exp1, exp2 and exp3.')
+        raise TypeError(
+            'It is not clear how to interpret the optional arguments exp1, exp2 and exp3.')
     check_type('exp0', exp0, Class)
     check_type('exp1', exp1, Class)
     check_type('exp2', exp2, Class)
