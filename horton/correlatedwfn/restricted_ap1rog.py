@@ -58,8 +58,8 @@ __all__ = [
 ]
 
 
-
 class RAp1rog(Geminal):
+
     '''Restricted AP1roG wavefunction class'''
 
     @timer.with_section('AP1roG')
@@ -141,9 +141,10 @@ class RAp1rog(Geminal):
         # Assign keyword arguements
         #
         names = []
-        def _helper(x,y):
+
+        def _helper(x, y):
             names.append(x)
-            return kwargs.get(x,y)
+            return kwargs.get(x, y)
         indextrans = _helper('indextrans', 'tensordot')
         warning = _helper('warning', False)
         swapa = _helper('swapa', np.array([[]]))
@@ -157,7 +158,7 @@ class RAp1rog(Geminal):
         dumpci = _helper('dumpci', {})
         dumpci.setdefault('amplitudestofile', False)
         dumpci.setdefault('amplitudesfilename', "./ap1rog_amplitudes.dat")
-        thresh = _helper('thresh', {'wfn':  1e-12})
+        thresh = _helper('thresh', {'wfn': 1e-12})
         printoptions = _helper('printoptions', {})
         printoptions.setdefault('geminal', True)
         printoptions.setdefault('ci', 0.01)
@@ -208,9 +209,9 @@ class RAp1rog(Geminal):
         # Solve for wavefunction
         #
         self.solve_model(one, two, orb, **{'maxiter': maxiter, 'thresh': thresh,
-                         'guess': initial_guess,
-                         'solver': solver, 'indextrans': indextrans,
-                         'orbitaloptimizer': False})
+                                           'guess': initial_guess,
+                                           'solver': solver, 'indextrans': indextrans,
+                                           'orbitaloptimizer': False})
 
         #
         # Final print statements:
@@ -371,9 +372,10 @@ class RAp1rog(Geminal):
         # values are checked below.
         #
         names = []
-        def _helper(x,y):
+
+        def _helper(x, y):
             names.append(x)
-            return kwargs.get(x,y)
+            return kwargs.get(x, y)
         indextrans = _helper('indextrans', 'tensordot')
         warning = _helper('warning', False)
         checkpoint = _helper('checkpoint', 1)
@@ -398,7 +400,7 @@ class RAp1rog(Geminal):
         dumpci.setdefault('amplitudestofile', False)
         dumpci.setdefault('amplitudesfilename', "./ap1rog_amplitudes.dat")
         thresh = _helper('thresh', {})
-        thresh.setdefault('wfn',  1e-12)
+        thresh.setdefault('wfn', 1e-12)
         thresh.setdefault('energy', 1e-8)
         thresh.setdefault('gradientnorm', 1e-4)
         thresh.setdefault('gradientmax', 5e-5)
@@ -488,15 +490,15 @@ class RAp1rog(Geminal):
         # First iteration:
         #
         self.solve_model(one, two, orb, **{'maxiter': maxiter, 'thresh': thresh,
-                         'guess': initial_guess[0], 'guesslm': initial_guess[0],
-                         'solver': solver, 'indextrans': indextrans,
-                         'orbitaloptimizer': orbitaloptimizer})
+                                           'guess': initial_guess[0], 'guesslm': initial_guess[0],
+                                           'solver': solver, 'indextrans': indextrans,
+                                           'orbitaloptimizer': orbitaloptimizer})
 
         #
         # Update total/corr energy
         #
         etot = self.compute_total_energy()
-        ecorr= self.compute_correlation_energy()
+        ecorr = self.compute_correlation_energy()
 
         if log.do_medium:
             log.hline('~')
@@ -504,14 +506,14 @@ class RAp1rog(Geminal):
             self.print_final('Initial')
             log('Entering orbital optimization of AP1roG...')
             log.hline(' ')
-            if stepsearch['method']=='trust-region':
+            if stepsearch['method'] == 'trust-region':
                 log('%3s %10s %14s  %10s     %10s   %8s   %6s   %10s'
-                     %('step', 'Etot', 'D(Etot)', 'Ecorr', 'D(Ecorr)', 'Max(Grad)',
-                       '|Grad|', 'TrustRegion'))
+                    % ('step', 'Etot', 'D(Etot)', 'Ecorr', 'D(Ecorr)', 'Max(Grad)',
+                        '|Grad|', 'TrustRegion'))
             else:
-                log('%3s %10s %14s  %10s     %10s   %8s   %6s     %4s' %('step',
-                    'Etot', 'D(Etot)', 'Ecorr', 'D(Ecorr)', 'Max(Grad)', '|Grad|',
-                    'Step'))
+                log('%3s %10s %14s  %10s     %10s   %8s   %6s     %4s' % ('step',
+                                                                          'Etot', 'D(Etot)', 'Ecorr', 'D(Ecorr)', 'Max(Grad)', '|Grad|',
+                                                                          'Step'))
 
         i = 0
 
@@ -552,9 +554,9 @@ class RAp1rog(Geminal):
                 # Recalculate WFN:
                 # FIXME: this slows us down.
                 self.solve_model(one, two, orb, **{'maxiter': maxiter, 'thresh': thresh,
-                    'guess': initial_guess[0], 'guesslm': initial_guess[0],
-                    'solver': solver, 'indextrans': indextrans,
-                    'orbitaloptimizer': orbitaloptimizer})
+                                                   'guess': initial_guess[0], 'guesslm': initial_guess[0],
+                                                   'solver': solver, 'indextrans': indextrans,
+                                                   'orbitaloptimizer': orbitaloptimizer})
 
             etot = self.compute_total_energy()
             ecorr = self.compute_correlation_energy()
@@ -563,21 +565,23 @@ class RAp1rog(Geminal):
             # Print information of iteration step
             #
             if log.do_medium:
-                if stepsearch['method']=='trust-region':
-                    log('%3i  %14.8f  %11.8f  %10.8f  %11.8f   %6.5f   %5.2e   %1.2e' %(i+1, (etot), (etot-etot_old),
-                         ecorr, (ecorr-ecorr_old),
-                         gradient.get_max(),
-                         gradient.norm(), stepsearch_.trustradius))
+                if stepsearch['method'] == 'trust-region':
+                    log('%3i  %14.8f  %11.8f  %10.8f  %11.8f   %6.5f   %5.2e   %1.2e' % (i + 1, (etot), (etot - etot_old),
+                                                                                         ecorr, (ecorr -
+                                                                                                 ecorr_old),
+                                                                                         gradient.get_max(),
+                                                                                         gradient.norm(), stepsearch_.trustradius))
                 else:
-                    log('%3i  %14.8f  %11.8f  %10.8f  %11.8f   %6.5f   %5.2e   %1.2e' %(i+1, (etot), (etot-etot_old), ecorr,
-                         (ecorr-ecorr_old),
-                         gradient.get_max(),
-                         gradient.norm(), stepsearch_.alpha))
+                    log('%3i  %14.8f  %11.8f  %10.8f  %11.8f   %6.5f   %5.2e   %1.2e' % (i + 1, (etot), (etot - etot_old), ecorr,
+                                                                                         (ecorr -
+                                                                                          ecorr_old),
+                                                                                         gradient.get_max(),
+                                                                                         gradient.norm(), stepsearch_.alpha))
 
             #
             # Checkpoint for orbitals
             #
-            if (i+1)%checkpoint == 0 and checkpoint > 0 and (etot < etot_old):
+            if (i + 1) % checkpoint == 0 and checkpoint > 0 and (etot < etot_old):
                 self.do_checkpoint(orb, olp, checkpoint_fn)
 
             #
@@ -586,7 +590,7 @@ class RAp1rog(Geminal):
             if self.check_convergence(etot, etot_old, gradient, thresh):
                 if log.do_medium:
                     log.hline(' ')
-                    log('Orbital optimization converged in %i iterations' %(i+1))
+                    log('Orbital optimization converged in %i iterations' % (i + 1))
                     log.hline(' ')
                 break
             elif self.check_stepsearch(stepsearch_):
@@ -595,17 +599,17 @@ class RAp1rog(Geminal):
                     log('Trustradius too small. Orbital optimization aborted!')
                     log.hline(' ')
                 break
-            i = i+1
+            i = i + 1
 
         #
         # Check convergence if i = maxorbiter:
         # Don't raise annoying ValueError
         #
-        if i >= maxiter['orbiter'] and i>0:
+        if i >= maxiter['orbiter'] and i > 0:
             if not self.check_convergence(etot, etot_old, gradient, thresh):
                 if log.do_medium:
                     log.hline(' ')
-                    log('WARNING: Orbital optimization NOT converged in %i iterations' %(i))
+                    log('WARNING: Orbital optimization NOT converged in %i iterations' % (i))
                     log.hline(' ')
 
         #
@@ -669,14 +673,18 @@ class RAp1rog(Geminal):
         check_options('two_dm', select, 'ps2', 'response')
         if select == 'response':
             cached_2dm1 = self.init_two_dm('rppqq')
-            self.compute_2dm(cached_2dm1, self.one_dm_response, self.geminal, self.lagrange, 'ppqq', True)
+            self.compute_2dm(
+                cached_2dm1, self.one_dm_response, self.geminal, self.lagrange, 'ppqq', True)
             cached_2dm2 = self.init_two_dm('rpqpq')
-            self.compute_2dm(cached_2dm2, self.one_dm_response, self.geminal, self.lagrange, 'pqpq', True)
+            self.compute_2dm(
+                cached_2dm2, self.one_dm_response, self.geminal, self.lagrange, 'pqpq', True)
         elif select == 'ps2':
             cached_2dm1 = self.init_two_dm('ppqq')
-            self.compute_2dm(cached_2dm1, self.one_dm_ps2, self.geminal, self.geminal, 'ppqq', False)
+            self.compute_2dm(
+                cached_2dm1, self.one_dm_ps2, self.geminal, self.geminal, 'ppqq', False)
             cached_2dm2 = self.init_two_dm('pqpq')
-            self.compute_2dm(cached_2dm1, self.one_dm_ps2, self.geminal, self.geminal, 'pqpq', False)
+            self.compute_2dm(
+                cached_2dm1, self.one_dm_ps2, self.geminal, self.geminal, 'pqpq', False)
 
     def compute_1dm(self, dmout, mat1, mat2, factor=1.0, response=True):
         '''Compute 1-RDM for AP1roG
@@ -697,7 +705,7 @@ class RAp1rog(Geminal):
         '''
         summand = 1.0
         if not response:
-            summand = 1+mat1.contract_two('ab,ab', mat2)
+            summand = 1 + mat1.contract_two('ab,ab', mat2)
 
         #
         # Calculate occupied block
@@ -741,11 +749,11 @@ class RAp1rog(Geminal):
                If True, calculate response 2-RDM. Otherwise the PS2 2-RDM is
                calculated.
         '''
-        check_options('select', select, 'ppqq','pqpq')
+        check_options('select', select, 'ppqq', 'pqpq')
         lc = mat1.contract_two('ab,ab', mat2)
         factor1 = 1.0
         if response:
-            factor1 = factor1-lc
+            factor1 = factor1 - lc
         if select == 'ppqq':
             #
             # temporary storage
@@ -786,7 +794,7 @@ class RAp1rog(Geminal):
             mat2_.imul(mat1)
             tmpov.iadd(mat2_, 2.0)
 
-            dmout.iadd(mat1, (factor1+lc), 0, self.npairs, self.npairs, self.nbasis)
+            dmout.iadd(mat1, (factor1 + lc), 0, self.npairs, self.npairs, self.nbasis)
             dmout.iadd(tmpov, 1.0, 0, self.npairs, self.npairs, self.nbasis)
         elif select == 'pqpq':
             #
@@ -798,16 +806,16 @@ class RAp1rog(Geminal):
             mat2_ = mat2.copy()
             mat2_.imul(mat1)
             for i in range(self.npairs):
-                for j in range(i+1,self.npairs):
-                    value = factor1+lc-tmpo.get_element(i)-tmpo.get_element(j)
-                    dmout.set_element(i,j, value)
-                    dmout.set_element(j,i, value)
-                value = factor1+lc-tmpo.get_element(i)
-                dmout.set_element(i,i, value)
+                for j in range(i + 1, self.npairs):
+                    value = factor1 + lc - tmpo.get_element(i) - tmpo.get_element(j)
+                    dmout.set_element(i, j, value)
+                    dmout.set_element(j, i, value)
+                value = factor1 + lc - tmpo.get_element(i)
+                dmout.set_element(i, i, value)
             dmout.iadd_t(dm1v, 1.0, 0, self.npairs, self.npairs, self.nbasis)
-            dmout.iadd(mat2_,-1.0, 0, self.npairs, self.npairs, self.nbasis)
+            dmout.iadd(mat2_, -1.0, 0, self.npairs, self.npairs, self.nbasis)
             dmout.iadd(dm1v, 1.0, self.npairs, self.nbasis, 0, self.npairs)
-            dmout.iadd_t(mat2_,-1.0, self.npairs, self.nbasis, 0, self.npairs)
+            dmout.iadd_t(mat2_, -1.0, self.npairs, self.nbasis, 0, self.npairs)
 
     def update_three_dm(self, select, three_dm=None):
         '''Update 3-RDM
@@ -895,7 +903,6 @@ class RAp1rog(Geminal):
             self.update_one_dm('response')
             orb.assign_occupations(self.one_dm_response)
 
-
     @timer.with_section('ProjectedSEq')
     def solve_geminal(self, guess, solver, wfnthreshold, wfnmaxiter):
         '''Solves for geminal matrix
@@ -926,10 +933,10 @@ class RAp1rog(Geminal):
                        callback=None)
         if not sol.success:
             raise ValueError('ERROR: program terminated. Error in solving \
-                             geminal equations: %s' %sol.message)
+                             geminal equations: %s' % sol.message)
         if log.do_high:
             log('Optimization of geminal coefficients converged in %i \
-                 iterations.' %(sol.nit))
+                 iterations.' % (sol.nit))
         return sol.x
 
     @timer.with_section('LagrangeMult')
@@ -962,10 +969,10 @@ class RAp1rog(Geminal):
                        options={'xtol': wfnthreshold, 'maxiter': wfnmaxiter})
         if not sol.success:
             raise ValueError('ERROR: program terminated. Error in solving \
-                              Lagrange multipliers: %s' %sol.message)
+                              Lagrange multipliers: %s' % sol.message)
         if log.do_high:
             log('Optimization of Lagrange multipliers converged in %i \
-                     iterations.' %(sol.nit))
+                     iterations.' % (sol.nit))
         return sol.x
 
     #
@@ -980,15 +987,20 @@ class RAp1rog(Geminal):
                 One of ``t``, ``fock``, ``gppqq``, ``gpqpq``, ``gpqqp``,
                 ``lpqpq``, ``lpqrq``, ``gpqrr``
         '''
-        check_options('select', select, 't', 'fock', 'gppqq', 'gpqpq', 'gpqqp', 'lpqpq', 'lpqrq', 'gpqrr')
+        check_options('select', select, 't', 'fock', 'gppqq',
+                      'gpqpq', 'gpqqp', 'lpqpq', 'lpqrq', 'gpqrr')
         if select in ['lpqrq', 'gpqrr']:
-            matrix, new = self._cache.load('matrix_%s' % select, alloc=(self._lf.create_three_index, self.nbasis), tags='m')
+            matrix, new = self._cache.load(
+                'matrix_%s' % select, alloc=(self._lf.create_three_index, self.nbasis), tags='m')
         elif select in ['fock']:
-            matrix, new = self._cache.load('matrix_%s' % select, alloc=(self._lf.create_one_index, self.nbasis), tags='m')
+            matrix, new = self._cache.load(
+                'matrix_%s' % select, alloc=(self._lf.create_one_index, self.nbasis), tags='m')
         else:
-            matrix, new = self._cache.load('matrix_%s' % select, alloc=(self._lf.create_two_index, self.nbasis), tags='m')
+            matrix, new = self._cache.load(
+                'matrix_%s' % select, alloc=(self._lf.create_two_index, self.nbasis), tags='m')
         if not new:
-            raise RuntimeError('The auxiliary matrix matrix_%s already exists. Call clear prior to updating the auxiliary matrices.' % select)
+            raise RuntimeError(
+                'The auxiliary matrix matrix_%s already exists. Call clear prior to updating the auxiliary matrices.' % select)
         return matrix
 
     @timer.with_section('IntegralSort')
@@ -1037,13 +1049,13 @@ class RAp1rog(Geminal):
         #
         matrix4 = self.init_auxmatrix('lpqpq')
         two_mo[0].slice_to_two('abab->ab', matrix4, 2.0, True)
-        two_mo[0].slice_to_two('abba->ab', matrix4,-1.0, False)
+        two_mo[0].slice_to_two('abba->ab', matrix4, -1.0, False)
         #
         # <pq||rq>+<pq|rq>
         #
         matrix5 = self.init_auxmatrix('lpqrq')
         two_mo[0].slice_to_three('abcb->abc', matrix5, 2.0, True)
-        two_mo[0].slice_to_three('abbc->abc', matrix5,-1.0, False)
+        two_mo[0].slice_to_three('abbc->abc', matrix5, -1.0, False)
         #
         # <pq|rr>
         #
@@ -1067,7 +1079,8 @@ class RAp1rog(Geminal):
                 't', 'gpqpq', 'gpqqp', 'lpqpq', 'pqrq', 'gpqrr', 'fock'.
         '''
         if not 'matrix_%s' % select in self._cache:
-            raise ValueError("The auxmatrix %s not found in cache. Did you use init_auxmatrix?" %select)
+            raise ValueError(
+                "The auxmatrix %s not found in cache. Did you use init_auxmatrix?" % select)
         return self._cache.load('matrix_%s' % select)
 
     #
@@ -1116,7 +1129,7 @@ class RAp1rog(Geminal):
                 If not provided, the correlation energy is calculated
                 from self.geminal (default None)
         '''
-        return (self.compute_correlation_energy(coeff)+self.compute_reference_energy()+self.ecore)
+        return (self.compute_correlation_energy(coeff) + self.compute_reference_energy() + self.ecore)
 
     #
     # Functions for orbital optimization (except gradient/Hessian):
@@ -1214,7 +1227,7 @@ class RAp1rog(Geminal):
         #
         # vectorFunction_ia
         #
-        result = self.lf.create_two_index(self.npairs,self.nvirt)
+        result = self.lf.create_two_index(self.npairs, self.nvirt)
 
         #
         # Add contributions to vectorFunction_ia:
@@ -1236,7 +1249,8 @@ class RAp1rog(Geminal):
         #
         # 2c_ia*f_aa
         #
-        result.iadd_contract_two_one('ab,b->ab', gmat, diagfock, 2.0, begin2=self.npairs, end2=self.nbasis)
+        result.iadd_contract_two_one(
+            'ab,b->ab', gmat, diagfock, 2.0, begin2=self.npairs, end2=self.nbasis)
 
         #
         # -2c_ia*(<ia||ia>+<ia|ia>)
@@ -1251,7 +1265,8 @@ class RAp1rog(Geminal):
         #
         # c_ib*(<bb|aa>)
         #
-        result.iadd_dot(gmat, miiaa, 1.0, begin2=self.npairs, end2=self.nbasis, begin3=self.npairs, end3=self.nbasis)
+        result.iadd_dot(gmat, miiaa, 1.0, begin2=self.npairs,
+                        end2=self.nbasis, begin3=self.npairs, end3=self.nbasis)
 
         #
         # c_ia*(c_jb*<jj|bb>)
@@ -1262,20 +1277,23 @@ class RAp1rog(Geminal):
         #
         # c_ib*<bb|jj>*c_ja
         #
-        tmp = self.lf.create_two_index(self.npairs,self.npairs)
-        tmp.iadd_dot(gmat, miiaa, 1.0, begin2=self.npairs, end2=self.nbasis, begin3=0, end3=self.npairs)
+        tmp = self.lf.create_two_index(self.npairs, self.npairs)
+        tmp.iadd_dot(gmat, miiaa, 1.0, begin2=self.npairs,
+                     end2=self.nbasis, begin3=0, end3=self.npairs)
         result.iadd_dot(tmp, gmat, 1.0)
 
         #
         # -2c_ja*c_ia*<jj|aa>
         #
-        tmp = gmat.contract_two_to_one('ab,ab->b', miiaa, None, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
+        tmp = gmat.contract_two_to_one(
+            'ab,ab->b', miiaa, None, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
         result.iadd_contract_two_one('ab,b->ab', gmat, tmp, -2.0)
 
         #
         # -2c_ib*c_ia*<ii|bb>
         #
-        tmp = gmat.contract_two_to_one('ab,ab->a', miiaa, None, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
+        tmp = gmat.contract_two_to_one(
+            'ab,ab->a', miiaa, None, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
         result.iadd_contract_two_one('ab,a->ab', gmat, tmp, -2.0)
 
         #
@@ -1345,15 +1363,17 @@ class RAp1rog(Geminal):
         cga = self.lf.create_one_index(self.nvirt)
         lci = self.lf.create_one_index(self.npairs)
         lca = self.lf.create_one_index(self.nvirt)
-        gmat.contract_two_to_one('ab,ab->a', miiaa, cgi, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
-        gmat.contract_two_to_one('ab,ab->b', miiaa, cga, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
+        gmat.contract_two_to_one(
+            'ab,ab->a', miiaa, cgi, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
+        gmat.contract_two_to_one(
+            'ab,ab->b', miiaa, cga, 1.0, True, 0, self.npairs, self.npairs, self.nbasis)
         lmat.contract_two_to_one('ab,ab->a', gmat, lci, 1.0, True)
         lmat.contract_two_to_one('ab,ab->b', gmat, lca, 1.0, True)
 
         #
         # vectorFunction_ia
         #
-        result = self.lf.create_two_index(self.npairs,self.nvirt)
+        result = self.lf.create_two_index(self.npairs, self.nvirt)
 
         #
         # miiaa
@@ -1373,12 +1393,14 @@ class RAp1rog(Geminal):
         #
         # -2miiaa*lci
         #
-        result.iadd_contract_two_one('ab,a->ab', miiaa, lci, -2.0, 0, self.npairs, self.npairs, self.nbasis)
+        result.iadd_contract_two_one(
+            'ab,a->ab', miiaa, lci, -2.0, 0, self.npairs, self.npairs, self.nbasis)
 
         #
         # -2miiaa*lca
         #
-        result.iadd_contract_two_one('ab,b->ab', miiaa, lca, -2.0, 0, self.npairs, self.npairs, self.nbasis)
+        result.iadd_contract_two_one(
+            'ab,b->ab', miiaa, lca, -2.0, 0, self.npairs, self.npairs, self.nbasis)
 
         #
         # -2l_ia*f_ii
@@ -1388,7 +1410,8 @@ class RAp1rog(Geminal):
         #
         # 2l_ia*f_aa
         #
-        result.iadd_contract_two_one('ab,b->ab', lmat, diagfock, 2.0, begin2=self.npairs, end2=self.nbasis)
+        result.iadd_contract_two_one(
+            'ab,b->ab', lmat, diagfock, 2.0, begin2=self.npairs, end2=self.nbasis)
 
         #
         # -2l_ia*(<ia||ia>+<ia|ia>)
@@ -1403,14 +1426,16 @@ class RAp1rog(Geminal):
         #
         # l_ib*(<bb|aa>)
         #
-        result.iadd_dot(lmat, miiaa, 1.0, begin2=self.npairs, end2=self.nbasis, begin3=self.npairs, end3=self.nbasis)
+        result.iadd_dot(lmat, miiaa, 1.0, begin2=self.npairs,
+                        end2=self.nbasis, begin3=self.npairs, end3=self.nbasis)
 
         #
         # 4l_ia*c_ia*<ii|aa>
         #
         tmp = lmat.copy()
         tmp.imul(gmat)
-        result.iadd_mult(tmp, miiaa, 4.0, begin0=0, end0=self.npairs, begin1=self.npairs, end1=self.nbasis)
+        result.iadd_mult(
+            tmp, miiaa, 4.0, begin0=0, end0=self.npairs, begin1=self.npairs, end1=self.nbasis)
 
         #
         # <ii|bb>*c_jb*l_ja
@@ -1424,7 +1449,8 @@ class RAp1rog(Geminal):
         #
         tmp = self.lf.create_two_index(self.npairs, self.npairs)
         tmp.iadd_dott(lmat, gmat)
-        result.iadd_dot(tmp, miiaa, 1.0, begin2=0, end2=self.npairs, begin3=self.npairs, end3=self.nbasis)
+        result.iadd_dot(
+            tmp, miiaa, 1.0, begin2=0, end2=self.npairs, begin3=self.npairs, end3=self.nbasis)
 
         return result._array.ravel(order='C')
 
@@ -1505,7 +1531,7 @@ class RAp1rog(Geminal):
         #
         # h_ut g_uu
         #
-        gradient.iadd_contract_two_one('ab,b->ab', one, onedm,-4.0)
+        gradient.iadd_contract_two_one('ab,b->ab', one, onedm, -4.0)
 
         ind = np.tril_indices(self.nbasis, -1)
 
@@ -1618,8 +1644,8 @@ class RAp1rog(Geminal):
         # <pq> G_pq
         #
         hessian.iadd_mult(vmat, twodmpqpq, 8.0)
-        hessian.iadd_mult(vmata, twodmpqpq,-8.0)
-        hessian.iadd_mult(vpp, twodmpqpq,-16.0)
+        hessian.iadd_mult(vmata, twodmpqpq, -8.0)
+        hessian.iadd_mult(vpp, twodmpqpq, -16.0)
         hessian.iadd_mult(vmat, two_dm_av, -8.0)
         hessian.iadd_mult(vpp, two_dm_av, -8.0)
         #
@@ -1718,33 +1744,33 @@ class RAp1rog(Geminal):
         # (1)
         # aa
         mo2ex.contract_two_to_four('abcd,cd->acbd', dm2pqpqex, hessian, 4.0, True)
-        mo2ex.contract_two_to_four('abcd,ab->acdb', dm2pqpqex, hessian,-4.0, False)
-        mo2ex.contract_two_to_four('abcd,cd->acdb', dm2pqpqex, hessian,-4.0, False)
+        mo2ex.contract_two_to_four('abcd,ab->acdb', dm2pqpqex, hessian, -4.0, False)
+        mo2ex.contract_two_to_four('abcd,cd->acdb', dm2pqpqex, hessian, -4.0, False)
         mo2ex.contract_two_to_four('abcd,ab->acbd', dm2pqpqex, hessian, 4.0, False)
         # ab
         mo2.contract_two_to_four('abcd,cd->acbd', dm2pqpq, hessian, 4.0, False)
-        mo2.contract_two_to_four('abcd,ab->acdb', dm2pqpq, hessian,-4.0, False)
-        mo2.contract_two_to_four('abcd,cd->acdb', dm2pqpq, hessian,-4.0, False)
+        mo2.contract_two_to_four('abcd,ab->acdb', dm2pqpq, hessian, -4.0, False)
+        mo2.contract_two_to_four('abcd,cd->acdb', dm2pqpq, hessian, -4.0, False)
         mo2.contract_two_to_four('abcd,ab->acbd', dm2pqpq, hessian, 4.0, False)
         # (2)
         # aa
         mo2ex.contract_two_to_four('abcd,cb->acdb', dm2pqpqex, hessian, 4.0, False)
-        mo2ex.contract_two_to_four('abcd,ad->acbd', dm2pqpqex, hessian,-4.0, False)
-        mo2ex.contract_two_to_four('abcd,cb->acbd', dm2pqpqex, hessian,-4.0, False)
+        mo2ex.contract_two_to_four('abcd,ad->acbd', dm2pqpqex, hessian, -4.0, False)
+        mo2ex.contract_two_to_four('abcd,cb->acbd', dm2pqpqex, hessian, -4.0, False)
         mo2ex.contract_two_to_four('abcd,ad->acdb', dm2pqpqex, hessian, 4.0, False)
         # ab
         mo2.contract_two_to_four('abcd,cb->acdb', dm2pqpq, hessian, 4.0, False)
-        mo2.contract_two_to_four('abcd,ad->acbd', dm2pqpq, hessian,-4.0, False)
-        mo2.contract_two_to_four('abcd,cb->acbd', dm2pqpq, hessian,-4.0, False)
+        mo2.contract_two_to_four('abcd,ad->acbd', dm2pqpq, hessian, -4.0, False)
+        mo2.contract_two_to_four('abcd,cb->acbd', dm2pqpq, hessian, -4.0, False)
         mo2.contract_two_to_four('abcd,ad->acdb', dm2pqpq, hessian, 4.0, False)
         # (3)
         mo2.contract_two_to_four('abcd,bd->abcd', dm2av, hessian, 4.0, False)
-        mo2.contract_two_to_four('abcd,ad->abcd', dm2av, hessian,-4.0, False)
-        mo2.contract_two_to_four('abcd,bd->abdc', dm2av, hessian,-4.0, False)
+        mo2.contract_two_to_four('abcd,ad->abcd', dm2av, hessian, -4.0, False)
+        mo2.contract_two_to_four('abcd,bd->abdc', dm2av, hessian, -4.0, False)
         mo2.contract_two_to_four('abcd,ac->abcd', dm2av, hessian, 4.0, False)
         mo2.contract_two_to_four('abcd,bc->abdc', dm2av, hessian, 4.0, False)
-        mo2.contract_two_to_four('abcd,ac->abdc', dm2av, hessian,-4.0, False)
-        mo2.contract_two_to_four('abcd,bc->abcd', dm2av, hessian,-4.0, False)
+        mo2.contract_two_to_four('abcd,ac->abdc', dm2av, hessian, -4.0, False)
+        mo2.contract_two_to_four('abcd,bc->abcd', dm2av, hessian, -4.0, False)
         mo2.contract_two_to_four('abcd,ad->abdc', dm2av, hessian, 4.0, False)
         # Apq,qw (pw) (qv) (-qw) (-pv)
         ind2.iadd_contract_two_one('ab,b->ab', mo1, dm1, 2.0)
@@ -1760,39 +1786,39 @@ class RAp1rog(Geminal):
         # Apq,qw (pq,qw) (-pq,vq)
         ind30.iadd_expand_two_one('ab,c->cab', mo1, dm1, -4)
         # aa
-        mo2ex.contract_two_to_three('abcb,db->adc', dm2pqpqex, ind31,-4.0, True)
+        mo2ex.contract_two_to_three('abcb,db->adc', dm2pqpqex, ind31, -4.0, True)
         # ab
-        mo2.contract_two_to_three('abcb,db->adc', dm2pqpq, ind31,-4.0, False)
-        mo2.contract_two_to_three('abcc,dc->adb', dm2av, ind31,-4.0, False)
+        mo2.contract_two_to_three('abcb,db->adc', dm2pqpq, ind31, -4.0, False)
+        mo2.contract_two_to_three('abcc,dc->adb', dm2av, ind31, -4.0, False)
         # Apq,qw (pq,vp) (-pq,pw)
         ind31.iadd_expand_two_one('ab,c->acb', mo1, dm1, -4)
         # aa
-        mo2.contract_two_to_three('abcb,db->dac', dm2pqpqex, ind30,-4.0, False)
+        mo2.contract_two_to_three('abcb,db->dac', dm2pqpqex, ind30, -4.0, False)
         mo2.contract_two_to_three('abbc,db->dac', dm2pqpqex, ind30, 4.0, False)
         # ab
-        mo2.contract_two_to_three('abcb,db->dac', dm2pqpq, ind30,-4.0, False)
-        mo2.contract_two_to_three('abcc,dc->dab', dm2av, ind30,-4.0, False)
+        mo2.contract_two_to_three('abcb,db->dac', dm2pqpq, ind30, -4.0, False)
+        mo2.contract_two_to_three('abcc,dc->dab', dm2av, ind30, -4.0, False)
 
         #
         # collect 2- and 3-index terms
         #
-        hessian.iadd_expand_two_to_four('0-2', ind2,-1.0)
+        hessian.iadd_expand_two_to_four('0-2', ind2, -1.0)
         hessian.iadd_expand_two_to_four('0-3', ind2, 1.0)
         hessian.iadd_expand_two_to_four('1-2', ind2, 1.0)
-        hessian.iadd_expand_two_to_four('1-3', ind2,-1.0)
-        hessian.iadd_expand_three_to_four('1-3-1-2', ind30,-1.0)
+        hessian.iadd_expand_two_to_four('1-3', ind2, -1.0)
+        hessian.iadd_expand_three_to_four('1-3-1-2', ind30, -1.0)
         hessian.iadd_expand_three_to_four('1-2-1-2', ind30, 1.0)
         hessian.iadd_expand_three_to_four('0-3-0-2', ind31, 1.0)
-        hessian.iadd_expand_three_to_four('0-2-0-2', ind31,-1.0)
+        hessian.iadd_expand_three_to_four('0-2-0-2', ind31, -1.0)
 
         #
         # reorder elements (p,q,r,s)->(pq,rs)
         #
-        dim = (self.nbasis*(self.nbasis-1))/2
+        dim = (self.nbasis * (self.nbasis - 1)) / 2
         tril = np.tril_indices(self.nbasis, -1)
         out = self.lf.create_two_index(dim, dim)
         # FIXME: use matrix class
-        out._array[:] = (hessian._array[:,:,tril[0],tril[1]])[tril]
+        out._array[:] = (hessian._array[:, :, tril[0], tril[1]])[tril]
 
         return out._array
 
@@ -1843,362 +1869,512 @@ class RAp1rog(Geminal):
         coeff = self.geminal._array.copy()
         matrix = np.identity(self.npairs)
         for i in range(excitationlevel):
-            it.append(np.nditer(coeff,flags=['multi_index']))
+            it.append(np.nditer(coeff, flags=['multi_index']))
         if amplitudestofile:
             with open(filename, 'w') as filea:
-                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant((-1,-1)), 1.0))
+                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant((-1, -1)), 1.0))
                 filea.write("\n")
         else:
-            log('%s %20.16f' %(self.get_slater_determinant((-1,-1)), 1.0))
+            log('%s %20.16f' % (self.get_slater_determinant((-1, -1)), 1.0))
         for i in range(excitationlevel):
-            if i==0:
+            if i == 0:
                 for ci in it[0]:
                     if abs(ci) >= (cithresh):
                         if amplitudestofile is True:
                             with open(filename, 'a') as filea:
-                                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index), float(ci)))
+                                filea.write('{0:10} {1:20.16f}'.format(
+                                    self.get_slater_determinant(it[0].multi_index), float(ci)))
                                 filea.write("\n")
                         else:
-                            log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index), float(ci)))
+                            log('%s %20.16f' %
+                                (self.get_slater_determinant(it[0].multi_index), float(ci)))
             if self.npairs > 1:
-                for index in range((i+1)):
-                    it[index] = np.nditer(coeff,flags=['multi_index'])
-                if i==1:
+                for index in range((i + 1)):
+                    it[index] = np.nditer(coeff, flags=['multi_index'])
+                if i == 1:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if (it[1].multi_index[0]>it[0].multi_index[0]):
-                                    if (it[1].multi_index[1]>it[0].multi_index[1]):
-                                        matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                        matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                        matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                        matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
+                                if (it[1].multi_index[0] > it[0].multi_index[0]):
+                                    if (it[1].multi_index[1] > it[0].multi_index[1]):
+                                        matrix[
+                                            it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                        matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                            ci2)
+                                        matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                            it[0].multi_index[0], it[1].multi_index[1]]
+                                        matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                            it[1].multi_index[0], it[0].multi_index[1]]
                                         amplitude = self.perm(matrix)
                                         if (abs(amplitude) >= cithresh):
                                             if amplitudestofile is True:
                                                 with open(filename, 'a') as filea:
-                                                    filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index), amplitude))
+                                                    filea.write('{0:10} {1:20.16f}'.format(
+                                                        self.get_slater_determinant(it[0].multi_index, it[1].multi_index), amplitude))
                                                     filea.write("\n")
                                             else:
-                                                log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index), amplitude))
+                                                log('%s %20.16f' % (
+                                                    self.get_slater_determinant(it[0].multi_index, it[1].multi_index), amplitude))
                                         matrix = np.identity(self.npairs)
-                if i==2:
+                if i == 2:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if (it[1].multi_index[0]>it[0].multi_index[0]):
-                                    if (it[1].multi_index[1]>it[0].multi_index[1]):
+                                if (it[1].multi_index[0] > it[0].multi_index[0]):
+                                    if (it[1].multi_index[1] > it[0].multi_index[1]):
                                         it[2] = it[1].copy()
                                         for ci3 in it[2]:
-                                            if (it[2].multi_index[0]>it[1].multi_index[0]):
-                                                if (it[2].multi_index[1]>it[1].multi_index[1]):
-                                                    matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                                    matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                                    matrix[it[2].multi_index[0],it[2].multi_index[0]] = float(ci3)
+                                            if (it[2].multi_index[0] > it[1].multi_index[0]):
+                                                if (it[2].multi_index[1] > it[1].multi_index[1]):
+                                                    matrix[
+                                                        it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                                    matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                                        ci2)
+                                                    matrix[it[2].multi_index[0], it[2].multi_index[0]] = float(
+                                                        ci3)
 
-                                                    matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                                    matrix[it[0].multi_index[0],it[2].multi_index[0]] = coeff[it[0].multi_index[0],it[2].multi_index[1]]
+                                                    matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                        it[0].multi_index[0], it[1].multi_index[1]]
+                                                    matrix[it[0].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                        it[0].multi_index[0], it[2].multi_index[1]]
 
-                                                    matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
-                                                    matrix[it[1].multi_index[0],it[2].multi_index[0]] = coeff[it[1].multi_index[0],it[2].multi_index[1]]
+                                                    matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                        it[1].multi_index[0], it[0].multi_index[1]]
+                                                    matrix[it[1].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                        it[1].multi_index[0], it[2].multi_index[1]]
 
-                                                    matrix[it[2].multi_index[0],it[0].multi_index[0]] = coeff[it[2].multi_index[0],it[0].multi_index[1]]
-                                                    matrix[it[2].multi_index[0],it[1].multi_index[0]] = coeff[it[2].multi_index[0],it[1].multi_index[1]]
+                                                    matrix[it[2].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                        it[2].multi_index[0], it[0].multi_index[1]]
+                                                    matrix[it[2].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                        it[2].multi_index[0], it[1].multi_index[1]]
                                                     amplitude = self.perm(matrix)
                                                     if (abs(amplitude) >= cithresh):
                                                         if amplitudestofile is True:
                                                             with open(filename, 'a') as filea:
-                                                                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
+                                                                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
                                                                                                                                    it[2].multi_index), amplitude))
                                                                 filea.write("\n")
                                                         else:
-                                                            log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                                           it[2].multi_index), amplitude))
+                                                            log('%s %20.16f' % (self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                            it[2].multi_index), amplitude))
                                                     matrix = np.identity(self.npairs)
-                if i==3:
+                if i == 3:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if (it[1].multi_index[0]>it[0].multi_index[0]):
-                                    if (it[1].multi_index[1]>it[0].multi_index[1]):
+                                if (it[1].multi_index[0] > it[0].multi_index[0]):
+                                    if (it[1].multi_index[1] > it[0].multi_index[1]):
                                         it[2] = it[1].copy()
                                         for ci3 in it[2]:
-                                            if (it[2].multi_index[0]>it[1].multi_index[0]):
-                                                if (it[2].multi_index[1]>it[1].multi_index[1]):
+                                            if (it[2].multi_index[0] > it[1].multi_index[0]):
+                                                if (it[2].multi_index[1] > it[1].multi_index[1]):
                                                     it[3] = it[2].copy()
                                                     for ci4 in it[3]:
-                                                        if (it[3].multi_index[0]>it[2].multi_index[0]):
-                                                            if (it[3].multi_index[1]>it[2].multi_index[1]):
-                                                                matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                                                matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                                                matrix[it[2].multi_index[0],it[2].multi_index[0]] = float(ci3)
-                                                                matrix[it[3].multi_index[0],it[3].multi_index[0]] = float(ci4)
+                                                        if (it[3].multi_index[0] > it[2].multi_index[0]):
+                                                            if (it[3].multi_index[1] > it[2].multi_index[1]):
+                                                                matrix[
+                                                                    it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                                                matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                                                    ci2)
+                                                                matrix[it[2].multi_index[0], it[2].multi_index[0]] = float(
+                                                                    ci3)
+                                                                matrix[it[3].multi_index[0], it[3].multi_index[0]] = float(
+                                                                    ci4)
 
-                                                                matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                                                matrix[it[0].multi_index[0],it[2].multi_index[0]] = coeff[it[0].multi_index[0],it[2].multi_index[1]]
-                                                                matrix[it[0].multi_index[0],it[3].multi_index[0]] = coeff[it[0].multi_index[0],it[3].multi_index[1]]
+                                                                matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                    it[0].multi_index[0], it[1].multi_index[1]]
+                                                                matrix[it[0].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                    it[0].multi_index[0], it[2].multi_index[1]]
+                                                                matrix[it[0].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                    it[0].multi_index[0], it[3].multi_index[1]]
 
-                                                                matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
-                                                                matrix[it[1].multi_index[0],it[2].multi_index[0]] = coeff[it[1].multi_index[0],it[2].multi_index[1]]
-                                                                matrix[it[1].multi_index[0],it[3].multi_index[0]] = coeff[it[1].multi_index[0],it[3].multi_index[1]]
+                                                                matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                    it[1].multi_index[0], it[0].multi_index[1]]
+                                                                matrix[it[1].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                    it[1].multi_index[0], it[2].multi_index[1]]
+                                                                matrix[it[1].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                    it[1].multi_index[0], it[3].multi_index[1]]
 
-                                                                matrix[it[2].multi_index[0],it[0].multi_index[0]] = coeff[it[2].multi_index[0],it[0].multi_index[1]]
-                                                                matrix[it[2].multi_index[0],it[1].multi_index[0]] = coeff[it[2].multi_index[0],it[1].multi_index[1]]
-                                                                matrix[it[2].multi_index[0],it[3].multi_index[0]] = coeff[it[2].multi_index[0],it[3].multi_index[1]]
+                                                                matrix[it[2].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                    it[2].multi_index[0], it[0].multi_index[1]]
+                                                                matrix[it[2].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                    it[2].multi_index[0], it[1].multi_index[1]]
+                                                                matrix[it[2].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                    it[2].multi_index[0], it[3].multi_index[1]]
 
-                                                                matrix[it[3].multi_index[0],it[0].multi_index[0]] = coeff[it[3].multi_index[0],it[0].multi_index[1]]
-                                                                matrix[it[3].multi_index[0],it[1].multi_index[0]] = coeff[it[3].multi_index[0],it[1].multi_index[1]]
-                                                                matrix[it[3].multi_index[0],it[2].multi_index[0]] = coeff[it[3].multi_index[0],it[2].multi_index[1]]
+                                                                matrix[it[3].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                    it[3].multi_index[0], it[0].multi_index[1]]
+                                                                matrix[it[3].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                    it[3].multi_index[0], it[1].multi_index[1]]
+                                                                matrix[it[3].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                    it[3].multi_index[0], it[2].multi_index[1]]
                                                                 amplitude = self.perm(matrix)
                                                                 if (abs(amplitude) >= cithresh):
                                                                     if amplitudestofile is True:
                                                                         with open(filename, 'a') as filea:
-                                                                            filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                        it[2].multi_index,it[3].multi_index), amplitude))
+                                                                            filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                                               it[2].multi_index, it[3].multi_index), amplitude))
                                                                             filea.write("\n")
                                                                     else:
-                                                                        log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                           it[2].multi_index,it[3].multi_index), amplitude))
+                                                                        log('%s %20.16f' % (self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                        it[2].multi_index, it[3].multi_index), amplitude))
                                                                 matrix = np.identity(self.npairs)
-                if i==4:
+                if i == 4:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if ((it[1].multi_index[0]>it[0].multi_index[0])
-                                    and (it[1].multi_index[1]>it[0].multi_index[1])):
+                                if ((it[1].multi_index[0] > it[0].multi_index[0])
+                                        and (it[1].multi_index[1] > it[0].multi_index[1])):
                                     it[2] = it[1].copy()
                                     for ci3 in it[2]:
-                                        if ((it[2].multi_index[0]>it[1].multi_index[0])
-                                            and (it[2].multi_index[1]>it[1].multi_index[1])):
+                                        if ((it[2].multi_index[0] > it[1].multi_index[0])
+                                                and (it[2].multi_index[1] > it[1].multi_index[1])):
                                             it[3] = it[2].copy()
                                             for ci4 in it[3]:
-                                                if ((it[3].multi_index[0]>it[2].multi_index[0])
-                                                    and (it[3].multi_index[1]>it[2].multi_index[1])):
+                                                if ((it[3].multi_index[0] > it[2].multi_index[0])
+                                                        and (it[3].multi_index[1] > it[2].multi_index[1])):
                                                     it[4] = it[3].copy()
                                                     for ci5 in it[4]:
-                                                        if ((it[4].multi_index[0]>it[3].multi_index[0])
-                                                            and (it[4].multi_index[1]>it[3].multi_index[1])):
-                                                            matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                                            matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                                            matrix[it[2].multi_index[0],it[2].multi_index[0]] = float(ci3)
-                                                            matrix[it[3].multi_index[0],it[3].multi_index[0]] = float(ci4)
-                                                            matrix[it[4].multi_index[0],it[4].multi_index[0]] = float(ci5)
+                                                        if ((it[4].multi_index[0] > it[3].multi_index[0])
+                                                                and (it[4].multi_index[1] > it[3].multi_index[1])):
+                                                            matrix[
+                                                                it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                                            matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                                                ci2)
+                                                            matrix[it[2].multi_index[0], it[2].multi_index[0]] = float(
+                                                                ci3)
+                                                            matrix[it[3].multi_index[0], it[3].multi_index[0]] = float(
+                                                                ci4)
+                                                            matrix[it[4].multi_index[0], it[4].multi_index[0]] = float(
+                                                                ci5)
 
-                                                            matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                                            matrix[it[0].multi_index[0],it[2].multi_index[0]] = coeff[it[0].multi_index[0],it[2].multi_index[1]]
-                                                            matrix[it[0].multi_index[0],it[3].multi_index[0]] = coeff[it[0].multi_index[0],it[3].multi_index[1]]
-                                                            matrix[it[0].multi_index[0],it[4].multi_index[0]] = coeff[it[0].multi_index[0],it[4].multi_index[1]]
+                                                            matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                it[0].multi_index[0], it[1].multi_index[1]]
+                                                            matrix[it[0].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                it[0].multi_index[0], it[2].multi_index[1]]
+                                                            matrix[it[0].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                it[0].multi_index[0], it[3].multi_index[1]]
+                                                            matrix[it[0].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                it[0].multi_index[0], it[4].multi_index[1]]
 
-                                                            matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
-                                                            matrix[it[1].multi_index[0],it[2].multi_index[0]] = coeff[it[1].multi_index[0],it[2].multi_index[1]]
-                                                            matrix[it[1].multi_index[0],it[3].multi_index[0]] = coeff[it[1].multi_index[0],it[3].multi_index[1]]
-                                                            matrix[it[1].multi_index[0],it[4].multi_index[0]] = coeff[it[1].multi_index[0],it[4].multi_index[1]]
+                                                            matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                it[1].multi_index[0], it[0].multi_index[1]]
+                                                            matrix[it[1].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                it[1].multi_index[0], it[2].multi_index[1]]
+                                                            matrix[it[1].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                it[1].multi_index[0], it[3].multi_index[1]]
+                                                            matrix[it[1].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                it[1].multi_index[0], it[4].multi_index[1]]
 
-                                                            matrix[it[2].multi_index[0],it[0].multi_index[0]] = coeff[it[2].multi_index[0],it[0].multi_index[1]]
-                                                            matrix[it[2].multi_index[0],it[1].multi_index[0]] = coeff[it[2].multi_index[0],it[1].multi_index[1]]
-                                                            matrix[it[2].multi_index[0],it[3].multi_index[0]] = coeff[it[2].multi_index[0],it[3].multi_index[1]]
-                                                            matrix[it[2].multi_index[0],it[4].multi_index[0]] = coeff[it[2].multi_index[0],it[4].multi_index[1]]
+                                                            matrix[it[2].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                it[2].multi_index[0], it[0].multi_index[1]]
+                                                            matrix[it[2].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                it[2].multi_index[0], it[1].multi_index[1]]
+                                                            matrix[it[2].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                it[2].multi_index[0], it[3].multi_index[1]]
+                                                            matrix[it[2].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                it[2].multi_index[0], it[4].multi_index[1]]
 
-                                                            matrix[it[3].multi_index[0],it[0].multi_index[0]] = coeff[it[3].multi_index[0],it[0].multi_index[1]]
-                                                            matrix[it[3].multi_index[0],it[1].multi_index[0]] = coeff[it[3].multi_index[0],it[1].multi_index[1]]
-                                                            matrix[it[3].multi_index[0],it[2].multi_index[0]] = coeff[it[3].multi_index[0],it[2].multi_index[1]]
-                                                            matrix[it[3].multi_index[0],it[4].multi_index[0]] = coeff[it[3].multi_index[0],it[4].multi_index[1]]
+                                                            matrix[it[3].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                it[3].multi_index[0], it[0].multi_index[1]]
+                                                            matrix[it[3].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                it[3].multi_index[0], it[1].multi_index[1]]
+                                                            matrix[it[3].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                it[3].multi_index[0], it[2].multi_index[1]]
+                                                            matrix[it[3].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                it[3].multi_index[0], it[4].multi_index[1]]
 
-                                                            matrix[it[4].multi_index[0],it[0].multi_index[0]] = coeff[it[4].multi_index[0],it[0].multi_index[1]]
-                                                            matrix[it[4].multi_index[0],it[1].multi_index[0]] = coeff[it[4].multi_index[0],it[1].multi_index[1]]
-                                                            matrix[it[4].multi_index[0],it[2].multi_index[0]] = coeff[it[4].multi_index[0],it[2].multi_index[1]]
-                                                            matrix[it[4].multi_index[0],it[3].multi_index[0]] = coeff[it[4].multi_index[0],it[3].multi_index[1]]
+                                                            matrix[it[4].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                it[4].multi_index[0], it[0].multi_index[1]]
+                                                            matrix[it[4].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                it[4].multi_index[0], it[1].multi_index[1]]
+                                                            matrix[it[4].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                it[4].multi_index[0], it[2].multi_index[1]]
+                                                            matrix[it[4].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                it[4].multi_index[0], it[3].multi_index[1]]
                                                             amplitude = self.perm(matrix)
                                                             if (abs(amplitude) >= cithresh):
                                                                 if amplitudestofile is True:
                                                                     with open(filename, 'a') as filea:
-                                                                        filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                    it[2].multi_index,it[3].multi_index, it[4].multi_index), amplitude))
+                                                                        filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                                           it[2].multi_index, it[3].multi_index, it[4].multi_index), amplitude))
                                                                         filea.write("\n")
                                                                 else:
-                                                                    log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                       it[2].multi_index,it[3].multi_index, it[4].multi_index), amplitude))
+                                                                    log('%s %20.16f' % (self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                    it[2].multi_index, it[3].multi_index, it[4].multi_index), amplitude))
                                                             matrix = np.identity(self.npairs)
-                if i==5:
+                if i == 5:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if ((it[1].multi_index[0]>it[0].multi_index[0])
-                                    and (it[1].multi_index[1]>it[0].multi_index[1])):
+                                if ((it[1].multi_index[0] > it[0].multi_index[0])
+                                        and (it[1].multi_index[1] > it[0].multi_index[1])):
                                     it[2] = it[1].copy()
                                     for ci3 in it[2]:
-                                        if ((it[2].multi_index[0]>it[1].multi_index[0])
-                                            and (it[2].multi_index[1]>it[1].multi_index[1])):
+                                        if ((it[2].multi_index[0] > it[1].multi_index[0])
+                                                and (it[2].multi_index[1] > it[1].multi_index[1])):
                                             it[3] = it[2].copy()
                                             for ci4 in it[3]:
-                                                if ((it[3].multi_index[0]>it[2].multi_index[0])
-                                                    and (it[3].multi_index[1]>it[2].multi_index[1])):
+                                                if ((it[3].multi_index[0] > it[2].multi_index[0])
+                                                        and (it[3].multi_index[1] > it[2].multi_index[1])):
                                                     it[4] = it[3].copy()
                                                     for ci5 in it[4]:
-                                                        if ((it[4].multi_index[0]>it[3].multi_index[0])
-                                                            and (it[4].multi_index[1]>it[3].multi_index[1])):
+                                                        if ((it[4].multi_index[0] > it[3].multi_index[0])
+                                                                and (it[4].multi_index[1] > it[3].multi_index[1])):
                                                             it[5] = it[4].copy()
                                                             for ci6 in it[5]:
-                                                                if ((it[5].multi_index[0]>it[4].multi_index[0])
-                                                                    and (it[5].multi_index[1]>it[4].multi_index[1])):
-                                                                    matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                                                    matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                                                    matrix[it[2].multi_index[0],it[2].multi_index[0]] = float(ci3)
-                                                                    matrix[it[3].multi_index[0],it[3].multi_index[0]] = float(ci4)
-                                                                    matrix[it[4].multi_index[0],it[4].multi_index[0]] = float(ci5)
-                                                                    matrix[it[5].multi_index[0],it[5].multi_index[0]] = float(ci6)
+                                                                if ((it[5].multi_index[0] > it[4].multi_index[0])
+                                                                        and (it[5].multi_index[1] > it[4].multi_index[1])):
+                                                                    matrix[
+                                                                        it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                                                    matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                                                        ci2)
+                                                                    matrix[it[2].multi_index[0], it[2].multi_index[0]] = float(
+                                                                        ci3)
+                                                                    matrix[it[3].multi_index[0], it[3].multi_index[0]] = float(
+                                                                        ci4)
+                                                                    matrix[it[4].multi_index[0], it[4].multi_index[0]] = float(
+                                                                        ci5)
+                                                                    matrix[it[5].multi_index[0], it[5].multi_index[0]] = float(
+                                                                        ci6)
 
-                                                                    matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                                                    matrix[it[0].multi_index[0],it[2].multi_index[0]] = coeff[it[0].multi_index[0],it[2].multi_index[1]]
-                                                                    matrix[it[0].multi_index[0],it[3].multi_index[0]] = coeff[it[0].multi_index[0],it[3].multi_index[1]]
-                                                                    matrix[it[0].multi_index[0],it[4].multi_index[0]] = coeff[it[0].multi_index[0],it[4].multi_index[1]]
-                                                                    matrix[it[0].multi_index[0],it[5].multi_index[0]] = coeff[it[0].multi_index[0],it[5].multi_index[1]]
+                                                                    matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                        it[0].multi_index[0], it[1].multi_index[1]]
+                                                                    matrix[it[0].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                        it[0].multi_index[0], it[2].multi_index[1]]
+                                                                    matrix[it[0].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                        it[0].multi_index[0], it[3].multi_index[1]]
+                                                                    matrix[it[0].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                        it[0].multi_index[0], it[4].multi_index[1]]
+                                                                    matrix[it[0].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                        it[0].multi_index[0], it[5].multi_index[1]]
 
-                                                                    matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
-                                                                    matrix[it[1].multi_index[0],it[2].multi_index[0]] = coeff[it[1].multi_index[0],it[2].multi_index[1]]
-                                                                    matrix[it[1].multi_index[0],it[3].multi_index[0]] = coeff[it[1].multi_index[0],it[3].multi_index[1]]
-                                                                    matrix[it[1].multi_index[0],it[4].multi_index[0]] = coeff[it[1].multi_index[0],it[4].multi_index[1]]
-                                                                    matrix[it[1].multi_index[0],it[5].multi_index[0]] = coeff[it[1].multi_index[0],it[5].multi_index[1]]
+                                                                    matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                        it[1].multi_index[0], it[0].multi_index[1]]
+                                                                    matrix[it[1].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                        it[1].multi_index[0], it[2].multi_index[1]]
+                                                                    matrix[it[1].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                        it[1].multi_index[0], it[3].multi_index[1]]
+                                                                    matrix[it[1].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                        it[1].multi_index[0], it[4].multi_index[1]]
+                                                                    matrix[it[1].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                        it[1].multi_index[0], it[5].multi_index[1]]
 
-                                                                    matrix[it[2].multi_index[0],it[0].multi_index[0]] = coeff[it[2].multi_index[0],it[0].multi_index[1]]
-                                                                    matrix[it[2].multi_index[0],it[1].multi_index[0]] = coeff[it[2].multi_index[0],it[1].multi_index[1]]
-                                                                    matrix[it[2].multi_index[0],it[3].multi_index[0]] = coeff[it[2].multi_index[0],it[3].multi_index[1]]
-                                                                    matrix[it[2].multi_index[0],it[4].multi_index[0]] = coeff[it[2].multi_index[0],it[4].multi_index[1]]
-                                                                    matrix[it[2].multi_index[0],it[5].multi_index[0]] = coeff[it[2].multi_index[0],it[5].multi_index[1]]
+                                                                    matrix[it[2].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                        it[2].multi_index[0], it[0].multi_index[1]]
+                                                                    matrix[it[2].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                        it[2].multi_index[0], it[1].multi_index[1]]
+                                                                    matrix[it[2].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                        it[2].multi_index[0], it[3].multi_index[1]]
+                                                                    matrix[it[2].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                        it[2].multi_index[0], it[4].multi_index[1]]
+                                                                    matrix[it[2].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                        it[2].multi_index[0], it[5].multi_index[1]]
 
-                                                                    matrix[it[3].multi_index[0],it[0].multi_index[0]] = coeff[it[3].multi_index[0],it[0].multi_index[1]]
-                                                                    matrix[it[3].multi_index[0],it[1].multi_index[0]] = coeff[it[3].multi_index[0],it[1].multi_index[1]]
-                                                                    matrix[it[3].multi_index[0],it[2].multi_index[0]] = coeff[it[3].multi_index[0],it[2].multi_index[1]]
-                                                                    matrix[it[3].multi_index[0],it[4].multi_index[0]] = coeff[it[3].multi_index[0],it[4].multi_index[1]]
-                                                                    matrix[it[3].multi_index[0],it[5].multi_index[0]] = coeff[it[3].multi_index[0],it[5].multi_index[1]]
+                                                                    matrix[it[3].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                        it[3].multi_index[0], it[0].multi_index[1]]
+                                                                    matrix[it[3].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                        it[3].multi_index[0], it[1].multi_index[1]]
+                                                                    matrix[it[3].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                        it[3].multi_index[0], it[2].multi_index[1]]
+                                                                    matrix[it[3].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                        it[3].multi_index[0], it[4].multi_index[1]]
+                                                                    matrix[it[3].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                        it[3].multi_index[0], it[5].multi_index[1]]
 
-                                                                    matrix[it[4].multi_index[0],it[0].multi_index[0]] = coeff[it[4].multi_index[0],it[0].multi_index[1]]
-                                                                    matrix[it[4].multi_index[0],it[1].multi_index[0]] = coeff[it[4].multi_index[0],it[1].multi_index[1]]
-                                                                    matrix[it[4].multi_index[0],it[2].multi_index[0]] = coeff[it[4].multi_index[0],it[2].multi_index[1]]
-                                                                    matrix[it[4].multi_index[0],it[3].multi_index[0]] = coeff[it[4].multi_index[0],it[3].multi_index[1]]
-                                                                    matrix[it[4].multi_index[0],it[5].multi_index[0]] = coeff[it[4].multi_index[0],it[5].multi_index[1]]
+                                                                    matrix[it[4].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                        it[4].multi_index[0], it[0].multi_index[1]]
+                                                                    matrix[it[4].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                        it[4].multi_index[0], it[1].multi_index[1]]
+                                                                    matrix[it[4].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                        it[4].multi_index[0], it[2].multi_index[1]]
+                                                                    matrix[it[4].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                        it[4].multi_index[0], it[3].multi_index[1]]
+                                                                    matrix[it[4].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                        it[4].multi_index[0], it[5].multi_index[1]]
 
-                                                                    matrix[it[5].multi_index[0],it[0].multi_index[0]] = coeff[it[5].multi_index[0],it[0].multi_index[1]]
-                                                                    matrix[it[5].multi_index[0],it[1].multi_index[0]] = coeff[it[5].multi_index[0],it[1].multi_index[1]]
-                                                                    matrix[it[5].multi_index[0],it[2].multi_index[0]] = coeff[it[5].multi_index[0],it[2].multi_index[1]]
-                                                                    matrix[it[5].multi_index[0],it[3].multi_index[0]] = coeff[it[5].multi_index[0],it[3].multi_index[1]]
-                                                                    matrix[it[5].multi_index[0],it[4].multi_index[0]] = coeff[it[5].multi_index[0],it[4].multi_index[1]]
+                                                                    matrix[it[5].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                        it[5].multi_index[0], it[0].multi_index[1]]
+                                                                    matrix[it[5].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                        it[5].multi_index[0], it[1].multi_index[1]]
+                                                                    matrix[it[5].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                        it[5].multi_index[0], it[2].multi_index[1]]
+                                                                    matrix[it[5].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                        it[5].multi_index[0], it[3].multi_index[1]]
+                                                                    matrix[it[5].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                        it[5].multi_index[0], it[4].multi_index[1]]
 
                                                                     amplitude = self.perm(matrix)
                                                                     if (abs(amplitude) >= cithresh):
                                                                         if amplitudestofile is True:
                                                                             with open(filename, 'a') as filea:
-                                                                                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                            it[2].multi_index,it[3].multi_index, it[4].multi_index,it[5].multi_index),
-                                                                                            amplitude))
+                                                                                filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                                                   it[2].multi_index, it[3].multi_index, it[4].multi_index, it[5].multi_index),
+                                                                                                                       amplitude))
                                                                                 filea.write("\n")
                                                                         else:
-                                                                            log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                               it[2].multi_index,it[3].multi_index, it[4].multi_index,it[5].multi_index),
-                                                                                               amplitude))
-                                                                    matrix = np.identity(self.npairs)
-                if i==6:
+                                                                            log('%s %20.16f' % (self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                            it[2].multi_index, it[3].multi_index, it[4].multi_index, it[5].multi_index),
+                                                                                                amplitude))
+                                                                    matrix = np.identity(
+                                                                        self.npairs)
+                if i == 6:
                     for ci in it[0]:
-                        if abs(ci) >= (cithresh/excitationlevel):
+                        if abs(ci) >= (cithresh / excitationlevel):
                             it[1] = it[0].copy()
                             for ci2 in it[1]:
-                                if ((it[1].multi_index[0]>it[0].multi_index[0])
-                                    and (it[1].multi_index[1]>it[0].multi_index[1])):
+                                if ((it[1].multi_index[0] > it[0].multi_index[0])
+                                        and (it[1].multi_index[1] > it[0].multi_index[1])):
                                     it[2] = it[1].copy()
                                     for ci3 in it[2]:
-                                        if ((it[2].multi_index[0]>it[1].multi_index[0])
-                                            and (it[2].multi_index[1]>it[1].multi_index[1])):
+                                        if ((it[2].multi_index[0] > it[1].multi_index[0])
+                                                and (it[2].multi_index[1] > it[1].multi_index[1])):
                                             it[3] = it[2].copy()
                                             for ci4 in it[3]:
-                                                if ((it[3].multi_index[0]>it[2].multi_index[0])
-                                                    and (it[3].multi_index[1]>it[2].multi_index[1])):
+                                                if ((it[3].multi_index[0] > it[2].multi_index[0])
+                                                        and (it[3].multi_index[1] > it[2].multi_index[1])):
                                                     it[4] = it[3].copy()
                                                     for ci5 in it[4]:
-                                                        if ((it[4].multi_index[0]>it[3].multi_index[0])
-                                                            and (it[4].multi_index[1]>it[3].multi_index[1])):
+                                                        if ((it[4].multi_index[0] > it[3].multi_index[0])
+                                                                and (it[4].multi_index[1] > it[3].multi_index[1])):
                                                             it[5] = it[4].copy()
                                                             for ci6 in it[5]:
-                                                                if ((it[5].multi_index[0]>it[4].multi_index[0])
-                                                                    and (it[5].multi_index[1]>it[4].multi_index[1])):
+                                                                if ((it[5].multi_index[0] > it[4].multi_index[0])
+                                                                        and (it[5].multi_index[1] > it[4].multi_index[1])):
                                                                     it[6] = it[5].copy()
                                                                     for ci7 in it[6]:
-                                                                        if ((it[6].multi_index[0]>it[5].multi_index[0])
-                                                                            and (it[6].multi_index[1]>it[5].multi_index[1])):
-                                                                            matrix[it[0].multi_index[0],it[0].multi_index[0]] = float(ci)
-                                                                            matrix[it[1].multi_index[0],it[1].multi_index[0]] = float(ci2)
-                                                                            matrix[it[2].multi_index[0],it[2].multi_index[0]] = float(ci3)
-                                                                            matrix[it[3].multi_index[0],it[3].multi_index[0]] = float(ci4)
-                                                                            matrix[it[4].multi_index[0],it[4].multi_index[0]] = float(ci5)
-                                                                            matrix[it[5].multi_index[0],it[5].multi_index[0]] = float(ci6)
-                                                                            matrix[it[6].multi_index[0],it[6].multi_index[0]] = float(ci7)
+                                                                        if ((it[6].multi_index[0] > it[5].multi_index[0])
+                                                                                and (it[6].multi_index[1] > it[5].multi_index[1])):
+                                                                            matrix[
+                                                                                it[0].multi_index[0], it[0].multi_index[0]] = float(ci)
+                                                                            matrix[it[1].multi_index[0], it[1].multi_index[0]] = float(
+                                                                                ci2)
+                                                                            matrix[it[2].multi_index[0], it[2].multi_index[0]] = float(
+                                                                                ci3)
+                                                                            matrix[it[3].multi_index[0], it[3].multi_index[0]] = float(
+                                                                                ci4)
+                                                                            matrix[it[4].multi_index[0], it[4].multi_index[0]] = float(
+                                                                                ci5)
+                                                                            matrix[it[5].multi_index[0], it[5].multi_index[0]] = float(
+                                                                                ci6)
+                                                                            matrix[it[6].multi_index[0], it[6].multi_index[0]] = float(
+                                                                                ci7)
 
-                                                                            matrix[it[0].multi_index[0],it[1].multi_index[0]] = coeff[it[0].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[0].multi_index[0],it[2].multi_index[0]] = coeff[it[0].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[0].multi_index[0],it[3].multi_index[0]] = coeff[it[0].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[0].multi_index[0],it[4].multi_index[0]] = coeff[it[0].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[0].multi_index[0],it[5].multi_index[0]] = coeff[it[0].multi_index[0],it[5].multi_index[1]]
-                                                                            matrix[it[0].multi_index[0],it[6].multi_index[0]] = coeff[it[0].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[5].multi_index[1]]
+                                                                            matrix[it[0].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[0].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[1].multi_index[0],it[0].multi_index[0]] = coeff[it[1].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[1].multi_index[0],it[2].multi_index[0]] = coeff[it[1].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[1].multi_index[0],it[3].multi_index[0]] = coeff[it[1].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[1].multi_index[0],it[4].multi_index[0]] = coeff[it[1].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[1].multi_index[0],it[5].multi_index[0]] = coeff[it[1].multi_index[0],it[5].multi_index[1]]
-                                                                            matrix[it[1].multi_index[0],it[6].multi_index[0]] = coeff[it[1].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[5].multi_index[1]]
+                                                                            matrix[it[1].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[1].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[2].multi_index[0],it[0].multi_index[0]] = coeff[it[2].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[2].multi_index[0],it[1].multi_index[0]] = coeff[it[2].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[2].multi_index[0],it[3].multi_index[0]] = coeff[it[2].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[2].multi_index[0],it[4].multi_index[0]] = coeff[it[2].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[2].multi_index[0],it[5].multi_index[0]] = coeff[it[2].multi_index[0],it[5].multi_index[1]]
-                                                                            matrix[it[2].multi_index[0],it[6].multi_index[0]] = coeff[it[2].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[5].multi_index[1]]
+                                                                            matrix[it[2].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[2].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[3].multi_index[0],it[0].multi_index[0]] = coeff[it[3].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[3].multi_index[0],it[1].multi_index[0]] = coeff[it[3].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[3].multi_index[0],it[2].multi_index[0]] = coeff[it[3].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[3].multi_index[0],it[4].multi_index[0]] = coeff[it[3].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[3].multi_index[0],it[5].multi_index[0]] = coeff[it[3].multi_index[0],it[5].multi_index[1]]
-                                                                            matrix[it[3].multi_index[0],it[6].multi_index[0]] = coeff[it[3].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[5].multi_index[1]]
+                                                                            matrix[it[3].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[3].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[4].multi_index[0],it[0].multi_index[0]] = coeff[it[4].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[4].multi_index[0],it[1].multi_index[0]] = coeff[it[4].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[4].multi_index[0],it[2].multi_index[0]] = coeff[it[4].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[4].multi_index[0],it[3].multi_index[0]] = coeff[it[4].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[4].multi_index[0],it[5].multi_index[0]] = coeff[it[4].multi_index[0],it[5].multi_index[1]]
-                                                                            matrix[it[4].multi_index[0],it[6].multi_index[0]] = coeff[it[4].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[5].multi_index[1]]
+                                                                            matrix[it[4].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[4].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[5].multi_index[0],it[0].multi_index[0]] = coeff[it[5].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[5].multi_index[0],it[1].multi_index[0]] = coeff[it[5].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[5].multi_index[0],it[2].multi_index[0]] = coeff[it[5].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[5].multi_index[0],it[3].multi_index[0]] = coeff[it[5].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[5].multi_index[0],it[4].multi_index[0]] = coeff[it[5].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[5].multi_index[0],it[6].multi_index[0]] = coeff[it[5].multi_index[0],it[6].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[5].multi_index[0], it[6].multi_index[0]] = coeff[
+                                                                                it[5].multi_index[0], it[6].multi_index[1]]
 
-                                                                            matrix[it[6].multi_index[0],it[0].multi_index[0]] = coeff[it[6].multi_index[0],it[0].multi_index[1]]
-                                                                            matrix[it[6].multi_index[0],it[1].multi_index[0]] = coeff[it[6].multi_index[0],it[1].multi_index[1]]
-                                                                            matrix[it[6].multi_index[0],it[2].multi_index[0]] = coeff[it[6].multi_index[0],it[2].multi_index[1]]
-                                                                            matrix[it[6].multi_index[0],it[3].multi_index[0]] = coeff[it[6].multi_index[0],it[3].multi_index[1]]
-                                                                            matrix[it[6].multi_index[0],it[4].multi_index[0]] = coeff[it[6].multi_index[0],it[4].multi_index[1]]
-                                                                            matrix[it[6].multi_index[0],it[5].multi_index[0]] = coeff[it[6].multi_index[0],it[5].multi_index[1]]
-                                                                            amplitude = self.perm(matrix)
+                                                                            matrix[it[6].multi_index[0], it[0].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[0].multi_index[1]]
+                                                                            matrix[it[6].multi_index[0], it[1].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[1].multi_index[1]]
+                                                                            matrix[it[6].multi_index[0], it[2].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[2].multi_index[1]]
+                                                                            matrix[it[6].multi_index[0], it[3].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[3].multi_index[1]]
+                                                                            matrix[it[6].multi_index[0], it[4].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[4].multi_index[1]]
+                                                                            matrix[it[6].multi_index[0], it[5].multi_index[0]] = coeff[
+                                                                                it[6].multi_index[0], it[5].multi_index[1]]
+                                                                            amplitude = self.perm(
+                                                                                matrix)
                                                                             if (abs(amplitude) >= cithresh):
                                                                                 if amplitudestofile is True:
                                                                                     with open(filename, 'a') as filea:
-                                                                                        filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                                    it[2].multi_index,it[3].multi_index, it[4].multi_index,it[5].multi_index,
-                                                                                                    it[6].multi_index), amplitude))
-                                                                                        filea.write("\n")
+                                                                                        filea.write('{0:10} {1:20.16f}'.format(self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                                                           it[2].multi_index, it[3].multi_index, it[
+                                                                                                                                                               4].multi_index, it[5].multi_index,
+                                                                                                                                                           it[6].multi_index), amplitude))
+                                                                                        filea.write(
+                                                                                            "\n")
                                                                                 else:
-                                                                                    log('%s %20.16f' %(self.get_slater_determinant(it[0].multi_index,it[1].multi_index,
-                                                                                                       it[2].multi_index,it[3].multi_index,
-                                                                                                       it[4].multi_index,it[5].multi_index,
-                                                                                                       it[6].multi_index), amplitude))
-                                                                            matrix = np.identity(self.npairs)
+                                                                                    log('%s %20.16f' % (self.get_slater_determinant(it[0].multi_index, it[1].multi_index,
+                                                                                                                                    it[2].multi_index, it[
+                                                                                                                                        3].multi_index,
+                                                                                                                                    it[4].multi_index, it[
+                                                                                                                                        5].multi_index,
+                                                                                                                                    it[6].multi_index), amplitude))
+                                                                            matrix = np.identity(
+                                                                                self.npairs)
 
     def get_slater_determinant(self, *indices):
         '''Return excited Slater Determinant.
@@ -2214,7 +2390,7 @@ class RAp1rog(Geminal):
         excited = []
         for ind in indices:
             orb_ref.append(ind[0])
-            excited.append(ind[1]+self.npairs)
+            excited.append(ind[1] + self.npairs)
 
         sd = []
         for i in range(self.nbasis):
@@ -2259,10 +2435,10 @@ class RAp1rog(Geminal):
                 A string.
         '''
         log.hline('-')
-        log('%s reference Energy:     %16.12f' %(s,self.compute_reference_energy()+self.ecore))
-        log('%s correlation Energy:   %16.12f' %(s,self.compute_correlation_energy()))
+        log('%s reference Energy:     %16.12f' % (s, self.compute_reference_energy() + self.ecore))
+        log('%s correlation Energy:   %16.12f' % (s, self.compute_correlation_energy()))
         log.hline('=')
-        log('%s total Energy:         %16.12f' %(s, (self.compute_total_energy())))
+        log('%s total Energy:         %16.12f' % (s, (self.compute_total_energy())))
         log.hline('=')
 
     def dump_final(self, orb, olp, printoptions, dumpci, checkpoint, checkpoint_fn='checkpoint.h5'):
@@ -2292,7 +2468,8 @@ class RAp1rog(Geminal):
             self.do_checkpoint(orb, olp, checkpoint_fn)
             if log.do_medium:
                 log.hline('-')
-                log('Final solution for coefficients: (only printed if |c_i| > %f)' %printoptions['ci'])
+                log('Final solution for coefficients: (only printed if |c_i| > %f)' %
+                    printoptions['ci'])
         self.print_solution(printoptions['ci'],
                             printoptions['excitationlevel'],
                             amplitudestofile=dumpci['amplitudestofile'],
@@ -2308,15 +2485,15 @@ class RAp1rog(Geminal):
         '''Print geminal coefficients
         '''
         log.hline('')
-        s = ''.join(str('%11i' %(i+1+self.npairs)) for i in range(self.nvirt))
-        log("  "+s)
+        s = ''.join(str('%11i' % (i + 1 + self.npairs)) for i in range(self.nvirt))
+        log("  " + s)
         log.hline('')
         for line in range(self.npairs):
-            s = str('%2i :     ' %(line+1))
+            s = str('%2i :     ' % (line + 1))
             s2 = ''
             for row in range(self.nvirt):
-                s2 += ' '+str('%10.6f' %(self.geminal.get_element(line, row)))
-            log(s+s2)
+                s2 += ' ' + str('%10.6f' % (self.geminal.get_element(line, row)))
+            log(s + s2)
 
     def check_keywords(self, guess, solver, maxiter, dumpci, thresh,
                        printoptions):
@@ -2351,7 +2528,7 @@ class RAp1rog(Geminal):
             check_options('thresh', key, 'wfn')
             check_type('thresh', value, float)
             if value < 0:
-                raise ValueError('Negative convergence threshold for %s is not allowed!' %key)
+                raise ValueError('Negative convergence threshold for %s is not allowed!' % key)
         #
         # Check printoptions
         #
@@ -2407,7 +2584,7 @@ class RAp1rog(Geminal):
                           'gradientmax')
             check_type('thresh', value, float)
             if value < 0:
-                raise ValueError('Negative convergence threshold for %s is not allowed!' %key)
+                raise ValueError('Negative convergence threshold for %s is not allowed!' % key)
         #
         # Check printoptions
         #
@@ -2433,9 +2610,9 @@ class RAp1rog(Geminal):
         #
         for key in stepsearch:
             check_options('stepsearch', key, 'method', 'optimizer', 'alpha',
-                'c1', 'minalpha', 'maxiterouter', 'maxiterinner', 'maxeta',
-                'mineta', 'upscale', 'downscale', 'trustradius', 'maxtrustradius',
-                'threshold')
+                          'c1', 'minalpha', 'maxiterouter', 'maxiterinner', 'maxeta',
+                          'mineta', 'upscale', 'downscale', 'trustradius', 'maxtrustradius',
+                          'threshold')
 
     def print_options(self, guess, solver, maxiter, thresh,
                       printoptions, indextrans):
@@ -2453,19 +2630,19 @@ class RAp1rog(Geminal):
         log(' ')
         log.hline()
         log('OPTIMIZATION PARAMETERS:')
-        log('Number of pairs:             %i' %self.npairs)
-        log('Number of virtuals:          %i' %self.nvirt)
-        log('4-index transformation:      %s' %indextrans)
+        log('Number of pairs:             %i' % self.npairs)
+        log('Number of virtuals:          %i' % self.nvirt)
+        log('4-index transformation:      %s' % indextrans)
         log('Initial guess:')
-        log('  type:                        %s' %guess['type'])
-        log('  scaling factor:              %2.3f' %guess['factor'])
+        log('  type:                        %s' % guess['type'])
+        log('  scaling factor:              %2.3f' % guess['factor'])
         log('Solvers:')
-        log('  wavefunction amplitudes:   %s' %solver['wfn'])
+        log('  wavefunction amplitudes:   %s' % solver['wfn'])
         log('Optimization thresholds:')
-        log('  wavefunction:              %1.2e' %thresh['wfn'])
+        log('  wavefunction:              %1.2e' % thresh['wfn'])
         log('Printing options:')
-        log('  c_i:                       %1.2e' %printoptions['ci'])
-        log('  excitation level:          %i' %printoptions['excitationlevel'])
+        log('  c_i:                       %1.2e' % printoptions['ci'])
+        log('  excitation level:          %i' % printoptions['excitationlevel'])
 
     def print_options_scf(self, guess, solver, maxiter, lshift, stepsearch,
                           thresh, printoptions, checkpoint, checkpoint_fn,
@@ -2484,51 +2661,51 @@ class RAp1rog(Geminal):
             log(' ')
             log.hline()
             log('OPTIMIZATION PARAMETERS:')
-            log('Number of pairs:               %i' %self.npairs)
-            log('Number of virtuals:            %i' %self.nvirt)
+            log('Number of pairs:               %i' % self.npairs)
+            log('Number of virtuals:            %i' % self.nvirt)
             log('Initial guess:')
-            log('  type:                        %s' %guess['type'])
-            log('  scaling factor:              %2.3f' %guess['factor'])
+            log('  type:                        %s' % guess['type'])
+            log('  scaling factor:              %2.3f' % guess['factor'])
             log('Solvers:')
-            log('  wavefunction amplitudes:     %s' %solver['wfn'])
-            log('  Lagrange multipliers:        %s' %solver['lagrange'])
-            log('  orbital optimization:        %s' %orbitaloptimizer)
-            log('Number of iterations:          %i' %maxiter['orbiter'])
-            log('Checkpointing:                 %i' %checkpoint)
-            log('Checkpoint file:               %s' %checkpoint_fn)
-            log('4-index transformation:        %s' %indextrans)
-            log('Level shift:                   %3.3e' %lshift)
-            log('Sorting natural orbitals:      %s' %sort)
-            if stepsearch['method']=='trust-region':
+            log('  wavefunction amplitudes:     %s' % solver['wfn'])
+            log('  Lagrange multipliers:        %s' % solver['lagrange'])
+            log('  orbital optimization:        %s' % orbitaloptimizer)
+            log('Number of iterations:          %i' % maxiter['orbiter'])
+            log('Checkpointing:                 %i' % checkpoint)
+            log('Checkpoint file:               %s' % checkpoint_fn)
+            log('4-index transformation:        %s' % indextrans)
+            log('Level shift:                   %3.3e' % lshift)
+            log('Sorting natural orbitals:      %s' % sort)
+            if stepsearch['method'] == 'trust-region':
                 log('Apply trust region:')
-                log('  initial trust radius:        %1.3f' %stepsearch['trustradius'])
-                log('  maximum turst radius:        %2.3f' %stepsearch['maxtrustradius'])
-                log('  upper trust ratio bound:     %1.2e' %stepsearch['maxeta'])
-                log('  lower trust ratio bound:     %1.2e' %stepsearch['mineta'])
-                log('  upper scaling factor:        %1.2e' %stepsearch['upscale'])
-                log('  lower scaling factor:        %1.2e' %stepsearch['downscale'])
-                log('  max number of iterations:    %i' %stepsearch['maxiterouter'])
-                log('  max number of optimizations: %i' %stepsearch['maxiterinner'])
-                log('  optimization threshold:      %1.2e' %stepsearch['threshold'])
-                log('  optimizer:                   %s' %stepsearch['optimizer'])
-            elif stepsearch['method']=='backtracking':
+                log('  initial trust radius:        %1.3f' % stepsearch['trustradius'])
+                log('  maximum turst radius:        %2.3f' % stepsearch['maxtrustradius'])
+                log('  upper trust ratio bound:     %1.2e' % stepsearch['maxeta'])
+                log('  lower trust ratio bound:     %1.2e' % stepsearch['mineta'])
+                log('  upper scaling factor:        %1.2e' % stepsearch['upscale'])
+                log('  lower scaling factor:        %1.2e' % stepsearch['downscale'])
+                log('  max number of iterations:    %i' % stepsearch['maxiterouter'])
+                log('  max number of optimizations: %i' % stepsearch['maxiterinner'])
+                log('  optimization threshold:      %1.2e' % stepsearch['threshold'])
+                log('  optimizer:                   %s' % stepsearch['optimizer'])
+            elif stepsearch['method'] == 'backtracking':
                 log('Apply line search:')
-                log('  line search method:          %s' %stepsearch['method'])
-                log('  initial scaling factor:      %1.3f' %stepsearch['alpha'])
-                log('  contraction factor:          %1.3f' %stepsearch['downscale'])
-                log('  c1 factor:                   %1.3e' %stepsearch['c1'])
-                log('  minimum scaling factor:      %1.3e' %stepsearch['minalpha'])
+                log('  line search method:          %s' % stepsearch['method'])
+                log('  initial scaling factor:      %1.3f' % stepsearch['alpha'])
+                log('  contraction factor:          %1.3f' % stepsearch['downscale'])
+                log('  c1 factor:                   %1.3e' % stepsearch['c1'])
+                log('  minimum scaling factor:      %1.3e' % stepsearch['minalpha'])
             else:
                 log('No step search selected:')
-                log('  scaling factor:              %1.3f' %stepsearch['alpha'])
+                log('  scaling factor:              %1.3f' % stepsearch['alpha'])
             log('Optimization thresholds:')
-            log('  wavefunction:                %1.2e' %thresh['wfn'])
-            log('  energy:                      %1.2e' %thresh['energy'])
-            log('  gradient:                    %1.2e' %thresh['gradientmax'])
-            log('  gradient norm:               %1.2e' %thresh['gradientnorm'])
+            log('  wavefunction:                %1.2e' % thresh['wfn'])
+            log('  energy:                      %1.2e' % thresh['energy'])
+            log('  gradient:                    %1.2e' % thresh['gradientmax'])
+            log('  gradient norm:               %1.2e' % thresh['gradientnorm'])
             log('Printing options:')
-            log('  c_i:                         %1.2e' %printoptions['ci'])
-            log('  excitation level:            %i' %printoptions['excitationlevel'])
+            log('  c_i:                         %1.2e' % printoptions['ci'])
+            log('  excitation level:            %i' % printoptions['excitationlevel'])
 
     def start_up(self, orb, swapa, givensrot=np.array([[]])):
         '''Modify orbitals prior to optimization
@@ -2561,7 +2738,7 @@ class RAp1rog(Geminal):
             for irot in range(len(givensrot)):
                 index0, index1, angle = givensrot[irot]
                 if log.do_medium:
-                    log('Rotating orbitals %i and %i' %(index0, index1))
+                    log('Rotating orbitals %i and %i' % (index0, index1))
                 orb.rotate_2orbitals(angle, index0, index1)
 
     def compute_objective_function(self, coeff=None):

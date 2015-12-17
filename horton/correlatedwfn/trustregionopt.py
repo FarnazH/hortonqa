@@ -34,6 +34,7 @@ __all__ = [
 
 
 class Dogleg():
+
     def __init__(self, pn, g, H, radius):
         '''
         Powell’s single dogleg steps approximate the trust region step over
@@ -82,7 +83,7 @@ class Dogleg():
         #
         tmp = self.H.mult(self.g)
         curv = self.g.dot(tmp)
-        factor = -self.g.dot(self.g)/curv
+        factor = -self.g.dot(self.g) / curv
         pc = self.g.copy()
         pc.iscale(factor)
         dotpc = pc.dot(pc)
@@ -93,7 +94,7 @@ class Dogleg():
         #
         if normpc >= self.Delta:
             self.step = pc
-            self.step.iscale(self.Delta/normpc)
+            self.step.iscale(self.Delta / normpc)
             self.stepNorm = np.sqrt(np.dot(self.step, self.step))
             return
 
@@ -105,8 +106,8 @@ class Dogleg():
         d_pn_pc.iadd(pc, -1.0)
         dot_d_pn_pc = d_pn_pc.dot(d_pn_pc)
         dot_pc_d_pn_pc = self.pn.dot(d_pn_pc)
-        term = dot_pc_d_pn_pc*dot_pc_d_pn_pc-dot_d_pn_pc*(dotpc-self.Delta*self.Delta)
-        tau = (-dot_pc_d_pn_pc+np.sqrt(term))/dot_d_pn_pc
+        term = dot_pc_d_pn_pc * dot_pc_d_pn_pc - dot_d_pn_pc * (dotpc - self.Delta * self.Delta)
+        tau = (-dot_pc_d_pn_pc + np.sqrt(term)) / dot_d_pn_pc
 
         #
         # Return Dogleg step
@@ -118,6 +119,7 @@ class Dogleg():
 
 
 class DoubleDogleg():
+
     def __init__(self, pn, g, H, radius):
         '''
         Double dogleg steps approximate the trust region step
@@ -164,7 +166,7 @@ class DoubleDogleg():
         #
         tmp = self.H.mult(self.g)
         curv = self.g.dot(tmp)
-        factor = -self.g.dot(self.g)/curv
+        factor = -self.g.dot(self.g) / curv
         pg = self.g.copy()
         pg.iscale(factor)
 
@@ -177,25 +179,25 @@ class DoubleDogleg():
         #
         # Calculate gamma.
         #
-        gamma = pg.dot(pg)/pg.dot(self.pn)
+        gamma = pg.dot(pg) / pg.dot(self.pn)
 
         if self.Delta <= normpg:
             #
             # p = Delta/norm(g)*g
             #
-            pg.iscale(self.Delta/normpg)
+            pg.iscale(self.Delta / normpg)
             self.step = pg
             self.stepNorm = self.step.norm()
-        elif self.Delta <= (gamma*normpn):
+        elif self.Delta <= (gamma * normpn):
             #
             # p = a*p(g) + (1-a)*gamma*p(n)
             #
-            a = gamma*gamma*normpn*normpn-normpg*normpg
-            b = self.Delta*self.Delta-normpg*normpg
-            alpha = (a-b)/(a+np.sqrt(a*b))
+            a = gamma * gamma * normpn * normpn - normpg * normpg
+            b = self.Delta * self.Delta - normpg * normpg
+            alpha = (a - b) / (a + np.sqrt(a * b))
 
             pg.iscale(alpha)
-            self.pn.iscale((1-alpha))
+            self.pn.iscale((1 - alpha))
             self.step = pg.copy()
             self.step.iadd(self.pn)
             self.stepNorm = self.step.norm()
@@ -203,7 +205,7 @@ class DoubleDogleg():
             #
             # p = Delta*p(g)/norm(p(n))
             #
-            self.pn.iscale(self.Delta/normpn)
+            self.pn.iscale(self.Delta / normpn)
             self.step = self.pn.copy()
             self.stepNorm = self.step.norm()
         else:
@@ -217,6 +219,7 @@ class DoubleDogleg():
 
 
 class TruncatedCG:
+
     def __init__(self, lf, g, H, radius, **kwargs):
         '''
         Solve the quadratic trust-region subproblem
@@ -276,10 +279,10 @@ class TruncatedCG:
           :maxiter:    maximum number of iterations (default: 2n),
           :prec:       a user-defined preconditioner.
         '''
-        abstol  = kwargs.get('absol', 1.0e-8)
-        reltol  = kwargs.get('reltol', 1.0e-6)
-        maxiter = kwargs.get('maxiter', 2*self.n)
-        prec    = kwargs.get('prec', lambda v: v)
+        abstol = kwargs.get('absol', 1.0e-8)
+        reltol = kwargs.get('reltol', 1.0e-6)
+        maxiter = kwargs.get('maxiter', 2 * self.n)
+        prec = kwargs.get('prec', lambda v: v)
 
         #
         # Initialization (Step 1)
@@ -305,7 +308,7 @@ class TruncatedCG:
         p.iscale(-1)
         i = 0
 
-        tolerance = max(abstol, reltol*sqrtry)
+        tolerance = max(abstol, reltol * sqrtry)
         maxThresh = True
         maxIter = True
         pastBoundary = True
@@ -331,7 +334,7 @@ class TruncatedCG:
             # Step 3:
             # Compute CG steplength.
             #
-            alpha = ry/dot_pHp
+            alpha = ry / dot_pHp
 
             #
             # (p, Hp) < 0, go to boundary
@@ -357,7 +360,7 @@ class TruncatedCG:
             r.iadd(Hp, alpha)
             y = prec(r).copy()
             ry_next = r.dot(y)
-            beta = ry_next/ry
+            beta = ry_next / ry
             p.iscale(beta)
             p.iadd(y, -1.0)
             ry = ry_next
@@ -391,6 +394,6 @@ class TruncatedCG:
         pp = p.dot(p)
         if not ss:
             ss = s.dot(s)
-        sigma = (-sp + np.sqrt(abs(sp*sp + pp * (radius*radius - ss))))
-        sigma = sigma/pp
+        sigma = (-sp + np.sqrt(abs(sp * sp + pp * (radius * radius - ss))))
+        sigma = sigma / pp
         return sigma

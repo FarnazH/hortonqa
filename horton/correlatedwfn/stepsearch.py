@@ -39,6 +39,7 @@ __all__ = [
 
 
 class StepSearch(object):
+
     def __init__(self, lf, **kw):
         """
            **Arguments:**
@@ -79,9 +80,10 @@ class StepSearch(object):
         # checked
         #
         names = []
-        def _helper(x,y):
+
+        def _helper(x, y):
             names.append(x)
-            kw.setdefault(x,y)
+            kw.setdefault(x, y)
         _helper('method', 'trust-region')
         _helper('alpha', 1.0)
         _helper('c1', 0.0001)
@@ -102,7 +104,8 @@ class StepSearch(object):
                 raise ValueError("Unknown keyword argument %s" % name)
             if value is not None:
                 if value < 0:
-                    raise ValueError('Cannot set attribute %s because of illegal value %s' %(name, value))
+                    raise ValueError(
+                        'Cannot set attribute %s because of illegal value %s' % (name, value))
                 setattr(self, name, kw[name])
 
         check_options('method', self.method, 'None', 'backtracking', 'trust-region')
@@ -212,6 +215,7 @@ class StepSearch(object):
 
 
 class RStepSearch(StepSearch):
+
     @timer.with_section('Linesearch')
     def __call__(self, obj, one, two, orb, **kwargs):
         '''Optimize Newton-Rapshon step.
@@ -333,7 +337,7 @@ class RStepSearch(StepSearch):
         # reduce step size until line search condition is satisfied
         #
         while self.check_line_search_condition(ofun, ofun_ref, kappa, gradient):
-            self.update_alpha(self.alpha*self.downscale)
+            self.update_alpha(self.alpha * self.downscale)
             #
             # New rotation
             #
@@ -441,9 +445,9 @@ class RStepSearch(StepSearch):
             #
             hstep = hessian.new()
             hessian.mult(stepn, hstep)
-            Destimate = gradient.dot(stepn)+0.5*stepn.dot(hstep)
-            De = ofun-ofun_ref
-            rho = De/Destimate
+            Destimate = gradient.dot(stepn) + 0.5 * stepn.dot(hstep)
+            De = ofun - ofun_ref
+            rho = De / Destimate
 
             #
             # For a given ratio, adjust trust radius and accept or reject
@@ -453,7 +457,7 @@ class RStepSearch(StepSearch):
                 #
                 # Enlarge trust radius:
                 #
-                new = min(self.upscale*self.trustradius,self.maxtrustradius)
+                new = min(self.upscale * self.trustradius, self.maxtrustradius)
                 self.update_trustradius(new)
                 orb.assign(orb_)
                 break
@@ -467,7 +471,7 @@ class RStepSearch(StepSearch):
                 #
                 # Decrease trust radius:
                 #
-                self.update_trustradius(self.downscale*self.trustradius)
+                self.update_trustradius(self.downscale * self.trustradius)
                 orb.assign(orb_)
                 break
             else:
@@ -475,11 +479,12 @@ class RStepSearch(StepSearch):
                 # Bad step! Reject Newton step and repeat with smaller trust
                 # radius
                 #
-                self.update_trustradius(self.downscale*self.trustradius)
+                self.update_trustradius(self.downscale * self.trustradius)
 
-            iteri = iteri+1
+            iteri = iteri + 1
             if iteri > self.maxiterouter:
-                log('Warning: Trust region search not converged after %i iterations. Trust region search aborted.' %self.maxiterouter)
+                log('Warning: Trust region search not converged after %i iterations. Trust region search aborted.' %
+                    self.maxiterouter)
                 orb.assign(orb_)
                 break
 
@@ -487,5 +492,5 @@ class RStepSearch(StepSearch):
         '''Check if Armijo condition is satisfied
            (e_tot(0+alpha*kappa)-e_tot(0) <= c1*alpha*(kappa,grad))
         '''
-        term = self.c1*self.alpha*kappa.dot(grad)
+        term = self.c1 * self.alpha * kappa.dot(grad)
         return (cetot - petot - term) > 0

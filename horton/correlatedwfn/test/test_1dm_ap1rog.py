@@ -58,7 +58,8 @@ def test_ap1rog_one_dm():
 
     # Do AP1roG optimization:
     geminal_solver = RAp1rog(lf, occ_model)
-    energy, g, l = geminal_solver(one, er, external['nn'], exp_alpha, olp, True, **{'checkpoint': -1, 'maxiter': {'orbiter': 0}})
+    energy, g, l = geminal_solver(
+        one, er, external['nn'], exp_alpha, olp, True, **{'checkpoint': -1, 'maxiter': {'orbiter': 0}})
 
     one_mo_ = lf.create_two_index()
     one_mo_.assign_two_index_transform(one, exp_alpha)
@@ -70,7 +71,7 @@ def test_ap1rog_one_dm():
     def fun(x):
         one_mo = []
         one_mo.append(geminal_solver.lf.create_two_index())
-        one_mo[0].assign(x.reshape(28,28))
+        one_mo[0].assign(x.reshape(28, 28))
 
         geminal_solver.clear_auxmatrix()
         geminal_solver.update_auxmatrix('scf', two_mo, one_mo)
@@ -83,14 +84,14 @@ def test_ap1rog_one_dm():
         lcoeff = geminal_solver.lagrange._array
 
         lagrangian = geminal_solver.compute_total_energy()
-        lagrangian += np.dot(lcoeff.ravel(order='C'), geminal_solver.vector_function_geminal(coeff, iiaa, iaia, one, fock))
+        lagrangian += np.dot(lcoeff.ravel(order='C'),
+                             geminal_solver.vector_function_geminal(coeff, iiaa, iaia, one, fock))
         return lagrangian
-
 
     def fun_deriv(x):
         one_mo = []
         one_mo.append(geminal_solver.lf.create_two_index())
-        one_mo[0].assign(x.reshape(28,28))
+        one_mo[0].assign(x.reshape(28, 28))
         geminal_solver.clear_auxmatrix()
         geminal_solver.update_auxmatrix('scf', two_mo, one_mo)
 
@@ -100,17 +101,17 @@ def test_ap1rog_one_dm():
 
         # Optimize OAP1roG Lagrange multipliers (lambda equations):
         lcoeff = geminal_solver.solve_lagrange(guesst, {'lagrange': 'krylov'}, 10e-12, 128)
-        onebody1 = geminal_solver.lf.create_two_index(3,25)
-        onebody2 = geminal_solver.lf.create_two_index(3,25)
+        onebody1 = geminal_solver.lf.create_two_index(3, 25)
+        onebody2 = geminal_solver.lf.create_two_index(3, 25)
         onebody1.assign(coeff)
         onebody2.assign(lcoeff)
 
         onedm = geminal_solver.lf.create_one_index()
         geminal_solver.compute_1dm(onedm, onebody1, onebody2, factor=2.0)
-        a = np.zeros((28,28))
+        a = np.zeros((28, 28))
         np.fill_diagonal(a, onedm._array.T)
         return a.ravel()
 
     x = one_mo_._array.ravel()
-    dxs = np.random.rand(100, 28*28)*0.00001
+    dxs = np.random.rand(100, 28 * 28) * 0.00001
     check_delta(fun, fun_deriv, x, dxs)

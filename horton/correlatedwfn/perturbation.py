@@ -52,9 +52,8 @@ __all__ = [
 ]
 
 
-
-
 class Perturbation(object):
+
     '''Perturbation class
 
        Purpose:
@@ -86,7 +85,7 @@ class Perturbation(object):
         self._lf = lf
         self._nocc = occ_model.noccs[0]
         self._nbasis = lf.default_nbasis
-        self._nvirt = (lf.default_nbasis-occ_model.noccs[0])
+        self._nvirt = (lf.default_nbasis - occ_model.noccs[0])
         self._cache = Cache()
         self._energy = []
         self._amplitudes = []
@@ -163,7 +162,8 @@ class Perturbation(object):
                 :py:meth:`PTb.init_aux_matrix` for possible choices
         '''
         if not '%s' % select in self._cache:
-            raise ValueError("The auxmatrix %s not found in cache. Did you use init_aux_matrix?" %select)
+            raise ValueError(
+                "The auxmatrix %s not found in cache. Did you use init_aux_matrix?" % select)
         return self._cache.load('%s' % select)
 
     @timer.with_section('Perturbation')
@@ -265,9 +265,8 @@ class Perturbation(object):
         return self.energy, self.amplitudes
 
 
-
-
 class RMP2(Perturbation):
+
     '''Moller-Plesset Perturbation Theory of second order
 
        Purpose:
@@ -305,8 +304,8 @@ class RMP2(Perturbation):
         #
         # Calculate MP2 energy correction
         #
-        energy = amplitudes.contract_four('abcd,abcd',ex_matrix, 2.0)
-        energy-= amplitudes.contract_four('abcd,adcb',ex_matrix)
+        energy = amplitudes.contract_four('abcd,abcd', ex_matrix, 2.0)
+        energy -= amplitudes.contract_four('abcd,adcb', ex_matrix)
 
         return [energy], amplitudes
 
@@ -321,7 +320,8 @@ class RMP2(Perturbation):
         '''
         # B_jk|bc
         out = self.lf.create_four_index(self.nocc, self.nvirt, self.nocc, self.nvirt)
-        mo2.slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0,
+                          self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         return out
 
     @timer.with_section('MP2Amplitudes')
@@ -339,10 +339,10 @@ class RMP2(Perturbation):
             for j in range(self.nocc):
                 for a in range(self.nvirt):
                     for b in range(self.nvirt):
-                        val = 1.0/(fock.get_element(i)+fock.get_element(j) \
-                                  -fock.get_element(self.nocc+a) \
-                                  -fock.get_element(self.nocc+b))
-                        amplitudes.set_element(i,a,j,b,val, symmetry=1)
+                        val = 1.0 / (fock.get_element(i) + fock.get_element(j)
+                                     - fock.get_element(self.nocc + a)
+                                     - fock.get_element(self.nocc + b))
+                        amplitudes.set_element(i, a, j, b, val, symmetry=1)
         amplitudes.imul(matrix)
         return amplitudes
 
@@ -369,8 +369,9 @@ class RMP2(Perturbation):
                 One of 'fock'
         '''
         check_options('select', select, 'fock')
-        if select=='fock':
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_one_index, self.lf.default_nbasis), tags='m')
+        if select == 'fock':
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_one_index, self.lf.default_nbasis), tags='m')
         if not new:
             raise RuntimeError('The matrix %s already exists. Call clear prior \
                                 to updating the wfn.' % select)
@@ -392,7 +393,7 @@ class RMP2(Perturbation):
         #
         tmp = self.lf.create_two_index()
         mo2.slice_to_two('abab->ab', tmp, 2.0, True)
-        mo2.slice_to_two('abba->ab', tmp,-1.0, False)
+        mo2.slice_to_two('abba->ab', tmp, -1.0, False)
         tmp.contract_to_one('ab->a', auxmat1, 1.0, True, 0, self.nbasis, 0, self.nocc)
 
         #
@@ -407,10 +408,10 @@ class RMP2(Perturbation):
 
     def print_energy(self, **kwargs):
         if log.do_medium:
-            log('E_ref:     %16.8f a.u.' %(kwargs.get('eref')))
-            log('E_MP2:     %16.8f a.u.' %self.energy[0])
+            log('E_ref:     %16.8f a.u.' % (kwargs.get('eref')))
+            log('E_MP2:     %16.8f a.u.' % self.energy[0])
             log.hline('-')
-            log('E_tot:     %16.8f a.u.' %(self.energy[0]+kwargs.get('eref')))
+            log('E_tot:     %16.8f a.u.' % (self.energy[0] + kwargs.get('eref')))
 
     def update_amplitudes(self, new):
         '''Update MP2 amplitudes
@@ -430,9 +431,9 @@ class RMP2(Perturbation):
             log('MP2 perturbation module')
             log(' ')
             log('OPTIMIZATION PARAMETERS:')
-            log('Reference Function           %s' %('RHF'))
-            log('Number of pairs:             %i' %self.nocc)
-            log('Number of virtuals:          %i' %self.nvirt)
+            log('Reference Function           %s' % ('RHF'))
+            log('Number of pairs:             %i' % self.nocc)
+            log('Number of virtuals:          %i' % self.nvirt)
             log.hline()
 
     def check_input(self, **kwargs):
@@ -449,8 +450,6 @@ class RMP2(Perturbation):
 
         if not self.amplitudes[0].is_symmetric('cdab', atol=thresh):
             raise ValueError('Warning: Cluster amplitudes not symmetric!')
-
-
 
 
 class PTa(Perturbation):
@@ -518,7 +517,7 @@ class PTa(Perturbation):
         check_type('args[8]', args[8], ThreeIndex)
         check_type('args[9]', args[9], TwoIndex)
 
-        e0 = kwargs.get('eref')-kwargs.get('ecore')
+        e0 = kwargs.get('eref') - kwargs.get('ecore')
 
         #
         # output
@@ -536,40 +535,51 @@ class PTa(Perturbation):
         #
         # <jk|bc>
         #
-        args[3].slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0,
+                              self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # c_kc <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jb <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,da->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,da->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jc <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_kb <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jkbc <bk|jc>
         #
-        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,cd->abcd', args[1], out, 1.0, False)
-        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,ad->abcd', args[1], out, 1.0, False)
         #
         # delta_jk [ c_jc F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ c_jb F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ oc_jbc ]
         #
@@ -585,15 +595,17 @@ class PTa(Perturbation):
         #
         # delta_bc [ c_jb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('ab,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'ab,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ c_kb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('cb,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'cb,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ vc_jkb ]
         #
-        tmp3ind1.iadd(args[6],-1.0)
+        tmp3ind1.iadd(args[6], -1.0)
         #
         # delta_bc [ oc_jkb ]
         #
@@ -605,7 +617,7 @@ class PTa(Perturbation):
         #
         # delta_bc,jk [ (sum_m h_mm+F_mm)*c_jb ]
         #
-        out.iadd_expand_two_to_four('diag', args[1],(-e0+onesum+fockdiagsum))
+        out.iadd_expand_two_to_four('diag', args[1], (-e0 + onesum + fockdiagsum))
         #
         # delta_bc,jk [ (sum_md <mm|dd> c_jmbd) ]
         #
@@ -636,7 +648,8 @@ class PTa(Perturbation):
         # B_jb|kc
         #
         out = self.lf.create_four_index(self.nocc, self.nvirt, self.nocc, self.nvirt)
-        args[3].slice_to_four('abcd->cadb', out, 1.0, True, self.nocc, self.nbasis, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc)
+        args[3].slice_to_four('abcd->cadb', out, 1.0, True, self.nocc,
+                              self.nbasis, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc)
         return out
 
     @timer.with_section('PTaAmplitudes')
@@ -653,13 +666,13 @@ class PTa(Perturbation):
         for i in range(self.nocc):
             for j in range(self.nocc):
                 for a in range(self.nvirt):
-                    aa = a+self.nocc
+                    aa = a + self.nocc
                     for b in range(self.nvirt):
-                        bb = b+self.nocc
-                        val = 1.0/(fock.get_element(i,i)+fock.get_element(j,j) \
-                                  -fock.get_element(aa,aa) \
-                                  -fock.get_element(bb,bb))
-                        amplitudes.set_element(i,a,j,b,val, symmetry=1)
+                        bb = b + self.nocc
+                        val = 1.0 / (fock.get_element(i, i) + fock.get_element(j, j)
+                                     - fock.get_element(aa, aa)
+                                     - fock.get_element(bb, bb))
+                        amplitudes.set_element(i, a, j, b, val, symmetry=1)
         amplitudes.imul(matrix)
         return amplitudes
 
@@ -694,15 +707,19 @@ class PTa(Perturbation):
 
         '''
         check_options('select', select, 'fock', 'ocjbc', 'vcjkb', 'ocjkb',
-            'vcjbc', 'dcjb')
-        if select=='fock':
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_two_index, self.lf.default_nbasis), tags='m')
-        if select=='dcjb':
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_two_index, dim, dim2), tags='m')
+                      'vcjbc', 'dcjb')
+        if select == 'fock':
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_two_index, self.lf.default_nbasis), tags='m')
+        if select == 'dcjb':
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_two_index, dim, dim2), tags='m')
         if select in ['ocjbc', 'vcjbc']:
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_three_index, dim, dim2, dim2), tags='m')
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_three_index, dim, dim2, dim2), tags='m')
         if select in ['vcjkb', 'ocjkb']:
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_three_index, dim, dim, dim2), tags='m')
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_three_index, dim, dim, dim2), tags='m')
         if not new:
             raise RuntimeError('The matrix %s already exists. Call clear prior \
                                 to updating the wfn.' % select)
@@ -730,47 +747,56 @@ class PTa(Perturbation):
         # Inactive Fock matrix
         #
         auxmat1 = self.init_aux_matrix('fock')
-        mo2.contract_to_two('abcb->ac', auxmat1, 2.0, True, 0, self.nbasis, 0, self.nocc, 0, self.nbasis, 0, self.nocc)
-        mo2.contract_to_two('abbc->ac', auxmat1,-1.0, False, 0, self.nbasis, 0, self.nocc, 0, self.nocc, 0, self.nbasis)
+        mo2.contract_to_two(
+            'abcb->ac', auxmat1, 2.0, True, 0, self.nbasis, 0, self.nocc, 0, self.nbasis, 0, self.nocc)
+        mo2.contract_to_two(
+            'abbc->ac', auxmat1, -1.0, False, 0, self.nbasis, 0, self.nocc, 0, self.nocc, 0, self.nbasis)
         auxmat1.iadd(mo1)
         #
         # oc_jbc = sum_m <mm|bc> c_jm^bc
         #
         tmp = self.lf.create_four_index(self.nocc, self.nocc, self.nvirt, self.nvirt)
         auxmat2 = self.init_aux_matrix('ocjbc', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_four('aabc,db->adbc', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('aabc,db->adbc', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ad->bcd', cia, auxmat2, 1.0, True)
-        mo2.contract_two_to_four('aabc,dc->adbc', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('aabc,dc->adbc', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ac->bcd', cia, auxmat2, 1.0, False)
         #
         # vc_jkb = sum_d <dd|jk> c_jk^bd
         #
         auxmat3 = self.init_aux_matrix('vcjkb', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_four('abcc,ad->abcd', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('abcc,ad->abcd', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,bc->abd', cia, auxmat3, 1.0, True)
-        mo2.contract_two_to_four('abcc,bd->abcd', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('abcc,bd->abcd', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ac->abd', cia, auxmat3, 1.0, False)
         #
         # vc_jbc = sum_d <bc|dd> c_j^d
         #
         auxmat4 = self.init_aux_matrix('vcjbc', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_three('abcc,dc->dab', cia, auxmat4, 1.0, True, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_three('abcc,dc->dab', cia, auxmat4, 1.0, True, self.nocc,
+                                  self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # oc_jkb = sum_m <mm|jk> c_m^b
         #
         auxmat5 = self.init_aux_matrix('ocjkb', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_three('aabc,ad->bcd', cia, auxmat5, 1.0, True, 0, self.nocc, 0, self.nocc, 0, self.nocc, 0, self.nocc)
+        mo2.contract_two_to_three(
+            'aabc,ad->bcd', cia, auxmat5, 1.0, True, 0, self.nocc, 0, self.nocc, 0, self.nocc, 0, self.nocc)
         #
         # dc_jb = sum_md <mm|dd> c_jm^bd
         #
-        auxmat6= self.init_aux_matrix('dcjb', cia.nbasis, cia.nbasis1)
+        auxmat6 = self.init_aux_matrix('dcjb', cia.nbasis, cia.nbasis1)
         tmp = self.lf.create_two_index(self.nbasis, self.nbasis)
         tmp2 = self.lf.create_two_index(self.nocc, self.nocc)
         # There is a bug in np.einsum that forces us to slice first...
         mo2.slice_to_two('aabb->ab', tmp, 1.0, True)
         factor = cia.contract_two('ab,ab', tmp, 0, self.nocc, self.nocc, self.nbasis)
         auxmat6.iadd(cia, factor)
-        cia.contract_two_to_two('ab,cb->ac', tmp, tmp2, 1.0, True, 0, self.nocc, self.nocc, self.nbasis)
+        cia.contract_two_to_two(
+            'ab,cb->ac', tmp, tmp2, 1.0, True, 0, self.nocc, self.nocc, self.nbasis)
         cia.contract_two_to_two('ab,ca->cb', tmp2, auxmat6, 1.0, False)
 
         return [auxmat1, auxmat2, auxmat3, auxmat4, auxmat5, auxmat6]
@@ -812,35 +838,35 @@ class PTa(Perturbation):
         # Seniority-2 sector
         #
         e_seniority_2 = amplitudes.contract_four('abad,abad', exjbkc0, 1.0)
-        e_seniority_2+= amplitudes.contract_four('abdb,abdb', exjbkc0, 1.0)
+        e_seniority_2 += amplitudes.contract_four('abdb,abdb', exjbkc0, 1.0)
         energy = amplitudes.contract_four('abcd,abcd', exjbkc0, 2.0)
-        energy-= amplitudes.contract_four('abcd,adcb', exjbkc0, 1.0)
+        energy -= amplitudes.contract_four('abcd,adcb', exjbkc0, 1.0)
         #
         # Seniority-4 sector
         #
-        e_seniority_4 = energy-e_seniority_2-e_seniority_0
+        e_seniority_4 = energy - e_seniority_2 - e_seniority_0
 
         return [energy, e_seniority_0, e_seniority_2, e_seniority_4]
 
     def print_energy(self, **kwargs):
         if log.do_medium:
-            log('E_PTa(Seniority 0):     %18.12f a.u.' %(self.energy[1]))
-            log('E_PTa(Seniority 2):     %18.12f a.u.' %(self.energy[2]))
-            log('E_PTa(Seniority 4):     %18.12f a.u.' %(self.energy[3]))
+            log('E_PTa(Seniority 0):     %18.12f a.u.' % (self.energy[1]))
+            log('E_PTa(Seniority 2):     %18.12f a.u.' % (self.energy[2]))
+            log('E_PTa(Seniority 4):     %18.12f a.u.' % (self.energy[3]))
             log.hline('-')
-            log('E_ref:                  %18.12f a.u.' %(kwargs.get('eref')))
-            log('E_PTa:                  %18.12f a.u.' %self.energy[0])
+            log('E_ref:                  %18.12f a.u.' % (kwargs.get('eref')))
+            log('E_PTa:                  %18.12f a.u.' % self.energy[0])
             log.hline('-')
-            log('E_tot:                  %18.12f a.u.' %(self.energy[0]+kwargs.get('eref')))
+            log('E_tot:                  %18.12f a.u.' % (self.energy[0] + kwargs.get('eref')))
 
     def print_info(self, **kwargs):
         if log.do_medium:
             log('PTa perturbation module')
             log(' ')
             log('OPTIMIZATION PARAMETERS:')
-            log('Reference Function           %s' %('AP1roG'))
-            log('Number of pairs:             %i' %self.nocc)
-            log('Number of virtuals:          %i' %self.nvirt)
+            log('Reference Function           %s' % ('AP1roG'))
+            log('Number of pairs:             %i' % self.nocc)
+            log('Number of virtuals:          %i' % self.nvirt)
             log.hline()
 
     def check_input(self, **kwargs):
@@ -865,9 +891,8 @@ class PTa(Perturbation):
         # check if diagonal amplitudes are zero:
         tmp = self.amplitudes[0].slice_to_two('abab->ab')
         if tmp.sum() > thresh:
-            raise ValueError('Warning: Diagonal cluster amplitudes not negligible. Aborting optimization!')
-
-
+            raise ValueError(
+                'Warning: Diagonal cluster amplitudes not negligible. Aborting optimization!')
 
 
 class PTb(Perturbation):
@@ -899,7 +924,7 @@ class PTb(Perturbation):
         #
         # Append el energy of principle det to function arguments:
         #
-        args += ((eref-ecore),)
+        args += ((eref - ecore),)
 
         #
         # Check argument type prior optimization:
@@ -931,9 +956,9 @@ class PTb(Perturbation):
                               options={'fatol': thresh, 'maxiter': maxiter})
         if not amplitudes.success:
             raise ValueError('ERROR: program terminated. Error in solving \
-                              amplitude equations: %s' %amplitudes.message)
+                              amplitude equations: %s' % amplitudes.message)
         if log.do_medium:
-            log('Optimization of cluster amplitudes converged in %i iterations.' %(amplitudes.nit))
+            log('Optimization of cluster amplitudes converged in %i iterations.' % (amplitudes.nit))
             log(' ')
             log('Calculating energy correction:')
 
@@ -1000,65 +1025,84 @@ class PTb(Perturbation):
         #
         # sum_c F_ac t_icjb
         #
-        ptamplitudes.contract_two_to_four('abcd,eb->aecd', args[4], out, 0.5, True, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
+        ptamplitudes.contract_two_to_four(
+            'abcd,eb->aecd', args[4], out, 0.5, True, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
         # P_ijab
-        ptamplitudes.contract_two_to_four('abcd,eb->cdae', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
+        ptamplitudes.contract_two_to_four(
+            'abcd,eb->cdae', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
         #
         # sum_c F_ac t_jbic
         #
-        ptamplitudes.contract_two_to_four('abcd,ed->ceab', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ed->ceab', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
         # P_ijab
-        ptamplitudes.contract_two_to_four('abcd,ed->abce', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ed->abce', args[4], out, 0.5, False, begin4=self.nocc, end4=self.nbasis, begin5=self.nocc, end5=self.nbasis)
         #
         # sum_l F_lj t_lbia
         #
-        ptamplitudes.contract_two_to_four('abcd,ae->cdeb', args[4], out,-0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ae->cdeb', args[4], out, -0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
         # P_ijab
-        ptamplitudes.contract_two_to_four('abcd,ae->ebcd', args[4], out,-0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ae->ebcd', args[4], out, -0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
         #
         # sum_l F_lj t_ialb
         #
-        ptamplitudes.contract_two_to_four('abcd,ce->edab', args[4], out,-0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ce->edab', args[4], out, -0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
         # P_ijab
-        ptamplitudes.contract_two_to_four('abcd,ce->abed', args[4], out,-0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
+        ptamplitudes.contract_two_to_four(
+            'abcd,ce->abed', args[4], out, -0.5, False, begin4=0, end4=self.nocc, begin5=0, end5=self.nocc)
 
         #
         # <jk|bc>
         #
-        args[3].slice_to_four('abcd->acbd', out, 1.0, False, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].slice_to_four('abcd->acbd', out, 1.0, False, 0, self.nocc, 0,
+                              self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # c_kc <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jb <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,da->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,da->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jc <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_kb <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jkbc <bk|jc>
         #
-        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,cd->abcd', args[1], out, 1.0, False)
-        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,ad->abcd', args[1], out, 1.0, False)
         #
         # delta_jk [ c_jc F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ c_jb F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ oc_jbc ]
         #
@@ -1074,15 +1118,17 @@ class PTb(Perturbation):
         #
         # delta_bc [ c_jb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('ab,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'ab,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ c_kb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('cb,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'cb,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ vc_jkb ]
         #
-        tmp3ind1.iadd(args[6],-1.0)
+        tmp3ind1.iadd(args[6], -1.0)
         #
         # delta_bc [ oc_jkb ]
         #
@@ -1094,7 +1140,7 @@ class PTb(Perturbation):
         #
         # delta_bc,jk [ (sum_m h_mm+F_mm)*c_jb ]
         #
-        out.iadd_expand_two_to_four('diag', args[1],(-e0+onesum+fockdiagsum))
+        out.iadd_expand_two_to_four('diag', args[1], (-e0 + onesum + fockdiagsum))
         #
         # delta_bc,jk [ (sum_md <mm|dd> c_jmbd) ]
         #
@@ -1141,40 +1187,51 @@ class PTb(Perturbation):
         #
         # <jk|bc>
         #
-        args[3].slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].slice_to_four('abcd->acbd', out, 1.0, True, 0, self.nocc, 0,
+                              self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # c_kc <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,bd->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jb <jc||bk>
         #
-        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False, self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
-        args[3].contract_two_to_four('abcd,da->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ca->cabd', args[1], out, 1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,da->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jc <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,dc->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_kb <bk|cj>
         #
-        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out,-1.0, False, self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
+        args[3].contract_two_to_four('abcd,ba->dabc', args[1], out, -1.0, False,
+                                     self.nocc, self.nbasis, 0, self.nocc, self.nocc, self.nbasis, 0, self.nocc)
         #
         # c_jkbc <bk|jc>
         #
-        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,ac->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,cd->abcd', args[1], out, 1.0, False)
-        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        args[3].contract_two_to_four('abcd,bc->acbd', args[1], tmp4ind, 1.0, True,
+                                     0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp4ind.contract_two_to_four('abcd,ad->abcd', args[1], out, 1.0, False)
         #
         # delta_jk [ c_jc F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ac,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ c_jb F_bc ]
         #
-        tmp3ind0.iadd_expand_two_two('ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        tmp3ind0.iadd_expand_two_two(
+            'ab,bc->abc', args[1], args[4], 1.0, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # delta_jk [ oc_jbc ]
         #
@@ -1190,15 +1247,17 @@ class PTb(Perturbation):
         #
         # delta_bc [ c_jb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('ab,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'ab,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ c_kb F_jk ]
         #
-        tmp3ind1.iadd_expand_two_two('cb,ac->acb', args[1], args[4],-1.0, 0, self.nocc, 0, self.nocc)
+        tmp3ind1.iadd_expand_two_two(
+            'cb,ac->acb', args[1], args[4], -1.0, 0, self.nocc, 0, self.nocc)
         #
         # delta_bc [ vc_jkb ]
         #
-        tmp3ind1.iadd(args[6],-1.0)
+        tmp3ind1.iadd(args[6], -1.0)
         #
         # delta_bc [ oc_jkb ]
         #
@@ -1210,7 +1269,7 @@ class PTb(Perturbation):
         #
         # delta_bc,jk [ (sum_m h_mm+F_mm)*c_jb ]
         #
-        out.iadd_expand_two_to_four('diag', args[1],(-e0+onesum+fockdiagsum))
+        out.iadd_expand_two_to_four('diag', args[1], (-e0 + onesum + fockdiagsum))
         #
         # delta_bc,jk [ (sum_md <mm|dd> c_jmbd) ]
         #
@@ -1220,8 +1279,8 @@ class PTb(Perturbation):
 
     def get_guess(self):
         '''Generate initial guess for amplitudes'''
-        tmp = np.random.rand(self.nocc*self.nvirt, self.nocc*self.nvirt)*0.01
-        tmp = (tmp+tmp.T)/2
+        tmp = np.random.rand(self.nocc * self.nvirt, self.nocc * self.nvirt) * 0.01
+        tmp = (tmp + tmp.T) / 2
         np.fill_diagonal(tmp, 0.0)
         return tmp.ravel()
 
@@ -1258,15 +1317,19 @@ class PTb(Perturbation):
                 The dimension of the auxiliary matrices for specific axes.
         '''
         check_options('select', select, 'fock', 'ocjbc', 'vcjkb', 'ocjkb',
-            'vcjbc', 'dcjb')
-        if select=='fock':
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_two_index, self.lf.default_nbasis), tags='m')
-        if select=='dcjb':
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_two_index, dim, dim2), tags='m')
+                      'vcjbc', 'dcjb')
+        if select == 'fock':
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_two_index, self.lf.default_nbasis), tags='m')
+        if select == 'dcjb':
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_two_index, dim, dim2), tags='m')
         if select in ['ocjbc', 'vcjbc']:
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_three_index, dim, dim2, dim2), tags='m')
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_three_index, dim, dim2, dim2), tags='m')
         if select in ['vcjkb', 'ocjkb']:
-            matrix, new = self._cache.load('%s' %select, alloc=(self.lf.create_three_index, dim, dim, dim2), tags='m')
+            matrix, new = self._cache.load(
+                '%s' % select, alloc=(self.lf.create_three_index, dim, dim, dim2), tags='m')
         if not new:
             raise RuntimeError('The matrix %s already exists. Call clear prior \
                                 to updating the wfn.' % select)
@@ -1294,47 +1357,56 @@ class PTb(Perturbation):
         # Inactive Fock matrix
         #
         auxmat1 = self.init_aux_matrix('fock')
-        mo2.contract_to_two('abcb->ac', auxmat1, 2.0, True, 0, self.nbasis, 0, self.nocc, 0, self.nbasis, 0, self.nocc)
-        mo2.contract_to_two('abbc->ac', auxmat1,-1.0, False, 0, self.nbasis, 0, self.nocc, 0, self.nocc, 0, self.nbasis)
+        mo2.contract_to_two(
+            'abcb->ac', auxmat1, 2.0, True, 0, self.nbasis, 0, self.nocc, 0, self.nbasis, 0, self.nocc)
+        mo2.contract_to_two(
+            'abbc->ac', auxmat1, -1.0, False, 0, self.nbasis, 0, self.nocc, 0, self.nocc, 0, self.nbasis)
         auxmat1.iadd(mo1)
         #
         # oc_jbc = sum_m <mm|bc> c_jm^bc
         #
         tmp = self.lf.create_four_index(self.nocc, self.nocc, self.nvirt, self.nvirt)
         auxmat2 = self.init_aux_matrix('ocjbc', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_four('aabc,db->adbc', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('aabc,db->adbc', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ad->bcd', cia, auxmat2, 1.0, True)
-        mo2.contract_two_to_four('aabc,dc->adbc', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('aabc,dc->adbc', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ac->bcd', cia, auxmat2, 1.0, False)
         #
         # vc_jkb = sum_d <dd|jk> c_jk^bd
         #
         auxmat3 = self.init_aux_matrix('vcjkb', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_four('abcc,ad->abcd', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('abcc,ad->abcd', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,bc->abd', cia, auxmat3, 1.0, True)
-        mo2.contract_two_to_four('abcc,bd->abcd', cia, tmp, 1.0, True, 0, self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_four('abcc,bd->abcd', cia, tmp, 1.0, True, 0,
+                                 self.nocc, 0, self.nocc, self.nocc, self.nbasis, self.nocc, self.nbasis)
         tmp.contract_two_to_three('abcd,ac->abd', cia, auxmat3, 1.0, False)
         #
         # vc_jbc = sum_d <bc|dd> c_j^d
         #
         auxmat4 = self.init_aux_matrix('vcjbc', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_three('abcc,dc->dab', cia, auxmat4, 1.0, True, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis)
+        mo2.contract_two_to_three('abcc,dc->dab', cia, auxmat4, 1.0, True, self.nocc,
+                                  self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis, self.nocc, self.nbasis)
         #
         # oc_jkb = sum_m <mm|jk> c_m^b
         #
         auxmat5 = self.init_aux_matrix('ocjkb', cia.nbasis, cia.nbasis1)
-        mo2.contract_two_to_three('aabc,ad->bcd', cia, auxmat5, 1.0, True, 0, self.nocc, 0, self.nocc, 0, self.nocc, 0, self.nocc)
+        mo2.contract_two_to_three(
+            'aabc,ad->bcd', cia, auxmat5, 1.0, True, 0, self.nocc, 0, self.nocc, 0, self.nocc, 0, self.nocc)
         #
         # dc_jb = sum_md <mm|dd> c_jm^bd
         #
-        auxmat6= self.init_aux_matrix('dcjb', cia.nbasis, cia.nbasis1)
+        auxmat6 = self.init_aux_matrix('dcjb', cia.nbasis, cia.nbasis1)
         tmp = self.lf.create_two_index(self.nbasis, self.nbasis)
         tmp2 = self.lf.create_two_index(self.nocc, self.nocc)
         # There is a bug in np.einsum that forces us to slice first...
         mo2.slice_to_two('aabb->ab', tmp, 1.0, True)
         factor = cia.contract_two('ab,ab', tmp, 0, self.nocc, self.nocc, self.nbasis)
         auxmat6.iadd(cia, factor)
-        cia.contract_two_to_two('ab,cb->ac', tmp, tmp2, 1.0, True, 0, self.nocc, self.nocc, self.nbasis)
+        cia.contract_two_to_two(
+            'ab,cb->ac', tmp, tmp2, 1.0, True, 0, self.nocc, self.nocc, self.nbasis)
         cia.contract_two_to_two('ab,ca->cb', tmp2, auxmat6, 1.0, False)
 
         return [auxmat1, auxmat2, auxmat3, auxmat4, auxmat5, auxmat6]
@@ -1376,26 +1448,26 @@ class PTb(Perturbation):
         # Seniority-2 sector
         #
         e_seniority_2 = amplitudes.contract_four('abad,abad', exjbkc0, 1.0)
-        e_seniority_2+= amplitudes.contract_four('abdb,abdb', exjbkc0, 1.0)
+        e_seniority_2 += amplitudes.contract_four('abdb,abdb', exjbkc0, 1.0)
         energy = amplitudes.contract_four('abcd,abcd', exjbkc0, 2.0)
-        energy-= amplitudes.contract_four('abcd,adcb', exjbkc0, 1.0)
+        energy -= amplitudes.contract_four('abcd,adcb', exjbkc0, 1.0)
         #
         # Seniority-4 sector
         #
-        e_seniority_4 = energy-e_seniority_2-e_seniority_0
+        e_seniority_4 = energy - e_seniority_2 - e_seniority_0
 
         return [energy, e_seniority_0, e_seniority_2, e_seniority_4]
 
     def print_energy(self, **kwargs):
         if log.do_medium:
-            log('E_PTb(Seniority 0):     %18.12f a.u.' %(self.energy[1]))
-            log('E_PTb(Seniority 2):     %18.12f a.u.' %(self.energy[2]))
-            log('E_PTb(Seniority 4):     %18.12f a.u.' %(self.energy[3]))
+            log('E_PTb(Seniority 0):     %18.12f a.u.' % (self.energy[1]))
+            log('E_PTb(Seniority 2):     %18.12f a.u.' % (self.energy[2]))
+            log('E_PTb(Seniority 4):     %18.12f a.u.' % (self.energy[3]))
             log.hline('-')
-            log('E_ref:                  %18.12f a.u.' %(kwargs.get('eref')))
-            log('E_PTb:                  %18.12f a.u.' %self.energy[0])
+            log('E_ref:                  %18.12f a.u.' % (kwargs.get('eref')))
+            log('E_PTb:                  %18.12f a.u.' % self.energy[0])
             log.hline('-')
-            log('E_tot:                  %18.12f a.u.' %(self.energy[0]+kwargs.get('eref')))
+            log('E_tot:                  %18.12f a.u.' % (self.energy[0] + kwargs.get('eref')))
 
     def print_info(self, **kwargs):
         thresh = kwargs.get('threshold', 1e-6)
@@ -1405,31 +1477,31 @@ class PTb(Perturbation):
             log('PTb perturbation module')
             log(' ')
             log('OPTIMIZATION PARAMETERS:')
-            log('Reference Function           %s' %('AP1roG'))
-            log('Number of pairs:             %i' %self.nocc)
-            log('Number of virtuals:          %i' %self.nvirt)
+            log('Reference Function           %s' % ('AP1roG'))
+            log('Number of pairs:             %i' % self.nocc)
+            log('Number of virtuals:          %i' % self.nvirt)
             if guess is None:
-                log('Initial guess:               %s' %('random'))
+                log('Initial guess:               %s' % ('random'))
             else:
-                log('Initial guess:               %s' %('user'))
+                log('Initial guess:               %s' % ('user'))
             log('Solvers:')
-            log('  PTb amplitudes:            %s' %('krylov'))
+            log('  PTb amplitudes:            %s' % ('krylov'))
             log('Optimization thresholds:')
-            log('  PTb amplitudes:            %1.2e' %(thresh))
-            log('  maxiter:                   %i' %(maxiter))
+            log('  PTb amplitudes:            %1.2e' % (thresh))
+            log('  maxiter:                   %i' % (maxiter))
             log.hline()
 
     def check_input(self, **kwargs):
         '''Check input parameters.'''
         for name, value in kwargs.items():
             check_options(name, name, 'ecore', 'eref', 'threshold', 'maxiter',
-                'guess', 'indextrans')
+                          'guess', 'indextrans')
         eref = kwargs.get('eref', float('nan'))
         ecore = kwargs.get('ecore', float('nan'))
         guess = kwargs.get('guess', None)
         if guess is not None:
             check_type('guess', guess, np.ndarray)
-            if not len(guess) == self.nocc*self.nocc*self.nvirt*self.nvirt:
+            if not len(guess) == self.nocc * self.nocc * self.nvirt * self.nvirt:
                 raise ValueError('Length of guess array does not agree with number of unknowns')
         if np.isnan(eref):
             raise ValueError('Warning: Cannot find reference energy in PTb module!')

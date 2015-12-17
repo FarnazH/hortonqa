@@ -37,7 +37,9 @@ __all__ = [
 
 
 class PropertyHelper(object):
+
     '''Auxiliary class to set up x_dm_y attributes of Geminal class.'''
+
     def __init__(self, method, arg, doc):
         self.method = method
         self.arg = arg
@@ -59,11 +61,13 @@ class PropertyHelper(object):
 
 
 class Geminal(object):
+
     '''A collection of geminals and optimization routines.
 
        This is just a base class that serves as a template for
        specific implementations.
     '''
+
     def __init__(self, lf, occ_model, npairs=None, nvirt=None):
         '''
            **Arguments:**
@@ -92,11 +96,13 @@ class Geminal(object):
         if npairs is None:
             npairs = occ_model.noccs[0]
         elif npairs >= lf.default_nbasis:
-            raise ValueError('Number of electron pairs (%i) larger than number of basis functions (%i)' %(npairs, self.nbasis))
+            raise ValueError(
+                'Number of electron pairs (%i) larger than number of basis functions (%i)' % (npairs, self.nbasis))
         if nvirt is None:
-            nvirt = (lf.default_nbasis-npairs)
+            nvirt = (lf.default_nbasis - npairs)
         elif nvirt >= lf.default_nbasis:
-            raise ValueError('Number of virtuals (%i) larger than number of basis functions (%i)' %(nvirt, self.nbasis))
+            raise ValueError(
+                'Number of virtuals (%i) larger than number of basis functions (%i)' % (nvirt, self.nbasis))
         self._npairs = npairs
         self._nvirt = nvirt
         self._cache = Cache()
@@ -179,7 +185,7 @@ class Geminal(object):
 
     def _get_dimension(self):
         '''The number of unknowns (i.e. the number of geminal coefficients)'''
-        return self._npairs*self._nvirt
+        return self._npairs * self._nvirt
 
     dimension = property(_get_dimension)
 
@@ -264,9 +270,11 @@ class Geminal(object):
                 'ps2' or 'response'.
         '''
         check_options('onedm', select, 'ps2', 'response')
-        dm, new = self._cache.load('one_dm_%s' % select, alloc=(self._lf.create_one_index, self.nbasis), tags='d')
+        dm, new = self._cache.load(
+            'one_dm_%s' % select, alloc=(self._lf.create_one_index, self.nbasis), tags='d')
         if not new:
-            raise RuntimeError('The density matrix one_dm_%s already exists. Call one_dm_%s.clear prior to updating the 1DM.' % select)
+            raise RuntimeError(
+                'The density matrix one_dm_%s already exists. Call one_dm_%s.clear prior to updating the 1DM.' % select)
         return dm
 
     def init_two_dm(self, select):
@@ -293,9 +301,11 @@ class Geminal(object):
                 '(r(esponse))ppqq', or '(r(esponse))pqpq'.
         '''
         check_options('twodm', select, 'ppqq', 'pqpq', 'rppqq', 'rpqpq')
-        dm, new = self._cache.load('two_dm_%s' % select, alloc=(self._lf.create_two_index, self.nbasis), tags='d')
+        dm, new = self._cache.load(
+            'two_dm_%s' % select, alloc=(self._lf.create_two_index, self.nbasis), tags='d')
         if not new:
-            raise RuntimeError('The density matrix two_dm_%s already exists. Call two_dm_%s.clear prior to updating the 2DM.' % select)
+            raise RuntimeError(
+                'The density matrix two_dm_%s already exists. Call two_dm_%s.clear prior to updating the 2DM.' % select)
         return dm
 
     def init_three_dm(self, select):
@@ -430,9 +440,9 @@ class Geminal(object):
         if dim is None:
             dim = self.dimension
         if guess['type'] == 'random':
-            return np.random.random(dim)*guess['factor']
+            return np.random.random(dim) * guess['factor']
         elif guess['type'] == 'const':
-            return np.ones(dim)*guess['factor']
+            return np.ones(dim) * guess['factor']
 
     def compute_rotation_matrix(self, coeff):
         '''Compute orbital rotation matrix'''
@@ -459,16 +469,16 @@ class Geminal(object):
                 element of orbital gradient are smaller than some threshold
                 values.
         '''
-        return abs(e0-e1) < thresh['energy'] and \
-               gradient.get_max() < thresh['gradientmax'] and \
-               gradient.norm() < thresh['gradientnorm']
+        return abs(e0 - e1) < thresh['energy'] and \
+            gradient.get_max() < thresh['gradientmax'] and \
+            gradient.norm() < thresh['gradientnorm']
 
     def check_stepsearch(self, linesearch):
         '''Check trustradius. Abort calculation if trustradius is smaller than
            1e-8
         '''
         return linesearch.method == 'trust-region' and \
-               linesearch.trustradius < 1e-8
+            linesearch.trustradius < 1e-8
 
     def prod(self, lst):
         return reduce(mul, lst)
@@ -485,5 +495,5 @@ class Geminal(object):
         n = len(a)
         r = range(n)
         s = permutations(r)
-        import math # FIXME: fsum really needed for accuracy?
+        import math  # FIXME: fsum really needed for accuracy?
         return math.fsum(self.prod(a[i][sigma[i]] for i in r) for sigma in s)

@@ -60,10 +60,11 @@ def test_ap1rog_lagrange():
     geminal_solver = RAp1rog(lf, occ_model)
     energy, g = geminal_solver(one, er, external['nn'], exp_alpha, olp, False)
 
-    geminal_solver.lagrange.assign(np.random.rand(3,25))
+    geminal_solver.lagrange.assign(np.random.rand(3, 25))
     x = geminal_solver.geminal._array.ravel(order='C')
-    dxs = np.random.rand(200, 3*25)*(0.001)
+    dxs = np.random.rand(200, 3 * 25) * (0.001)
     check_delta(x, dxs, geminal_solver)
+
 
 def fun(x, ham):
     iiaa = ham.get_auxmatrix('gppqq')
@@ -72,9 +73,11 @@ def fun(x, ham):
     one = ham.get_auxmatrix('t')
     coeff = ham.lagrange._array
 
-    lagrangian = ham.compute_total_energy(x.reshape(3,25))
-    lagrangian += np.dot(coeff.ravel(order='C'), ham.vector_function_geminal(x.ravel(order='C'), iiaa, iaia, one, fock))
+    lagrangian = ham.compute_total_energy(x.reshape(3, 25))
+    lagrangian += np.dot(coeff.ravel(order='C'),
+                         ham.vector_function_geminal(x.ravel(order='C'), iiaa, iaia, one, fock))
     return lagrangian
+
 
 def fun_deriv(x, ham):
     iiaa = ham.get_auxmatrix('gppqq')
@@ -82,11 +85,12 @@ def fun_deriv(x, ham):
     fock = ham.get_auxmatrix('fock')
     one = ham.get_auxmatrix('t')
     coeff = ham.lagrange._array.ravel(order='C')
-    gmat = ham.lf.create_two_index(3,25)
+    gmat = ham.lf.create_two_index(3, 25)
     gmat.assign(x)
 
-    gradient = ham.vector_function_lagrange(coeff,gmat, iiaa, iaia, one, fock)
+    gradient = ham.vector_function_lagrange(coeff, gmat, iiaa, iaia, one, fock)
     return gradient.ravel(order='C')
+
 
 def check_delta(x, dxs, ham):
     """Check the difference between two function values using the analytical gradient
@@ -120,9 +124,9 @@ def check_delta(x, dxs, ham):
     f0 = fun(x, ham)
     grad0 = fun_deriv(x, ham)
     for dx in dxs:
-        f1 = fun(x+dx, ham)
-        grad1 = fun_deriv(x+dx, ham)
-        grad = 0.5*(grad0+grad1)
+        f1 = fun(x + dx, ham)
+        grad1 = fun_deriv(x + dx, ham)
+        grad = 0.5 * (grad0 + grad1)
         d1 = f1 - f0
         if hasattr(d1, '__iter__'):
             norm = np.linalg.norm
@@ -132,7 +136,7 @@ def check_delta(x, dxs, ham):
 
         dn1s.append(norm(d1))
         dn2s.append(norm(d2))
-        dnds.append(norm(d1-d2))
+        dnds.append(norm(d1 - d2))
     dn1s = np.array(dn1s)
     dn2s = np.array(dn2s)
     dnds = np.array(dnds)
@@ -148,7 +152,7 @@ def check_delta(x, dxs, ham):
             'threshold is %.1e.\n\nDifferences:\n%s\n\nFirst order '
             'approximation to differences:\n%s\n\nAbsolute errors:\n%s')
             % (threshold,
-            ' '.join('%.1e' % v for v in dn1s[mask]),
-            ' '.join('%.1e' % v for v in dn2s[mask]),
-            ' '.join('%.1e' % v for v in dnds[mask])
-        ))
+               ' '.join('%.1e' % v for v in dn1s[mask]),
+               ' '.join('%.1e' % v for v in dn2s[mask]),
+               ' '.join('%.1e' % v for v in dnds[mask])
+               ))
