@@ -104,7 +104,7 @@ def transform_integrals(one, two, indextrans='tensordot', *exps):
     two_mo = []
     one_mo = []
     if not all([isinstance(i, Expansion) for i in exps]):
-        raise TypeError('argument of unsupported type: %s' %i)
+        raise TypeError('argument of unsupported type: %s' % i)
     for arg in exps:
         exp.append(arg)
 
@@ -189,7 +189,7 @@ def split_core_active(one, two, ecore, orb, ncore, nactive, indextrans='tensordo
     check_options('indextrans', indextrans, 'tensordot', 'einsum')
     if ncore <= 0 or nactive <= 0:
         raise ValueError('ncore and nactive must be strictly positive.')
-    if nactive+ncore > one.nbasis:
+    if nactive + ncore > one.nbasis:
         raise ValueError('More active orbitals than basis functions.')
 
     #
@@ -205,27 +205,30 @@ def split_core_active(one, two, ecore, orb, ncore, nactive, indextrans='tensordo
     # Core energy
     norb = one.nbasis
     #   One body term
-    ecore += 2*one_mo.trace(0, ncore, 0, ncore)
+    ecore += 2 * one_mo.trace(0, ncore, 0, ncore)
     #   Direct part
-    ecore += two_mo.slice_to_two('abab->ab', None, 2.0, True, 0, ncore, 0, ncore, 0, ncore, 0, ncore).sum()
+    ecore += two_mo.slice_to_two('abab->ab', None, 2.0, True, 0, ncore,
+                                 0, ncore, 0, ncore, 0, ncore).sum()
     #   Exchange part
-    ecore += two_mo.slice_to_two('abba->ab', None,-1.0, True, 0, ncore, 0, ncore, 0, ncore, 0, ncore).sum()
+    ecore += two_mo.slice_to_two('abba->ab', None, -1.0, True, 0,
+                                 ncore, 0, ncore, 0, ncore, 0, ncore).sum()
 
     # Active space one-body integrals
     one_mo_corr = one_mo.new()
     #   Direct part
     two_mo.contract_to_two('abcb->ac', one_mo_corr, 2.0, True, 0, norb, 0, ncore, 0, norb, 0, ncore)
     #   Exchange part
-    two_mo.contract_to_two('abbc->ac', one_mo_corr,-1.0, False, 0, norb, 0, ncore, 0, ncore, 0, norb)
+    two_mo.contract_to_two(
+        'abbc->ac', one_mo_corr, -1.0, False, 0, norb, 0, ncore, 0, ncore, 0, norb)
     one_mo.iadd(one_mo_corr, 1.0)
     #one_mo.iadd_t(one_mo_corr, 1.0)
 
     #
     # Store in smaller n-index objects
     #
-    one_mo_small = one_mo.copy(ncore, ncore+nactive, ncore, ncore+nactive)
-    two_mo_small = two_mo.copy(ncore, ncore+nactive, ncore, ncore+nactive,
-                               ncore, ncore+nactive, ncore, ncore+nactive)
+    one_mo_small = one_mo.copy(ncore, ncore + nactive, ncore, ncore + nactive)
+    two_mo_small = two_mo.copy(ncore, ncore + nactive, ncore, ncore + nactive,
+                               ncore, ncore + nactive, ncore, ncore + nactive)
 
     # Done
     return one_mo_small, two_mo_small, ecore
