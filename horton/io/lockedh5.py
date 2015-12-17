@@ -21,13 +21,16 @@
 '''H5 file with lock'''
 
 
-import h5py as h5, fcntl, time
+import h5py as h5
+import fcntl
+import time
 
 
 __all__ = ['LockedH5File']
 
 
 class LockedH5File(h5.File):
+
     def __init__(self, *args, **kwargs):
         '''Open an HDF5 file exclusively using flock (works only with sec2 driver)
 
@@ -62,9 +65,9 @@ class LockedH5File(h5.File):
         for irep in xrange(count):
             try:
                 h5.File.__init__(self, *args, **kwargs)
-                break # When this line is reached, it worked.
+                break  # When this line is reached, it worked.
             except IOError, e:
-                if irep == count-1:
+                if irep == count - 1:
                     # giving up
                     raise
                 else:
@@ -72,7 +75,7 @@ class LockedH5File(h5.File):
         # then try to get a lock
         for irep in xrange(count):
             try:
-                if self.driver != 'sec2': # only works for sec2
+                if self.driver != 'sec2':  # only works for sec2
                     raise ValueError('LockedH5File only works with HDF5 sec2 driver.')
                 fd = self.fid.get_vfd_handle()
                 if fd == 0:
@@ -81,9 +84,9 @@ class LockedH5File(h5.File):
                     fcntl.flock(fd, fcntl.LOCK_SH | fcntl.LOCK_NB)
                 else:
                     fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                break # When this line is reached, it worked.
+                break  # When this line is reached, it worked.
             except IOError, e:
-                if irep == count-1:
+                if irep == count - 1:
                     # giving up
                     raise
                 else:

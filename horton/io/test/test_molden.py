@@ -20,7 +20,8 @@
 #--
 
 
-import numpy as np, os
+import numpy as np
+import os
 
 from horton import *
 from horton.io.test.common import compute_mulliken_charges

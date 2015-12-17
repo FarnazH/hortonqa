@@ -50,7 +50,6 @@ def load_mkl(filename, lf):
     def helper_char_mult(f):
         return [int(word) for word in f.readline().split()]
 
-
     def helper_coordinates(f):
         numbers = []
         coordinates = []
@@ -62,9 +61,8 @@ def load_mkl(filename, lf):
             numbers.append(int(words[0]))
             coordinates.append([float(words[1]), float(words[2]), float(words[3])])
         numbers = np.array(numbers, int)
-        coordinates = np.array(coordinates)*angstrom
+        coordinates = np.array(coordinates) * angstrom
         return numbers, coordinates
-
 
     def helper_obasis(f, coordinates):
         shell_types = []
@@ -113,7 +111,6 @@ def load_mkl(filename, lf):
         con_coeffs = np.array(con_coeffs)
         return GOBasis(coordinates, shell_map, nprims, shell_types, alphas, con_coeffs)
 
-
     def helper_coeffs(f, nbasis):
         coeffs = []
         energies = []
@@ -131,7 +128,7 @@ def load_mkl(filename, lf):
                 assert ncol > 0
                 for word in words:
                     assert word == 'a1g'
-                cols = [np.zeros((nbasis,1), float) for icol in xrange(ncol)]
+                cols = [np.zeros((nbasis, 1), float) for icol in xrange(ncol)]
                 in_orb = 1
             elif in_orb == 1:
                 # read energies
@@ -154,7 +151,6 @@ def load_mkl(filename, lf):
 
         return np.hstack(coeffs), np.array(energies)
 
-
     def helper_occ(f):
         occs = []
         while True:
@@ -165,7 +161,6 @@ def load_mkl(filename, lf):
             for word in lstrip.split():
                 occs.append(float(word))
         return np.array(occs)
-
 
     charge = None
     spinmult = None
@@ -211,7 +206,8 @@ def load_mkl(filename, lf):
         raise IOError('Alpha occupation numbers not found in mkl file.')
 
     if lf.default_nbasis is not None and lf.default_nbasis != obasis.nbasis:
-        raise TypeError('The value of lf.default_nbasis does not match nbasis reported in the mkl file.')
+        raise TypeError(
+            'The value of lf.default_nbasis does not match nbasis reported in the mkl file.')
     lf.default_nbasis = obasis.nbasis
     nelec = numbers.sum() - charge
     if coeff_beta is None:
@@ -220,14 +216,15 @@ def load_mkl(filename, lf):
         exp_alpha = lf.create_expansion(obasis.nbasis, coeff_alpha.shape[1])
         exp_alpha.coeffs[:] = coeff_alpha
         exp_alpha.energies[:] = ener_alpha
-        exp_alpha.occupations[:] = occ_alpha/2
+        exp_alpha.occupations[:] = occ_alpha / 2
         exp_beta = None
     else:
         if occ_beta is None:
-            raise IOError('Beta occupation numbers not found in mkl file while beta orbitals were present.')
+            raise IOError(
+                'Beta occupation numbers not found in mkl file while beta orbitals were present.')
         nalpha = int(np.round(occ_alpha.sum()))
         nbeta = int(np.round(occ_beta.sum()))
-        assert nelec == nalpha+nbeta
+        assert nelec == nalpha + nbeta
         assert coeff_alpha.shape == coeff_beta.shape
         assert ener_alpha.shape == ener_beta.shape
         assert occ_alpha.shape == occ_beta.shape

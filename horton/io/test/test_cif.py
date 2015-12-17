@@ -20,7 +20,8 @@
 #--
 
 
-import h5py as h5, numpy as np
+import h5py as h5
+import numpy as np
 from nose.plugins.attrib import attr
 
 from horton import *
@@ -64,9 +65,11 @@ def test_load_cif_low_lta_castep():
     assert fields['cell_angle_beta'] == 90.0
     assert fields['cell_angle_gamma'] == 90.0
     assert (fields['atom_site_label'] == ['O1', 'O13', 'O25', 'Si1']).all()
-    assert (fields['atom_site_fract_x'] == [-1.220667052947635, -0.292509343078465, -1.110956438805889, -1.183699077638015]).all()
+    assert (fields['atom_site_fract_x'] == [-1.220667052947635, -
+                                            0.292509343078465, -1.110956438805889, -1.183699077638015]).all()
     assert (fields['atom_site_fract_y'] == [1.0, 1.0, 1.110956438805889, 1.0]).all()
-    assert (fields['atom_site_fract_z'] == [0.5, 1.292509343078465, 0.345757991600433, 0.370366544189800]).all()
+    assert (fields['atom_site_fract_z'] == [
+            0.5, 1.292509343078465, 0.345757991600433, 0.370366544189800]).all()
     assert (fields['atom_site_U_iso_or_equiv'] == 0.0100).all()
     assert fields['atom_site_U_iso_or_equiv'].shape == (4,)
     assert (fields['atom_site_occupancy'] == 1.0).all()
@@ -123,20 +126,27 @@ def test_load_cif_low_lta_iza():
 
 
 def test_iter_equiv_pos_terms():
-    assert list(iter_equiv_pos_terms('x+1/2')) == [(+1,'x'),(+1,'1/2')]
-    assert list(iter_equiv_pos_terms('-x+1/2')) == [(-1,'x'),(+1,'1/2')]
-    assert list(iter_equiv_pos_terms('y-1/2')) == [(+1,'y'),(-1,'1/2')]
-    assert list(iter_equiv_pos_terms('z')) == [(+1,'z')]
+    assert list(iter_equiv_pos_terms('x+1/2')) == [(+1, 'x'), (+1, '1/2')]
+    assert list(iter_equiv_pos_terms('-x+1/2')) == [(-1, 'x'), (+1, '1/2')]
+    assert list(iter_equiv_pos_terms('y-1/2')) == [(+1, 'y'), (-1, '1/2')]
+    assert list(iter_equiv_pos_terms('z')) == [(+1, 'z')]
 
 
 def test_equiv_pos_to_generator():
-    assert abs(equiv_pos_to_generator('x,y,z') - np.array([[1,0,0,0],[0,1,0,0],[0,0,1,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('y,x,z') - np.array([[0,1,0,0],[1,0,0,0],[0,0,1,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('y,z,x') - np.array([[0,1,0,0],[0,0,1,0],[1,0,0,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('x,-y,-z') - np.array([[1,0,0,0],[0,-1,0,0],[0,0,-1,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('-y,z,x') - np.array([[0,-1,0,0],[0,0,1,0],[1,0,0,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('x+1/2,y,z') - np.array([[1,0,0,0.5],[0,1,0,0],[0,0,1,0]])).max() < 1e-10
-    assert abs(equiv_pos_to_generator('x,y-3/4,z') - np.array([[1,0,0,0],[0,1,0,-0.75],[0,0,1,0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('x,y,z') -
+               np.array([[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('y,x,z') -
+               np.array([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 1, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('y,z,x') -
+               np.array([[0, 1, 0, 0], [0, 0, 1, 0], [1, 0, 0, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('x,-y,-z') -
+               np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('-y,z,x') -
+               np.array([[0, -1, 0, 0], [0, 0, 1, 0], [1, 0, 0, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('x+1/2,y,z') -
+               np.array([[1, 0, 0, 0.5], [0, 1, 0, 0], [0, 0, 1, 0]])).max() < 1e-10
+    assert abs(equiv_pos_to_generator('x,y-3/4,z') -
+               np.array([[1, 0, 0, 0], [0, 1, 0, -0.75], [0, 0, 1, 0]])).max() < 1e-10
 
 
 def check_lta_mol(mol):

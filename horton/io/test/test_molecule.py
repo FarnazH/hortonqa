@@ -31,7 +31,8 @@ def test_typecheck():
     assert issubclass(m.coordinates.dtype.type, float)
     assert not hasattr(m, 'numbers')
     m = IOData(numbers=np.array([2, 3]), coordinates=np.array([[1, 2, 3], [2, 3, 1]]))
-    m = IOData(numbers=np.array([2.0, 3.0]), pseudo_numbers=np.array([1, 1]), coordinates=np.array([[1, 2, 3], [2, 3, 1]]))
+    m = IOData(numbers=np.array([2.0, 3.0]), pseudo_numbers=np.array(
+        [1, 1]), coordinates=np.array([[1, 2, 3], [2, 3, 1]]))
     assert issubclass(m.numbers.dtype.type, int)
     assert issubclass(m.pseudo_numbers.dtype.type, float)
     assert hasattr(m, 'numbers')

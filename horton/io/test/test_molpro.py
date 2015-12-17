@@ -157,7 +157,8 @@ def test_dump_load_fcidimp_consistency_mo_active():
 
     # transform to mo basis and use only active space
     enn = compute_nucnuc(mol0.coordinates, mol0.pseudo_numbers)
-    mol0.one_mo, mol0.two_mo, mol0.core_energy = split_core_active(one, two, enn, mol0.exp_alpha, 2, 4)
+    mol0.one_mo, mol0.two_mo, mol0.core_energy = split_core_active(
+        one, two, enn, mol0.exp_alpha, 2, 4)
     mol0.one_mo.symmetrize()
     mol0.two_mo.symmetrize()
     mol0.nelec = 10

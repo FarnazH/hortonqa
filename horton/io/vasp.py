@@ -60,7 +60,7 @@ def _load_vasp_header(f, nskip):
     rvecs = []
     for i in xrange(3):
         rvecs.append([float(w) for w in f.next().split()])
-    rvecs = np.array(rvecs)*angstrom
+    rvecs = np.array(rvecs) * angstrom
 
     # Convert to cell object
     cell = Cell(rvecs)
@@ -69,7 +69,7 @@ def _load_vasp_header(f, nskip):
     vasp_counts = [int(w) for w in f.next().split()]
     numbers = []
     for n, c in zip(vasp_numbers, vasp_counts):
-        numbers.extend([n]*c)
+        numbers.extend([n] * c)
     numbers = np.array(numbers)
 
     # skip some lines
@@ -125,7 +125,7 @@ def _load_vasp_grid(filename):
         'coordinates': coordinates,
         'numbers': numbers,
         'cell': cell,
-        'grid': UniformGrid(np.zeros(3), cell.rvecs/shape.reshape(-1,1), shape, np.ones(3, int)),
+        'grid': UniformGrid(np.zeros(3), cell.rvecs / shape.reshape(-1, 1), shape, np.ones(3, int)),
         'cube_data': cube_data,
     }
 
@@ -205,7 +205,7 @@ def dump_poscar(filename, data):
         # Write cell vectors, each row is one vector in angstrom:
         rvecs = data.cell.rvecs
         for rvec in rvecs:
-            print >> f, '  % 21.16f % 21.16f % 21.16f' % tuple(rvec/angstrom)
+            print >> f, '  % 21.16f % 21.16f % 21.16f' % tuple(rvec / angstrom)
 
         # Construct list of elements to make sure the coordinates get written
         # in this order. Heaviest elements are put furst.

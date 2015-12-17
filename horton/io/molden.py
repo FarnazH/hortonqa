@@ -51,7 +51,7 @@ def _get_molden_permutation(obasis, reverse=False):
             rule = reverse_rule
         if rule is None:
             rule = np.arange(get_shell_nbasis(shell_type))
-        permutation.extend(rule+len(permutation))
+        permutation.extend(rule + len(permutation))
     return np.array(permutation, dtype=int)
 
 
@@ -88,9 +88,8 @@ def load_molden(filename, lf):
                 numbers.append(int(words[2]))
                 coordinates.append([float(words[3]), float(words[4]), float(words[5])])
         numbers = np.array(numbers, int)
-        coordinates = np.array(coordinates)*cunit
+        coordinates = np.array(coordinates) * cunit
         return numbers, coordinates
-
 
     def helper_obasis(f, coordinates, pure):
         '''Load the orbital basis'''
@@ -113,7 +112,7 @@ def load_molden(filename, lf):
                 in_atom = False
                 in_shell = False
             elif len(words) == 2 and not in_atom:
-                icenter = int(words[0])-1
+                icenter = int(words[0]) - 1
                 in_atom = True
                 in_shell = False
             elif len(words) == 3:
@@ -140,7 +139,6 @@ def load_molden(filename, lf):
         alphas = np.array(alphas)
         con_coeffs = np.array(con_coeffs)
         return GOBasis(coordinates, shell_map, nprims, shell_types, alphas, con_coeffs)
-
 
     def helper_coeffs(f, nbasis):
         '''Load the orbital coefficients'''
@@ -180,7 +178,8 @@ def load_molden(filename, lf):
                         occ_beta.append(occ)
                     new_orb = False
                     if icoeff < nbasis:
-                        raise IOError('Too little expansions coefficients in one orbital in molden file.')
+                        raise IOError(
+                            'Too little expansions coefficients in one orbital in molden file.')
                     icoeff = 0
                 words = line.split()
                 if icoeff >= nbasis:
@@ -265,14 +264,15 @@ def load_molden(filename, lf):
         raise IOError('Alpha orbitals not found in molden input file.')
 
     if lf.default_nbasis is not None and lf.default_nbasis != obasis.nbasis:
-        raise TypeError('The value of lf.default_nbasis does not match nbasis reported in the molden.input file.')
+        raise TypeError(
+            'The value of lf.default_nbasis does not match nbasis reported in the molden.input file.')
     lf.default_nbasis = obasis.nbasis
     if coeff_beta is None:
-        nalpha = int(np.round(occ_alpha.sum()))/2
+        nalpha = int(np.round(occ_alpha.sum())) / 2
         exp_alpha = lf.create_expansion(obasis.nbasis, coeff_alpha.shape[1])
         exp_alpha.coeffs[:] = coeff_alpha
         exp_alpha.energies[:] = ener_alpha
-        exp_alpha.occupations[:] = occ_alpha/2
+        exp_alpha.occupations[:] = occ_alpha / 2
         exp_beta = None
     else:
         nalpha = int(np.round(occ_alpha.sum()))
@@ -348,18 +348,18 @@ def _is_normalized_properly(lf, obasis, permutation, exp_alpha, exp_beta, signs=
     # the largest deviation from unity
     error_max = 0.0
     for iorb in xrange(exp_alpha.nfn):
-        vec = exp_alpha._coeffs[:,iorb]*signs
+        vec = exp_alpha._coeffs[:, iorb] * signs
         if permutation is not None:
             vec = vec[permutation]
         norm = olp.inner(vec, vec)
-        error_max = max(error_max, abs(norm-1))
+        error_max = max(error_max, abs(norm - 1))
     if exp_beta is not None:
         for iorb in xrange(exp_beta.nfn):
-            vec = (exp_beta._coeffs[:,iorb]*signs)
+            vec = (exp_beta._coeffs[:, iorb] * signs)
             if permutation is not None:
                 vec = vec[permutation]
             norm = olp.inner(vec, vec)
-            error_max = max(error_max, abs(norm-1))
+            error_max = max(error_max, abs(norm - 1))
     # final judgement
     return error_max <= threshold
 
@@ -373,18 +373,18 @@ def _get_orca_signs(obasis):
             An instance of GOBasis.
     '''
     sign_rules = {
-      -4: [1,1,1,1,1,-1,-1,-1,-1],
-      -3: [1,1,1,1,1,-1,-1],
-      -2: [1,1,1,1,1],
+      -4: [1, 1, 1, 1, 1, -1, -1, -1, -1],
+      -3: [1, 1, 1, 1, 1, -1, -1],
+      -2: [1, 1, 1, 1, 1],
        0: [1],
-       1: [1,1,1],
+       1: [1, 1, 1],
     }
     signs = []
     for shell_type in obasis.shell_types:
         if shell_type in sign_rules:
             signs.extend(sign_rules[shell_type])
         else:
-            signs.extend([1]*get_shell_nbasis(shell_type))
+            signs.extend([1] * get_shell_nbasis(shell_type))
     return np.array(signs, dtype=int)
 
 
@@ -408,19 +408,19 @@ def _get_fixed_con_coeffs(obasis, mode):
         for ialpha in xrange(obasis.nprims[ishell]):
             alpha = obasis.alphas[iprim]
             if shell_type == 0:
-                scale = gob_cart_normalization(alpha, np.array([0,0,0]))
+                scale = gob_cart_normalization(alpha, np.array([0, 0, 0]))
             elif shell_type == 1:
-                scale = gob_cart_normalization(alpha, np.array([1,0,0]))
+                scale = gob_cart_normalization(alpha, np.array([1, 0, 0]))
             elif shell_type == -2:
-                scale = gob_cart_normalization(alpha, np.array([1,1,0]))
+                scale = gob_cart_normalization(alpha, np.array([1, 1, 0]))
                 if mode == 'psi4':
                     scale /= np.sqrt(3)
             elif shell_type == -3:
-                scale = gob_cart_normalization(alpha, np.array([1,1,1]))
+                scale = gob_cart_normalization(alpha, np.array([1, 1, 1]))
                 if mode == 'psi4':
                     scale /= np.sqrt(15)
             elif shell_type == -4:
-                scale = gob_cart_normalization(alpha, np.array([2,1,1]))
+                scale = gob_cart_normalization(alpha, np.array([2, 1, 1]))
                 if mode == 'psi4':
                     scale /= np.sqrt(105)
             else:
@@ -453,7 +453,8 @@ def _fix_molden_from_buggy_codes(result, filename):
     # Try to fix it as if it was a file generated by ORCA.
     orca_signs = _get_orca_signs(obasis)
     orca_con_coeffs = _get_fixed_con_coeffs(obasis, 'orca')
-    orca_obasis = GOBasis(obasis.centers, obasis.shell_map, obasis.nprims, obasis.shell_types, obasis.alphas, orca_con_coeffs)
+    orca_obasis = GOBasis(obasis.centers, obasis.shell_map, obasis.nprims,
+                          obasis.shell_types, obasis.alphas, orca_con_coeffs)
     if _is_normalized_properly(result['lf'], orca_obasis, permutation, result['exp_alpha'], result.get('exp_beta'), orca_signs):
         if log.do_medium:
             log('Detected typical ORCA errors in file. Fixing them...')
@@ -462,7 +463,8 @@ def _fix_molden_from_buggy_codes(result, filename):
         return
     # Try to fix it as if it was a file generated by PSI4.
     psi4_con_coeffs = _get_fixed_con_coeffs(obasis, 'psi4')
-    psi4_obasis = GOBasis(obasis.centers, obasis.shell_map, obasis.nprims, obasis.shell_types, obasis.alphas, psi4_con_coeffs)
+    psi4_obasis = GOBasis(obasis.centers, obasis.shell_map, obasis.nprims,
+                          obasis.shell_types, obasis.alphas, psi4_con_coeffs)
     if _is_normalized_properly(result['lf'], psi4_obasis, permutation, result['exp_alpha'], result.get('exp_beta')):
         if log.do_medium:
             log('Detected typical PSI4 errors in file. Fixing them...')
@@ -501,7 +503,7 @@ def dump_molden(filename, data):
             number = data.numbers[i]
             x, y, z = data.coordinates[i]
             print >> f, '%2s %3i %3i  %25.18f %25.18f %25.18f' % (
-                periodic[number].symbol.ljust(2), i+1, number, x, y, z
+                periodic[number].symbol.ljust(2), i + 1, number, x, y, z
             )
 
         # Print the basis set
@@ -566,14 +568,15 @@ def dump_molden(filename, data):
 
             print >> f, '[GTO]'
             for icenter in xrange(data.obasis.ncenter):
-                print >> f, '%3i 0' % (icenter+1)
+                print >> f, '%3i 0' % (icenter + 1)
                 for sts, prims in centers[icenter]:
                     print >> f, '%1s %3i 1.0' % (sts, len(prims))
                     for alpha, con_coeff in prims:
                         print >> f, '%20.10f %20.10f' % (alpha, con_coeff)
                 print >> f
         else:
-            raise NotImplementedError('A Gaussian orbital basis is required to write a molden input file.')
+            raise NotImplementedError(
+                'A Gaussian orbital basis is required to write a molden input file.')
 
         def helper_exp(spin, occ_scale=1.0):
             exp = getattr(data, 'exp_%s' % spin)
@@ -581,9 +584,9 @@ def dump_molden(filename, data):
                 print >> f, ' Sym=     1a'
                 print >> f, ' Ene= %20.14E' % exp.energies[ifn]
                 print >> f, ' Spin= %s' % spin.capitalize()
-                print >> f, ' Occup= %8.6f' % (exp.occupations[ifn]*occ_scale)
+                print >> f, ' Occup= %8.6f' % (exp.occupations[ifn] * occ_scale)
                 for ibasis in xrange(exp.nbasis):
-                    print >> f, '%3i %20.12f' % (ibasis+1, exp.coeffs[permutation[ibasis],ifn])
+                    print >> f, '%3i %20.12f' % (ibasis + 1, exp.coeffs[permutation[ibasis], ifn])
 
         # Construct the permutation of the basis functions
         permutation = _get_molden_permutation(data.obasis, reverse=True)

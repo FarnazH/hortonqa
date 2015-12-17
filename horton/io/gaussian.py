@@ -57,7 +57,8 @@ def load_operators_g09(fn, lf):
                 nbasis = int(line[12:18])
                 break
         if lf.default_nbasis is not None and lf.default_nbasis != nbasis:
-            raise TypeError('The value of lf.default_nbasis does not match nbasis reported in the log file.')
+            raise TypeError(
+                'The value of lf.default_nbasis does not match nbasis reported in the log file.')
         lf.default_nbasis = nbasis
 
         # Then load the one- and four-index operators. This part is written such
@@ -103,7 +104,7 @@ def _load_twoindex_g09(f, nbasis, lf):
             words = f.next().split()[1:]
             for j in xrange(len(words)):
                 value = float(words[j].replace('D', 'E'))
-                result.set_element(i+block_counter, j+block_counter, value)
+                result.set_element(i + block_counter, j + block_counter, value)
         block_counter += 5
     return result
 
@@ -132,11 +133,11 @@ def _load_fourindex_g09(f, nbasis, lf):
         line = f.next()
         if not line.startswith(' I='):
             break
-        #print line[3:7], line[9:13], line[15:19], line[21:25], line[28:].replace('D', 'E')
-        i = int(line[3:7])-1
-        j = int(line[9:13])-1
-        k = int(line[15:19])-1
-        l = int(line[21:25])-1
+        # print line[3:7], line[9:13], line[15:19], line[21:25], line[28:].replace('D', 'E')
+        i = int(line[3:7]) - 1
+        j = int(line[9:13]) - 1
+        k = int(line[15:19]) - 1
+        l = int(line[21:25]) - 1
         value = float(line[29:].replace('D', 'E'))
         # Gaussian uses the chemists notation for the 4-center indexes. HORTON
         # uses the physicists notation.
@@ -145,6 +146,7 @@ def _load_fourindex_g09(f, nbasis, lf):
 
 
 class FCHKFile(dict):
+
     """Reader for Formatted checkpoint files
 
        After initialization, the data from the file is available in the fields
@@ -206,7 +208,8 @@ class FCHKFile(dict):
                     return True
             elif len(words) == 3:
                 if words[1] != "N=":
-                    raise IOError("Unexpected line in formatted checkpoint file %s\n%s" % (filename, line[:-1]))
+                    raise IOError(
+                        "Unexpected line in formatted checkpoint file %s\n%s" % (filename, line[:-1]))
                 length = int(words[2])
                 value = np.zeros(length, datatype)
                 counter = 0
@@ -214,17 +217,20 @@ class FCHKFile(dict):
                     while counter < length:
                         line = f.readline()
                         if line == "":
-                            raise IOError("Unexpected end of formatted checkpoint file %s" % filename)
+                            raise IOError(
+                                "Unexpected end of formatted checkpoint file %s" % filename)
                         for word in line.split():
                             try:
                                 value[counter] = datatype(word)
                             except (ValueError, OverflowError), e:
-                                raise IOError('Could not interpret word while reading %s: %s' % (word, filename))
+                                raise IOError(
+                                    'Could not interpret word while reading %s: %s' % (word, filename))
                             counter += 1
                 except ValueError:
                     return True
             else:
-                raise IOError("Unexpected line in formatted checkpoint file %s\n%s" % (filename, line[:-1]))
+                raise IOError("Unexpected line in formatted checkpoint file %s\n%s" %
+                              (filename, line[:-1]))
 
             self[label] = value
             return True
@@ -257,13 +263,13 @@ def triangle_to_dense(triangle):
 
        **Returns:** a square symmetrix matrix.
     '''
-    nrow = int(np.round((np.sqrt(1+8*len(triangle))-1)/2))
+    nrow = int(np.round((np.sqrt(1 + 8 * len(triangle)) - 1) / 2))
     result = np.zeros((nrow, nrow))
     begin = 0
     for irow in xrange(nrow):
         end = begin + irow + 1
-        result[irow,:irow+1] = triangle[begin:end]
-        result[:irow+1,irow] = triangle[begin:end]
+        result[irow, :irow + 1] = triangle[begin:end]
+        result[:irow + 1, irow] = triangle[begin:end]
         begin = end
     return result
 
@@ -311,7 +317,7 @@ def load_fchk(filename, lf):
 
     # A) Load the geometry
     numbers = fchk["Atomic numbers"]
-    coordinates = fchk["Current cartesian coordinates"].reshape(-1,3)
+    coordinates = fchk["Current cartesian coordinates"].reshape(-1, 3)
     pseudo_numbers = fchk["Nuclear charges"]
     # Mask out ghost atoms
     mask = pseudo_numbers != 0.0
@@ -343,16 +349,16 @@ def load_fchk(filename, lf):
             my_shell_map.append(shell_map[i])
             my_nprims.append(nprims[i])
             my_nprims.append(nprims[i])
-            my_alphas.append(alphas[counter:counter+n])
-            my_alphas.append(alphas[counter:counter+n])
-            con_coeffs.append(ccoeffs_level1[counter:counter+n])
-            con_coeffs.append(ccoeffs_level2[counter:counter+n])
+            my_alphas.append(alphas[counter:counter + n])
+            my_alphas.append(alphas[counter:counter + n])
+            con_coeffs.append(ccoeffs_level1[counter:counter + n])
+            con_coeffs.append(ccoeffs_level2[counter:counter + n])
         else:
             my_shell_types.append(shell_types[i])
             my_shell_map.append(shell_map[i])
             my_nprims.append(nprims[i])
-            my_alphas.append(alphas[counter:counter+n])
-            con_coeffs.append(ccoeffs_level1[counter:counter+n])
+            my_alphas.append(alphas[counter:counter + n])
+            con_coeffs.append(ccoeffs_level1[counter:counter + n])
         counter += n
     my_shell_types = np.array(my_shell_types)
     my_shell_map = np.array(my_shell_map)
@@ -366,7 +372,8 @@ def load_fchk(filename, lf):
 
     obasis = GOBasis(coordinates, my_shell_map, my_nprims, my_shell_types, my_alphas, con_coeffs)
     if lf.default_nbasis is not None and lf.default_nbasis != obasis.nbasis:
-        raise TypeError('The value of lf.default_nbasis does not match nbasis reported in the fchk file.')
+        raise TypeError(
+            'The value of lf.default_nbasis does not match nbasis reported in the fchk file.')
     lf.default_nbasis = obasis.nbasis
 
     # permutation of the orbital basis functions
@@ -392,7 +399,7 @@ def load_fchk(filename, lf):
     }
     permutation = []
     for shell_type in my_shell_types:
-        permutation.extend(permutation_rules[shell_type]+len(permutation))
+        permutation.extend(permutation_rules[shell_type] + len(permutation))
     permutation = np.array(permutation, dtype=int)
 
     result = {
@@ -411,9 +418,9 @@ def load_fchk(filename, lf):
             dm = lf.create_two_index(obasis.nbasis)
             start = 0
             for i in xrange(obasis.nbasis):
-                stop = start+i+1
-                dm._array[i,:i+1] = fchk[label][start:stop]
-                dm._array[:i+1,i] = fchk[label][start:stop]
+                stop = start + i + 1
+                dm._array[i, :i + 1] = fchk[label][start:stop]
+                dm._array[:i + 1, i] = fchk[label][start:stop]
                 start = stop
             return dm
 
@@ -430,14 +437,14 @@ def load_fchk(filename, lf):
     # D) Load the wavefunction
     # Handle small difference in fchk files from g03 and g09
     nbasis_indep = fchk.get("Number of independant functions") or \
-                   fchk.get("Number of independent functions")
+        fchk.get("Number of independent functions")
     if nbasis_indep is None:
         nbasis_indep = obasis.nbasis
 
     # Load orbitals
     nalpha = fchk['Number of alpha electrons']
     nbeta = fchk['Number of beta electrons']
-    if nalpha < 0 or nbeta < 0 or nalpha+nbeta <= 0:
+    if nalpha < 0 or nbeta < 0 or nalpha + nbeta <= 0:
         raise ValueError('The file %s does not contain a positive number of electrons.' % filename)
     exp_alpha = lf.create_expansion(obasis.nbasis, nbasis_indep)
     exp_alpha.coeffs[:] = fchk['Alpha MO coefficients'].reshape(nbasis_indep, obasis.nbasis).T

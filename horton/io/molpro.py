@@ -66,13 +66,14 @@ def load_fcidump(filename, lf):
         nelec = int(header_info['NELEC'])
         ms2 = int(header_info['MS2'])
         if lf.default_nbasis is not None and lf.default_nbasis != nbasis:
-            raise TypeError('The value of lf.default_nbasis does not match NORB reported in the FCIDUMP file.')
+            raise TypeError(
+                'The value of lf.default_nbasis does not match NORB reported in the FCIDUMP file.')
         lf.default_nbasis = nbasis
 
         # skip rest of header
         for line in f:
             words = line.split()
-            if words[0] == "&END" or words[0] == "/END" or words[0]=="/":
+            if words[0] == "&END" or words[0] == "/END" or words[0] == "/":
                 break
 
         # read the integrals
@@ -85,18 +86,18 @@ def load_fcidump(filename, lf):
             if len(words) != 5:
                 raise IOError('Expecting 5 fields on each data line in FCIDUMP')
             if words[3] != '0':
-                ii = int(words[1])-1
-                ij = int(words[2])-1
-                ik = int(words[3])-1
-                il = int(words[4])-1
+                ii = int(words[1]) - 1
+                ij = int(words[2]) - 1
+                ik = int(words[3]) - 1
+                il = int(words[4]) - 1
                 # Uncomment the following line if you want to assert that the
                 # FCIDUMP file does not contain duplicate 4-index entries.
                 #assert two_mo.get_element(ii,ik,ij,il) == 0.0
-                two_mo.set_element(ii,ik,ij,il,float(words[0]))
+                two_mo.set_element(ii, ik, ij, il, float(words[0]))
             elif words[1] != '0':
-                ii = int(words[1])-1
-                ij = int(words[2])-1
-                one_mo.set_element(ii,ij,float(words[0]))
+                ii = int(words[1]) - 1
+                ij = int(words[2]) - 1
+                one_mo.set_element(ii, ij, float(words[0]))
             else:
                 core_energy = float(words[0])
 
@@ -135,23 +136,24 @@ def dump_fcidump(filename, data):
 
         # Write header
         print >> f, ' &FCI NORB=%i,NELEC=%i,MS2=%i,' % (nactive, nelec, ms2)
-        print >> f, '  ORBSYM= '+",".join(str(1) for v in xrange(nactive))+","
+        print >> f, '  ORBSYM= ' + ",".join(str(1) for v in xrange(nactive)) + ","
         print >> f, '  ISYM=1'
         print >> f, ' &END'
 
         # Write integrals and core energy
         for i in xrange(nactive):
-            for j in xrange(i+1):
+            for j in xrange(i + 1):
                 for k in xrange(nactive):
-                    for l in xrange(k+1):
-                        if (i*(i+1))/2+j >= (k*(k+1))/2+l:
-                            value = two_mo.get_element(i,k,j,l)
+                    for l in xrange(k + 1):
+                        if (i * (i + 1)) / 2 + j >= (k * (k + 1)) / 2 + l:
+                            value = two_mo.get_element(i, k, j, l)
                             if value != 0.0:
-                                print >> f, '%23.16e %4i %4i %4i %4i' % (value, i+1, j+1, k+1, l+1)
+                                print >> f, '%23.16e %4i %4i %4i %4i' % (
+                                    value, i + 1, j + 1, k + 1, l + 1)
         for i in xrange(nactive):
-            for j in xrange(i+1):
-                value = one_mo.get_element(i,j)
+            for j in xrange(i + 1):
+                value = one_mo.get_element(i, j)
                 if value != 0.0:
-                    print >> f, '%23.16e %4i %4i %4i %4i' % (value, i+1, j+1, 0, 0)
+                    print >> f, '%23.16e %4i %4i %4i %4i' % (value, i + 1, j + 1, 0, 0)
         if core_energy != 0.0:
             print >> f, '%23.16e %4i %4i %4i %4i' % (core_energy, 0, 0, 0, 0)

@@ -21,8 +21,8 @@
 '''Crystalographic Information File format'''
 
 
-
-import shlex, numpy as np
+import shlex
+import numpy as np
 
 from horton.units import angstrom, deg
 from horton.periodic import periodic
@@ -56,12 +56,12 @@ def dump_cif(filename, data):
         print >> f, '_symmetry_equiv_pos_as_xyz'
         print >> f, '  x,y,z'
         lengths, angles = data.cell.parameters
-        print >> f, '_cell_length_a     %12.6f' % (lengths[0]/angstrom)
-        print >> f, '_cell_length_b     %12.6f' % (lengths[1]/angstrom)
-        print >> f, '_cell_length_c     %12.6f' % (lengths[2]/angstrom)
-        print >> f, '_cell_angle_alpha  %12.6f' % (angles[0]/deg)
-        print >> f, '_cell_angle_beta   %12.6f' % (angles[1]/deg)
-        print >> f, '_cell_angle_gamma  %12.6f' % (angles[2]/deg)
+        print >> f, '_cell_length_a     %12.6f' % (lengths[0] / angstrom)
+        print >> f, '_cell_length_b     %12.6f' % (lengths[1] / angstrom)
+        print >> f, '_cell_length_c     %12.6f' % (lengths[2] / angstrom)
+        print >> f, '_cell_angle_alpha  %12.6f' % (angles[0] / deg)
+        print >> f, '_cell_angle_beta   %12.6f' % (angles[1] / deg)
+        print >> f, '_cell_angle_gamma  %12.6f' % (angles[2] / deg)
         print >> f, 'loop_'
         print >> f, '_atom_site_label'
         print >> f, '_atom_site_type_symbol'
@@ -71,16 +71,18 @@ def dump_cif(filename, data):
         for i in xrange(data.natom):
             fx, fy, fz = data.cell.to_frac(data.coordinates[i])
             symbol = periodic[data.numbers[i]].symbol
-            label = symbol+str(i+1)
+            label = symbol + str(i + 1)
             print >> f, '%10s %3s % 12.6f % 12.6f % 12.6f' % (label, symbol, fx, fy, fz)
 
 
 class IterRelevantCIFLines(object):
+
     '''A wrapper that reads lines from the CIF file.
 
        Irrelevant lines are ignored and a rewind method is present such that
        one can easily 'undo' a line read.
     '''
+
     def __init__(self, f):
         '''
            **Arguments:**
@@ -184,7 +186,6 @@ def _load_cif_table(irl):
     return headings, rows
 
 
-
 def _load_cif_low(fn_cif):
     '''Read the title and all the field arrays from the CIF file.
 
@@ -229,7 +230,7 @@ def _load_cif_low(fn_cif):
             elif line.startswith('loop_'):
                 tables.append(_load_cif_table(irl))
             # Just ignore lines that are not fit
-            #else:
+            # else:
             #    print line
             #    raise NotImplementedError
 
@@ -254,15 +255,17 @@ def iter_equiv_pos_terms(comp):
        'y-1/2' will yield to 2-tuples: (+1, 'y'), (-1, '1/2')
     '''
     # remove all white space first:
-    comp = comp.replace(' ','')
+    comp = comp.replace(' ', '')
     while len(comp) > 0:
-        sign = 1-2*(comp[0]=='-')
+        sign = 1 - 2 * (comp[0] == '-')
         if comp[0] in '+-':
             comp = comp[1:]
         pos_p = comp.find('+')
         pos_m = comp.find('-')
-        if pos_p < 0: pos_p += len(comp)+1
-        if pos_m < 0: pos_m += len(comp)+1
+        if pos_p < 0:
+            pos_p += len(comp) + 1
+        if pos_m < 0:
+            pos_m += len(comp) + 1
         end = min(pos_p, pos_m)
         yield sign, comp[:end]
         comp = comp[end:]
@@ -283,10 +286,10 @@ def equiv_pos_to_generator(s):
     for index, comp in enumerate(s.split(',')):
         for sign, term in iter_equiv_pos_terms(comp):
             if term in 'xyz':
-                g[index,'xyz'.find(term)] = sign
+                g[index, 'xyz'.find(term)] = sign
             else:
                 nom, denom = term.split('/')
-                g[index,3] = sign*float(nom)/float(denom)
+                g[index, 3] = sign * float(nom) / float(denom)
 
     return g
 
@@ -319,8 +322,10 @@ def load_cif(filename, lf):
 
     prim_numbers = np.array([periodic[symbol].number for symbol in fields['atom_site_type_symbol']])
 
-    lengths = np.array([fields['cell_length_a'], fields['cell_length_b'], fields['cell_length_c']])*angstrom
-    angles = np.array([fields['cell_angle_alpha'], fields['cell_angle_beta'], fields['cell_angle_gamma']])*deg
+    lengths = np.array(
+        [fields['cell_length_a'], fields['cell_length_b'], fields['cell_length_c']]) * angstrom
+    angles = np.array(
+        [fields['cell_angle_alpha'], fields['cell_angle_beta'], fields['cell_angle_gamma']]) * deg
     cell = Cell.from_parameters(lengths, angles)
 
     prim_labels = fields['atom_site_label']

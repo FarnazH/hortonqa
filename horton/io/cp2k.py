@@ -52,7 +52,7 @@ def _helper_norb(oe):
     norb = 0
     nel = 0
     for l, s, occ, ener in oe:
-        norb += 2*l+1
+        norb += 2 * l + 1
         nel += occ
     return norb, nel
 
@@ -64,7 +64,7 @@ def _helper_exp(exp, oe, coeffs, shell_types, restricted):
     ls = abs(shell_types)
     for l in sorted(set(ls)):
         offsets.append(offset)
-        offset += (2*l+1)*(l == ls).sum()
+        offset += (2 * l + 1) * (l == ls).sum()
     del offset
 
     # Fill in the coefficients
@@ -74,21 +74,21 @@ def _helper_exp(exp, oe, coeffs, shell_types, restricted):
         if cs is None:
             assert occ == 0
             continue
-        stride = 2*l+1
-        for m in xrange(-l, l+1):
+        stride = 2 * l + 1
+        for m in xrange(-l, l + 1):
             im = m + l
             exp.energies[iorb] = ener
-            exp.occupations[iorb] = im < occ/(restricted+1)
+            exp.occupations[iorb] = im < occ / (restricted + 1)
             for ic in xrange(len(cs)):
-                exp.coeffs[offsets[l] + stride*ic + im,iorb] = cs[ic]
+                exp.coeffs[offsets[l] + stride * ic + im, iorb] = cs[ic]
             iorb += 1
 
 
 def _get_cp2k_norm_corrections(l, alphas):
-    expzet = 0.25*(2*l + 3)
-    prefac = np.sqrt(np.sqrt(np.pi)/2.0**(l+2)*fac2(2*l+1))
-    zeta = 2*np.array(alphas)
-    return zeta**expzet/prefac
+    expzet = 0.25 * (2 * l + 3)
+    prefac = np.sqrt(np.sqrt(np.pi) / 2.0 ** (l + 2) * fac2(2 * l + 1))
+    zeta = 2 * np.array(alphas)
+    return zeta ** expzet / prefac
 
 
 def load_atom_cp2k(filename, lf):
@@ -115,8 +115,8 @@ def load_atom_cp2k(filename, lf):
             if line.startswith(' Pseudopotential Basis'):
                 break
 
-        f.next() # empty line
-        line = f.next() # Check for GTO
+        f.next()  # empty line
+        line = f.next()  # Check for GTO
         assert line == ' ********************** Contracted Gaussian Type Orbitals **********************\n'
 
         # Load the basis used for the PP wavefn
@@ -144,7 +144,7 @@ def load_atom_cp2k(filename, lf):
         for shell_type, a, c in basis_desc:
             # get correction to contraction coefficients.
             corrections = _get_cp2k_norm_corrections(abs(shell_type), a)
-            c = np.array(c)/corrections.reshape(-1,1)
+            c = np.array(c) / corrections.reshape(-1, 1)
             # fill in arrays
             for col in c.T:
                 shell_map.append(0)
@@ -162,7 +162,8 @@ def load_atom_cp2k(filename, lf):
         con_coeffs = np.array(con_coeffs)
         obasis = GOBasis(coordinates, shell_map, nprims, shell_types, alphas, con_coeffs)
         if lf.default_nbasis is not None and lf.default_nbasis != obasis.nbasis:
-            raise TypeError('The value of lf.default_nbasis does not match nbasis reported in the cp2k.out file.')
+            raise TypeError(
+                'The value of lf.default_nbasis does not match nbasis reported in the cp2k.out file.')
         lf.default_nbasis = obasis.nbasis
 
         # Search for (un)restricted
@@ -207,9 +208,9 @@ def load_atom_cp2k(filename, lf):
                 continue
             empty = 0
             s = int(words[0])
-            l = int(words[2-restricted])
-            occ = float(words[3-restricted])
-            ener = float(words[4-restricted])
+            l = int(words[2 - restricted])
+            occ = float(words[3 - restricted])
+            ener = float(words[4 - restricted])
             if restricted or words[1] == 'alpha':
                 oe_alpha.append((l, s, occ, ener))
             else:
@@ -228,11 +229,10 @@ def load_atom_cp2k(filename, lf):
 
             coeffs_beta = _read_coeffs_helper(f, oe_beta)
 
-
         # Turn orbital data into a HORTON orbital expansions
         if restricted:
             norb, nel = _helper_norb(oe_alpha)
-            assert nel%2 == 0
+            assert nel % 2 == 0
             exp_alpha = lf.create_expansion(obasis.nbasis, norb)
             exp_beta = None
             _helper_exp(exp_alpha, oe_alpha, coeffs_alpha, shell_types, restricted)

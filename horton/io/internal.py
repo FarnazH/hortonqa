@@ -21,7 +21,8 @@
 '''HORTON internal file format'''
 
 
-import numpy as np, h5py as h5
+import numpy as np
+import h5py as h5
 from horton.io.lockedh5 import LockedH5File
 
 

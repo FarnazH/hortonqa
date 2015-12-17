@@ -43,8 +43,8 @@ def check_water(mol):
     assert mol.numbers[0] == 1
     assert mol.numbers[1] == 8
     assert mol.numbers[2] == 1
-    assert abs(np.linalg.norm(mol.coordinates[0] - mol.coordinates[1])/angstrom - 0.96) < 1e-5
-    assert abs(np.linalg.norm(mol.coordinates[2] - mol.coordinates[1])/angstrom - 0.96) < 1e-5
+    assert abs(np.linalg.norm(mol.coordinates[0] - mol.coordinates[1]) / angstrom - 0.96) < 1e-5
+    assert abs(np.linalg.norm(mol.coordinates[2] - mol.coordinates[1]) / angstrom - 0.96) < 1e-5
 
 
 def test_load_dump_consistency():

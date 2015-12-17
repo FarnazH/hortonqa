@@ -48,9 +48,9 @@ def load_xyz(filename):
     for i in xrange(size):
         words = f.next().split()
         numbers[i] = periodic[words[0]].number
-        coordinates[i,0] = float(words[1])*angstrom
-        coordinates[i,1] = float(words[2])*angstrom
-        coordinates[i,2] = float(words[3])*angstrom
+        coordinates[i, 0] = float(words[1]) * angstrom
+        coordinates[i, 1] = float(words[2]) * angstrom
+        coordinates[i, 2] = float(words[3]) * angstrom
     f.close()
     return {
         'title': title,
@@ -77,5 +77,5 @@ def dump_xyz(filename, data):
         print >> f, getattr(data, 'title', 'Created with HORTON')
         for i in xrange(data.natom):
             n = periodic[data.numbers[i]].symbol
-            x, y, z = data.coordinates[i]/angstrom
+            x, y, z = data.coordinates[i] / angstrom
             print >> f, '%2s %15.10f %15.10f %15.10f' % (n, x, y, z)

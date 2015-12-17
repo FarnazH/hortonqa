@@ -53,7 +53,7 @@ def _read_cube_header(f):
     shape = np.array([shape0, shape1, shape2], int)
     axes = np.array([axis0, axis1, axis2])
 
-    cell = Cell(axes*shape.reshape(-1,1))
+    cell = Cell(axes * shape.reshape(-1, 1))
     ugrid = UniformGrid(origin, axes, shape, np.ones(3, int))
 
     def read_coordinate_line(line):
@@ -138,7 +138,7 @@ def _write_cube_data(f, cube_data):
     counter = 0
     for value in cube_data.flat:
         f.write(' % 12.5E' % value)
-        if counter%6 == 5:
+        if counter % 6 == 5:
             f.write('\n')
         counter += 1
 

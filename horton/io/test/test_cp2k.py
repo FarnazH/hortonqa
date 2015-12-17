@@ -41,10 +41,10 @@ def test_atom_si_uks():
     olp = mol.obasis.compute_overlap(mol.lf)
     ca = mol.exp_alpha.coeffs
     cb = mol.exp_beta.coeffs
-    assert abs(np.diag(olp._array[:2,:2]) - np.array([0.42921199338707744, 0.32067871530183140])).max() < 1e-5
+    assert abs(np.diag(olp._array[:2, :2]) -
+               np.array([0.42921199338707744, 0.32067871530183140])).max() < 1e-5
     assert abs(np.dot(ca.T, np.dot(olp._array, ca)) - np.identity(4)).max() < 1e-5
     assert abs(np.dot(cb.T, np.dot(olp._array, cb)) - np.identity(4)).max() < 1e-5
-
 
 
 def test_atom_o_rks():

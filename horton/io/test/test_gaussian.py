@@ -42,25 +42,25 @@ def test_load_operators_water_sto3g_hf_g03():
     nuclear_attraction = result['na']
     electronic_repulsion = result['er']
 
-    assert abs(overlap.get_element(0,0) - 1.0) < eps
-    assert abs(overlap.get_element(0,1) - 0.236704) < eps
-    assert abs(overlap.get_element(0,2) - 0.0) < eps
-    assert abs(overlap.get_element(-1,-3) - (-0.13198)) < eps
+    assert abs(overlap.get_element(0, 0) - 1.0) < eps
+    assert abs(overlap.get_element(0, 1) - 0.236704) < eps
+    assert abs(overlap.get_element(0, 2) - 0.0) < eps
+    assert abs(overlap.get_element(-1, -3) - (-0.13198)) < eps
 
-    assert abs(kinetic.get_element(2,0) - 0.0) < eps
-    assert abs(kinetic.get_element(4,4) - 2.52873) < eps
-    assert abs(kinetic.get_element(-1,5) - 0.00563279) < eps
-    assert abs(kinetic.get_element(-1,-3) - (-0.0966161)) < eps
+    assert abs(kinetic.get_element(2, 0) - 0.0) < eps
+    assert abs(kinetic.get_element(4, 4) - 2.52873) < eps
+    assert abs(kinetic.get_element(-1, 5) - 0.00563279) < eps
+    assert abs(kinetic.get_element(-1, -3) - (-0.0966161)) < eps
 
-    assert abs(nuclear_attraction.get_element(3,3) - 9.99259) < eps
-    assert abs(nuclear_attraction.get_element(-2,-1) - 1.55014) < eps
-    assert abs(nuclear_attraction.get_element(2,6) - 2.76941) < eps
-    assert abs(nuclear_attraction.get_element(0,3) - 0.0) < eps
+    assert abs(nuclear_attraction.get_element(3, 3) - 9.99259) < eps
+    assert abs(nuclear_attraction.get_element(-2, -1) - 1.55014) < eps
+    assert abs(nuclear_attraction.get_element(2, 6) - 2.76941) < eps
+    assert abs(nuclear_attraction.get_element(0, 3) - 0.0) < eps
 
-    assert abs(electronic_repulsion.get_element(0,0,0,0) - 4.78506575204) < eps
-    assert abs(electronic_repulsion.get_element(6,6,6,6) - 0.774605944194) < eps
-    assert abs(electronic_repulsion.get_element(6,5,0,5) - 0.0289424337101) < eps
-    assert abs(electronic_repulsion.get_element(5,4,0,1) - 0.00274145291476) < eps
+    assert abs(electronic_repulsion.get_element(0, 0, 0, 0) - 4.78506575204) < eps
+    assert abs(electronic_repulsion.get_element(6, 6, 6, 6) - 0.774605944194) < eps
+    assert abs(electronic_repulsion.get_element(6, 5, 0, 5) - 0.0289424337101) < eps
+    assert abs(electronic_repulsion.get_element(5, 4, 0, 1) - 0.00274145291476) < eps
 
 
 def test_load_operators_water_ccpvdz_pure_hf_g03():
@@ -80,26 +80,26 @@ def test_load_operators_water_ccpvdz_pure_hf_g03():
             assert op.nbasis == 24
             assert op.is_symmetric()
 
-    assert abs(overlap.get_element(0,0) - 1.0) < eps
-    assert abs(overlap.get_element(0,1) - 0.214476) < eps
-    assert abs(overlap.get_element(0,2) - 0.183817) < eps
-    assert abs(overlap.get_element(10,16) - 0.380024) < eps
-    assert abs(overlap.get_element(-1,-3) - 0.000000) < eps
+    assert abs(overlap.get_element(0, 0) - 1.0) < eps
+    assert abs(overlap.get_element(0, 1) - 0.214476) < eps
+    assert abs(overlap.get_element(0, 2) - 0.183817) < eps
+    assert abs(overlap.get_element(10, 16) - 0.380024) < eps
+    assert abs(overlap.get_element(-1, -3) - 0.000000) < eps
 
-    assert abs(kinetic.get_element(2,0) - 0.160648) < eps
-    assert abs(kinetic.get_element(11,11) - 4.14750) < eps
-    assert abs(kinetic.get_element(-1,5) - (-0.0244025)) < eps
-    assert abs(kinetic.get_element(-1,-6) - (-0.0614899)) < eps
+    assert abs(kinetic.get_element(2, 0) - 0.160648) < eps
+    assert abs(kinetic.get_element(11, 11) - 4.14750) < eps
+    assert abs(kinetic.get_element(-1, 5) - (-0.0244025)) < eps
+    assert abs(kinetic.get_element(-1, -6) - (-0.0614899)) < eps
 
-    assert abs(nuclear_attraction.get_element(3,3) - 12.8806) < eps
-    assert abs(nuclear_attraction.get_element(-2,-1) - 0.0533113) < eps
-    assert abs(nuclear_attraction.get_element(2,6) - 0.173282) < eps
-    assert abs(nuclear_attraction.get_element(-1,0) - 1.24131) < eps
+    assert abs(nuclear_attraction.get_element(3, 3) - 12.8806) < eps
+    assert abs(nuclear_attraction.get_element(-2, -1) - 0.0533113) < eps
+    assert abs(nuclear_attraction.get_element(2, 6) - 0.173282) < eps
+    assert abs(nuclear_attraction.get_element(-1, 0) - 1.24131) < eps
 
-    assert abs(electronic_repulsion.get_element(0,0,0,0) - 4.77005841522) < eps
-    assert abs(electronic_repulsion.get_element(23,23,23,23) - 0.785718708997) < eps
-    assert abs(electronic_repulsion.get_element(23,8,23,2) - (-0.0400337571969)) < eps
-    assert abs(electronic_repulsion.get_element(15,2,12,0) - (-0.0000308196281033)) < eps
+    assert abs(electronic_repulsion.get_element(0, 0, 0, 0) - 4.77005841522) < eps
+    assert abs(electronic_repulsion.get_element(23, 23, 23, 23) - 0.785718708997) < eps
+    assert abs(electronic_repulsion.get_element(23, 8, 23, 2) - (-0.0400337571969)) < eps
+    assert abs(electronic_repulsion.get_element(15, 2, 12, 0) - (-0.0000308196281033)) < eps
 
 
 def test_load_fchk_nonexistent():
@@ -123,9 +123,9 @@ def test_load_fchk_hf_sto3g_num():
     assert coordinates.shape[1] == 3
     assert len(numbers) == 2
     assert energy == -9.856961609951867E+01
-    assert (fields['mulliken_charges'] == [0.45000000E+00 , 4.22300000E+00]).all()
-    assert (fields['npa_charges']== [3.50000000E+00,  1.32000000E+00]).all()
-    assert (fields['esp_charges']==[ 0.77700000E+00,  0.66600000E+00]).all()
+    assert (fields['mulliken_charges'] == [0.45000000E+00, 4.22300000E+00]).all()
+    assert (fields['npa_charges'] == [3.50000000E+00, 1.32000000E+00]).all()
+    assert (fields['esp_charges'] == [0.77700000E+00, 0.66600000E+00]).all()
     assert fields['dm_full_scf'].is_symmetric()
 
 
@@ -195,11 +195,11 @@ def test_load_fchk_water_sto3g_hf():
     assert exp_alpha.nbasis == 7
     assert abs(exp_alpha.energies[0] - (-2.02333942E+01)) < 1e-7
     assert abs(exp_alpha.energies[-1] - 7.66134805E-01) < 1e-7
-    assert abs(exp_alpha.coeffs[0,0] - 0.99410) < 1e-4
-    assert abs(exp_alpha.coeffs[1,0] - 0.02678) < 1e-4
-    assert abs(exp_alpha.coeffs[-1,2] - (-0.44154)) < 1e-4
-    assert abs(exp_alpha.coeffs[3,-1]) < 1e-4
-    assert abs(exp_alpha.coeffs[4,-1] - (-0.82381)) < 1e-4
+    assert abs(exp_alpha.coeffs[0, 0] - 0.99410) < 1e-4
+    assert abs(exp_alpha.coeffs[1, 0] - 0.02678) < 1e-4
+    assert abs(exp_alpha.coeffs[-1, 2] - (-0.44154)) < 1e-4
+    assert abs(exp_alpha.coeffs[3, -1]) < 1e-4
+    assert abs(exp_alpha.coeffs[4, -1] - (-0.82381)) < 1e-4
     assert abs(exp_alpha.occupations.sum() - 5) == 0.0
     assert exp_alpha.occupations.min() == 0.0
     assert exp_alpha.occupations.max() == 1.0
@@ -224,11 +224,11 @@ def test_load_fchk_lih_321g_hf():
     assert exp_alpha.nbasis == 11
     assert abs(exp_alpha.energies[0] - (-2.76117)) < 1e-4
     assert abs(exp_alpha.energies[-1] - 0.97089) < 1e-4
-    assert abs(exp_alpha.coeffs[0,0] - 0.99105) < 1e-4
-    assert abs(exp_alpha.coeffs[1,0] - 0.06311) < 1e-4
-    assert abs(exp_alpha.coeffs[3,2]) < 1e-4
-    assert abs(exp_alpha.coeffs[-1,9] - 0.13666) < 1e-4
-    assert abs(exp_alpha.coeffs[4,-1] - 0.17828) < 1e-4
+    assert abs(exp_alpha.coeffs[0, 0] - 0.99105) < 1e-4
+    assert abs(exp_alpha.coeffs[1, 0] - 0.06311) < 1e-4
+    assert abs(exp_alpha.coeffs[3, 2]) < 1e-4
+    assert abs(exp_alpha.coeffs[-1, 9] - 0.13666) < 1e-4
+    assert abs(exp_alpha.coeffs[4, -1] - 0.17828) < 1e-4
     assert abs(exp_alpha.occupations.sum() - 2) == 0.0
     assert exp_alpha.occupations.min() == 0.0
     assert exp_alpha.occupations.max() == 1.0
@@ -236,11 +236,11 @@ def test_load_fchk_lih_321g_hf():
     assert exp_beta.nbasis == 11
     assert abs(exp_beta.energies[0] - (-2.76031)) < 1e-4
     assert abs(exp_beta.energies[-1] - 1.13197) < 1e-4
-    assert abs(exp_beta.coeffs[0,0] - 0.99108) < 1e-4
-    assert abs(exp_beta.coeffs[1,0] - 0.06295) < 1e-4
-    assert abs(exp_beta.coeffs[3,2]) < 1e-4
-    assert abs(exp_beta.coeffs[-1,9] - 0.80875) < 1e-4
-    assert abs(exp_beta.coeffs[4,-1] - (-0.15503)) < 1e-4
+    assert abs(exp_beta.coeffs[0, 0] - 0.99108) < 1e-4
+    assert abs(exp_beta.coeffs[1, 0] - 0.06295) < 1e-4
+    assert abs(exp_beta.coeffs[3, 2]) < 1e-4
+    assert abs(exp_beta.coeffs[-1, 9] - 0.80875) < 1e-4
+    assert abs(exp_beta.coeffs[4, -1] - (-0.15503)) < 1e-4
     assert abs(exp_beta.occupations.sum() - 1) == 0.0
     assert exp_beta.occupations.min() == 0.0
     assert exp_beta.occupations.max() == 1.0
@@ -265,7 +265,7 @@ def test_load_fchk_ghost_atoms():
     assert numbers.shape[0] == natom
     assert coordinates.shape[0] == natom
     assert mulliken_charges.shape[0] == natom
-    assert obasis.centers.shape[0] == ( natom + nghost )
+    assert obasis.centers.shape[0] == (natom + nghost)
 
 
 def test_load_fchk_ch3_rohf_g03():

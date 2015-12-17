@@ -27,13 +27,16 @@
 
 
 from horton.matrix import DenseLinalgFactory, LinalgObject
-import h5py as h5, os, numpy as np
+import h5py as h5
+import os
+import numpy as np
 
 
 __all__ = ['IOData']
 
 
 class ArrayTypeCheckDescriptor(object):
+
     def __init__(self, name, ndim=None, shape=None, dtype=None, matching=None, default=None):
         '''
            Decorator to perform type checking an np.ndarray attributes
@@ -89,27 +92,27 @@ class ArrayTypeCheckDescriptor(object):
     def __set__(self, obj, value):
         # try casting to proper dtype:
         value = np.array(value, dtype=self._dtype, copy=False)
-        #if not isinstance(value, np.ndarray):
+        # if not isinstance(value, np.ndarray):
         #    raise TypeError('Attribute \'%s\' of \'%s\' must be a numpy '
         #                    'array.' % (self._name, type(obj)))
         if self._ndim is not None and value.ndim != self._ndim:
             raise TypeError('Attribute \'%s\' of \'%s\' must be a numpy array '
                             'with %i dimension(s).' % (self._name, type(obj),
-                            self._ndim))
+                                                       self._ndim))
         if self._shape is not None:
             for i in xrange(len(self._shape)):
                 if self._shape[i] >= 0 and self._shape[i] != value.shape[i]:
                     raise TypeError('Attribute \'%s\' of \'%s\' must be a numpy'
                                     ' array %i elements in dimension %i.' % (
-                                    self._name, type(obj), self._shape[i], i))
+                                        self._name, type(obj), self._shape[i], i))
         if self._dtype is not None:
             if not issubclass(value.dtype.type, self._dtype.type):
                 raise TypeError('Attribute \'%s\' of \'%s\' must be a numpy '
                                 'array with dtype \'%s\'.' % (self._name,
-                                type(obj), self._dtype.type))
+                                                              type(obj), self._dtype.type))
         if self._matching is not None:
             for othername in self._matching:
-                other = getattr(obj, '_'+othername, None)
+                other = getattr(obj, '_' + othername, None)
                 if other is not None:
                     for i in xrange(len(self._shape)):
                         if self._shape[i] == -1 and \
@@ -117,14 +120,15 @@ class ArrayTypeCheckDescriptor(object):
                             raise TypeError('shape[%i] of attribute \'%s\' of '
                                             '\'%s\' in is incompatible with '
                                             'that of \'%s\'.' % (i, self._name,
-                                            type(obj), othername))
-        setattr(obj, '_'+self._name, value)
+                                                                 type(obj), othername))
+        setattr(obj, '_' + self._name, value)
 
     def __delete__(self, obj):
-        delattr(obj, '_'+self._name)
+        delattr(obj, '_' + self._name)
 
 
 class IOData(object):
+
     '''A container class for data loaded from (or to be written to) a file.
 
        In principle, the constructor accepts any keyword argument, which is
@@ -232,16 +236,19 @@ class IOData(object):
        two_mo
             Two-electron integrals in the (Hartree-Fock) molecular-orbital basis
     '''
+
     def __init__(self, **kwargs):
         for key, value in kwargs.iteritems():
             setattr(self, key, value)
 
     # only perform type checking on minimal attributes
     numbers = ArrayTypeCheckDescriptor('numbers', 1, (-1,), int, ['coordinates', 'pseudo_numbers'])
-    coordinates = ArrayTypeCheckDescriptor('coordinates', 2, (-1, 3), float, ['numbers', 'pseudo_numbers'])
+    coordinates = ArrayTypeCheckDescriptor(
+        'coordinates', 2, (-1, 3), float, ['numbers', 'pseudo_numbers'])
     cube_data = ArrayTypeCheckDescriptor('cube_data', 3)
     polar = ArrayTypeCheckDescriptor('polar', 2, (3, 3), float)
-    pseudo_numbers = ArrayTypeCheckDescriptor('pseudo_numbers', 1, (-1,), float, ['coordinates', 'numbers'], 'numbers')
+    pseudo_numbers = ArrayTypeCheckDescriptor(
+        'pseudo_numbers', 1, (-1,), float, ['coordinates', 'numbers'], 'numbers')
 
     def _get_natom(self):
         '''The number of atoms'''
