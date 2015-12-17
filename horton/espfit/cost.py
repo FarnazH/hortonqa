@@ -35,6 +35,7 @@ __all__ = ['ESPCost', 'setup_weights']
 
 
 class ESPCost(object):
+
     def __init__(self, A, B, C, natom):
         # Set attributes
         self._A = A
@@ -71,8 +72,8 @@ class ESPCost(object):
         if isinstance(ugrid, UniformGrid):
             natom = len(coordinates)
             if (ugrid.pbc == [1, 1, 1]).all():
-                A = np.zeros((natom+1, natom+1), float)
-                B = np.zeros(natom+1, float)
+                A = np.zeros((natom + 1, natom + 1), float)
+                B = np.zeros(natom + 1, float)
                 C = np.zeros((), float)
                 setup_esp_cost_cube(ugrid, vref, weights, coordinates, A, B, C, rcut, alpha, gcut)
                 return cls(A, B, C, natom)
@@ -86,24 +87,24 @@ class ESPCost(object):
             raise NotImplementedError
 
     def value(self, x):
-        return np.dot(x, np.dot(self._A, x) - 2*self._B) + self._C
+        return np.dot(x, np.dot(self._A, x) - 2 * self._B) + self._C
 
     def value_charges(self, charges):
         if self.natom < len(self._A):
             # Set up a system of equations where all charges are fixed and the
             # remaining parameters are solved for.
-            A = self._A[self.natom:,self.natom:]
-            B = self._B[self.natom:] - np.dot(charges, self._A[:self.natom,self.natom:])
+            A = self._A[self.natom:, self.natom:]
+            B = self._B[self.natom:] - np.dot(charges, self._A[:self.natom, self.natom:])
             C = self._C \
-                + np.dot(np.dot(charges, self._A[:self.natom,:self.natom]), charges) \
-                - 2*np.dot(self._B[:self.natom], charges)
+                + np.dot(np.dot(charges, self._A[:self.natom, :self.natom]), charges) \
+                - 2 * np.dot(self._B[:self.natom], charges)
             x = np.linalg.solve(A, B)
             return C - np.dot(B, x)
         else:
             return self.value(charges)
 
     def gradient(self, x):
-        return 2*(np.dot(self._A, x) - self._B)
+        return 2 * (np.dot(self._A, x) - self._B)
 
     def worst(self, qtot=0.0):
         '''Return a worst-case value for the cost function
@@ -117,27 +118,27 @@ class ESPCost(object):
            happens, it is better not to use charges at all.
         '''
         charges = np.zeros(self.natom)
-        charges[:] = qtot/self.natom
+        charges[:] = qtot / self.natom
         return self.value_charges(charges)
 
     def solve(self, qtot=None, ridge=0.0):
         # apply regularization to atomic degrees of freedom
         A = self._A.copy()
-        A.ravel()[::len(A)+1][:self.natom] += ridge*np.diag(A)[:self.natom].mean()
+        A.ravel()[::len(A) + 1][:self.natom] += ridge * np.diag(A)[:self.natom].mean()
         # construct preconditioned matrices
-        norms = np.diag(A)**0.5
-        A = A/norms/norms.reshape(-1,1)
-        B = self._B/norms
+        norms = np.diag(A) ** 0.5
+        A = A / norms / norms.reshape(-1, 1)
+        B = self._B / norms
 
         x = np.linalg.solve(A, B)
         if qtot is not None:
             # Fix the total charge with a lagrange multiplier
             d = np.zeros(len(A))
-            d[:self.natom] = 1/norms[:self.natom]
+            d[:self.natom] = 1 / norms[:self.natom]
             d[self.natom:] = 0.0
             aid = np.linalg.solve(A, d)
-            lagrange = (np.dot(aid, B) - qtot)/np.dot(aid, d)
-            x -= aid*lagrange
+            lagrange = (np.dot(aid, B) - qtot) / np.dot(aid, d)
+            x -= aid * lagrange
         x /= norms
         return x
 
@@ -196,7 +197,7 @@ def setup_weights(coordinates, numbers, grid, dens=None, near=None, far=None):
             if pair is None:
                 continue
             r0, gamma = pair
-            if r0 > 5*angstrom:
+            if r0 > 5 * angstrom:
                 raise ValueError('The wnear radius is excessive. Please keep it below 5 angstrom.')
             multiply_near_mask(coordinates[i], grid, r0, gamma, weights)
     if far is not None:

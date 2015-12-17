@@ -20,7 +20,8 @@
 #--
 
 
-import numpy as np, h5py as h5
+import numpy as np
+import h5py as h5
 from nose.plugins.attrib import attr
 
 from horton import *
@@ -73,9 +74,9 @@ def check_costs(costs, eps0=1e-3, eps1=1e-9):
     assert abs(costs[0]._A).max() > eps0
     assert abs(costs[0]._B).max() > eps0
     for i in xrange(9):
-        assert abs(costs[i]._A - costs[i+1]._A).max() < eps1
-        assert abs(costs[i]._B - costs[i+1]._B).max() < eps1
-        assert abs(costs[i]._C - costs[i+1]._C) < eps1
+        assert abs(costs[i]._A - costs[i + 1]._A).max() < eps1
+        assert abs(costs[i]._B - costs[i + 1]._B).max() < eps1
+        assert abs(costs[i]._C - costs[i + 1]._C) < eps1
 
 
 def test_esp_cost_cube3d_invariance_origin():
@@ -86,7 +87,7 @@ def test_esp_cost_cube3d_invariance_origin():
     costs = []
     for i in xrange(10):
         shift = np.random.uniform(-3, 3, 3)
-        tmp = coordinates+shift
+        tmp = coordinates + shift
         grid = UniformGrid(shift, grid_rvecs, shape, pbc)
         cost = ESPCost.from_grid_data(tmp, grid, vref, weights)
         costs.append(cost)
@@ -102,7 +103,7 @@ def test_esp_cost_cube0d_invariance_origin():
     costs = []
     for i in xrange(10):
         shift = np.random.uniform(-3, 3, 3)
-        tmp = coordinates+shift
+        tmp = coordinates + shift
         grid = UniformGrid(shift, grid_rvecs, shape, pbc)
         cost = ESPCost.from_grid_data(tmp, grid, vref, weights)
         costs.append(cost)
@@ -118,12 +119,12 @@ def test_esp_cost_cube3d_invariance_rotation():
     costs = []
     for i in xrange(10):
         A = np.random.normal(0, 1, (3, 3))
-        A = 0.5*(A+A.T)
+        A = 0.5 * (A + A.T)
         evals, evecs = np.linalg.eigh(A)
         del A
         del evals
         new_grid_rvecs = np.dot(grid_rvecs, evecs)
-        new_coordinates = np.dot(coordinates-origin, evecs)+origin
+        new_coordinates = np.dot(coordinates - origin, evecs) + origin
 
         grid = UniformGrid(origin, new_grid_rvecs, shape, pbc)
         cost = ESPCost.from_grid_data(new_coordinates, grid, vref, weights)
@@ -140,12 +141,12 @@ def test_esp_cost_cube0d_invariance_rotation():
     costs = []
     for i in xrange(10):
         A = np.random.normal(0, 1, (3, 3))
-        A = 0.5*(A+A.T)
+        A = 0.5 * (A + A.T)
         evals, evecs = np.linalg.eigh(A)
         del A
         del evals
         new_grid_rvecs = np.dot(grid_rvecs, evecs)
-        new_coordinates = np.dot(coordinates-origin, evecs)+origin
+        new_coordinates = np.dot(coordinates - origin, evecs) + origin
 
         grid = UniformGrid(origin, new_grid_rvecs, shape, pbc)
         cost = ESPCost.from_grid_data(new_coordinates, grid, vref, weights)
@@ -182,9 +183,10 @@ def test_esp_cost_cube3d_invariance_rcut():
     costs = []
     for i in xrange(10):
         rcut = np.random.uniform(10, 30)
-        alpha = 4.5/rcut
-        gcut = 1.5*alpha
-        cost = ESPCost.from_grid_data(coordinates, grid, vref, weights, rcut=rcut, alpha=alpha, gcut=gcut)
+        alpha = 4.5 / rcut
+        gcut = 1.5 * alpha
+        cost = ESPCost.from_grid_data(
+            coordinates, grid, vref, weights, rcut=rcut, alpha=alpha, gcut=gcut)
         costs.append(cost)
     # Compare the cost functions
     check_costs(costs, eps1=1e-8)
@@ -197,8 +199,8 @@ def test_esp_cost_cube3d_gradient():
     grid = UniformGrid(origin, grid_rvecs, shape, pbc)
     cost = ESPCost.from_grid_data(coordinates, grid, vref, weights)
 
-    x0 = np.random.uniform(-0.5, 0.5, len(numbers)+1)
-    dxs = np.random.uniform(-1e-5, 1e-5, (100, len(numbers)+1))
+    x0 = np.random.uniform(-0.5, 0.5, len(numbers) + 1)
+    dxs = np.random.uniform(-1e-5, 1e-5, (100, len(numbers) + 1))
     check_delta(cost.value, cost.gradient, x0, dxs)
 
 
@@ -224,7 +226,7 @@ def test_esp_cost_solve():
     # test with constraint 1.0
     x = cost.solve(qtot=1.0)
     charges = x[:10]
-    assert abs(charges.sum()-1) < 1e-9
+    assert abs(charges.sum() - 1) < 1e-9
     gradient = cost.gradient(x)
     assert abs(gradient[:10] - gradient[:10].mean()).max() < 1e-9
     assert abs(gradient[10:]).max() < 1e-9
@@ -240,24 +242,24 @@ def test_esp_cost_solve_regularized():
     # test without constraint
     ridge = 1e-6
     x = cost.solve(ridge=ridge)
-    l = ridge*np.diag(cost._A)[:cost.natom].mean()
-    ls = np.ones(cost._B.shape)*l
+    l = ridge * np.diag(cost._A)[:cost.natom].mean()
+    ls = np.ones(cost._B.shape) * l
     ls[-1] = 0
-    assert abs(cost.gradient(x) + 2*ls*x).max() < 1e-9
+    assert abs(cost.gradient(x) + 2 * ls * x).max() < 1e-9
 
     # test with constraint 0.0
     x = cost.solve(qtot=0.0, ridge=ridge)
     charges = x[:10]
     assert abs(charges.sum()) < 1e-9
-    gradient = cost.gradient(x) + 2*ls*x
+    gradient = cost.gradient(x) + 2 * ls * x
     assert abs(gradient[:10] - gradient[:10].mean()).max() < 1e-10
     assert abs(gradient[10:]).max() < 1e-10
 
     # test with constraint 1.0
     x = cost.solve(qtot=1.0, ridge=ridge)
     charges = x[:10]
-    assert abs(charges.sum()-1) < 1e-9
-    gradient = cost.gradient(x) + 2*ls*x
+    assert abs(charges.sum() - 1) < 1e-9
+    gradient = cost.gradient(x) + 2 * ls * x
     assert abs(gradient[:10] - gradient[:10].mean()).max() < 1e-10
     assert abs(gradient[10:]).max() < 1e-10
 
@@ -270,15 +272,15 @@ def test_compare_cubetools():
 
     # Use a different grid
     origin = np.array([0.0, 0.0, 0.0])
-    grid_rvecs = np.diag([0.183933, 0.187713, 0.190349])*3
+    grid_rvecs = np.diag([0.183933, 0.187713, 0.190349]) * 3
     shape = np.array([18, 25, 27])
     pbc = np.array([1, 1, 1])
     ugrid = UniformGrid(origin, grid_rvecs, shape, pbc)
 
     # Generate weights
     weights = setup_weights(mol.coordinates, mol.numbers, ugrid,
-        near={8: (1.8*angstrom, 0.5*angstrom),
-              14: (1.8*angstrom, 0.5*angstrom)})
+                            near={8: (1.8 * angstrom, 0.5 * angstrom),
+                                  14: (1.8 * angstrom, 0.5 * angstrom)})
     weights /= weights.sum()
 
     # Random ref data
@@ -293,17 +295,17 @@ def test_compare_cubetools():
     assert abs(cost._A.T - cost._A).max() < 1e-10
 
     # Compare numbers withreference values obtained with cfit2.cubetools
-    assert abs(cost._A[0, 0] - 0.002211777956341868*gvol) < 1e-7
-    assert abs(cost._A[7, 3] - 1.5124537688153498E-4*gvol) < 1e-8
-    assert abs(cost._A[18, 2] - -0.028812329600683098*gvol) < 1e-6
+    assert abs(cost._A[0, 0] - 0.002211777956341868 * gvol) < 1e-7
+    assert abs(cost._A[7, 3] - 1.5124537688153498E-4 * gvol) < 1e-8
+    assert abs(cost._A[18, 2] - -0.028812329600683098 * gvol) < 1e-6
 
 
 def test_worst():
     cost = get_random_esp_cost_cube3d()
     N = cost.natom
     assert cost.worst() < cost._C
-    assert cost.worst(1.0) < cost._C + cost._A[:N,:N].sum()/N**2 - 2*cost._B[:N].sum()/N
-    assert cost.worst(-1.0) < cost._C + cost._A[:N,:N].sum()/N**2 + 2*cost._B[:N].sum()/N
+    assert cost.worst(1.0) < cost._C + cost._A[:N, :N].sum() / N ** 2 - 2 * cost._B[:N].sum() / N
+    assert cost.worst(-1.0) < cost._C + cost._A[:N, :N].sum() / N ** 2 + 2 * cost._B[:N].sum() / N
     assert cost.worst() > 0.0
     assert cost.worst(1.0) > 0.0
     assert cost.worst(-1.0) > 0.0
@@ -335,16 +337,16 @@ def test_consistent():
     # random grid
     origin = np.random.uniform(-3, 3, 3)
     nrep = 10
-    grid_rvecs = np.diag(np.random.uniform(8.0, 10.0, 3))/nrep
-    grid_rvecs += np.random.uniform(-1.0, 1.0, (3, 3))/nrep
+    grid_rvecs = np.diag(np.random.uniform(8.0, 10.0, 3)) / nrep
+    grid_rvecs += np.random.uniform(-1.0, 1.0, (3, 3)) / nrep
     shape = np.array([nrep, nrep, nrep])
     pbc = np.array([1, 1, 1])
     ugrid = UniformGrid(origin, grid_rvecs, shape, pbc)
 
     # compute the ESP
     rcut = 20.0
-    alpha = 3.0/10.0
-    gcut = 1.1*alpha
+    alpha = 3.0 / 10.0
+    gcut = 1.1 * alpha
     esp = np.zeros(shape)
     compute_esp_grid_cube(ugrid, esp, coordinates, charges, rcut, alpha, gcut)
 

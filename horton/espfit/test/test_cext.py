@@ -37,8 +37,8 @@ def test_pair_ewald3d_invariance_rcut():
     cell = get_random_cell(1.0, 3)
     results = []
     for rcut in np.arange(10.0, 20.001, 1.0):
-        alpha = alpha_scale/rcut
-        gcut = gcut_scale*alpha
+        alpha = alpha_scale / rcut
+        gcut = gcut_scale * alpha
         results.append(pair_ewald(delta, cell, rcut, alpha, gcut))
     results = np.array(results)
     assert abs(results - results.mean()).max() < 1e-7
