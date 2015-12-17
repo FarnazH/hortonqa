@@ -35,6 +35,7 @@ __all__ = [
 
 
 class StockHolderMixin(object):
+
     def get_rgrid(self, index):
         raise NotImplementedError
 
@@ -60,11 +61,12 @@ class StockHolderMixin(object):
         # Check for negative parts
         original = rgrid.integrate(rho)
         if rho.min() < 0:
-            rho[rho<0] = 0.0
+            rho[rho < 0] = 0.0
             deriv = None
             error = rgrid.integrate(rho) - original
             if log.do_medium:
-                log('                    Pro-atom not positive everywhere. Lost %.1e electrons' % error)
+                log('                    Pro-atom not positive everywhere. Lost %.1e electrons' %
+                    error)
 
         return rho, deriv
 
@@ -85,7 +87,8 @@ class StockHolderMixin(object):
             grid = self.get_grid(index)
         if log.do_debug:
             number = self.numbers[index]
-            log('  Evaluating spline (%s) for atom %i (n=%i) on %i grid points' % (label, index, number, grid.size))
+            log('  Evaluating spline (%s) for atom %i (n=%i) on %i grid points' %
+                (label, index, number, grid.size))
         grid.eval_spline(spline, center, output)
 
     def eval_proatom(self, index, output, grid=None):
@@ -138,6 +141,7 @@ class StockHolderMixin(object):
 
 
 class StockholderWPart(StockHolderMixin, WPart):
+
     def update_pro(self, index, proatdens, promoldens):
         work = self.grid.zeros()
         self.eval_proatom(index, work, self.grid)
@@ -146,6 +150,7 @@ class StockholderWPart(StockHolderMixin, WPart):
 
 
 class StockholderCPart(StockHolderMixin, CPart):
+
     def update_pro(self, index, proatdens, promoldens):
         self.eval_proatom(index, proatdens)
         promoldens += self.to_sys_grid(index, proatdens)

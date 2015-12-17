@@ -47,13 +47,14 @@ class HirshfeldIMixin(IterativeProatomMixin):
                 ('Scheme', 'Hirshfeld-I'),
                 ('Convergence threshold', '%.1e' % self._threshold),
                 ('Maximum iterations', self._maxiter),
-                ('Proatomic DB',  self._proatomdb),
+                ('Proatomic DB', self._proatomdb),
             ])
             log.cite('bultinck2007', 'the use of Hirshfeld-I partitioning')
 
     def get_memory_estimates(self):
         if self._greedy:
-            return [('Isolated atoms', np.ones(self.natom)*3, 0),] # This is a conservative estimate.
+            # This is a conservative estimate.
+            return [('Isolated atoms', np.ones(self.natom) * 3, 0), ]
         else:
             return []
 
@@ -71,9 +72,9 @@ class HirshfeldIMixin(IterativeProatomMixin):
         pseudo_pop = self.pseudo_numbers[index] - icharge
         number = self.numbers[index]
         if pseudo_pop == 1 or x == 0.0:
-            return self.proatomdb.get_rho(number, {icharge: 1-x}, do_deriv=True)
+            return self.proatomdb.get_rho(number, {icharge: 1 - x}, do_deriv=True)
         elif pseudo_pop > 1:
-            return self.proatomdb.get_rho(number, {icharge: 1-x, icharge+1: x}, do_deriv=True)
+            return self.proatomdb.get_rho(number, {icharge: 1 - x, icharge + 1: x}, do_deriv=True)
         elif pseudo_pop <= 0:
             raise ValueError('Requesting a pro-atom with a negative (pseudo) population')
 
@@ -99,10 +100,10 @@ class HirshfeldIMixin(IterativeProatomMixin):
         # Greedy version of eval_proatom
         icharge, x = self.get_interpolation_info(index)
         output[:] = self.get_isolated(index, icharge, grid)
-        output *= 1-x
+        output *= 1 - x
         pseudo_pop = self.pseudo_numbers[index] - icharge
         if pseudo_pop > 1 and x != 0.0:
-            output += self.get_isolated(index, icharge+1, grid)*x
+            output += self.get_isolated(index, icharge + 1, grid) * x
         elif pseudo_pop <= 0:
             raise ValueError('Requesting a pro-atom with a negative (pseudo) population')
         output += 1e-100
@@ -123,6 +124,7 @@ class HirshfeldIMixin(IterativeProatomMixin):
 
 
 class HirshfeldIWPart(HirshfeldIMixin, HirshfeldWPart):
+
     '''Iterative Hirshfeld partitioning with Becke-Lebedev grids'''
 
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,
@@ -167,6 +169,7 @@ class HirshfeldIWPart(HirshfeldIMixin, HirshfeldWPart):
 
 
 class HirshfeldICPart(HirshfeldIMixin, HirshfeldCPart):
+
     '''Iterative Hirshfeld partitioning with uniform grids'''
 
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,

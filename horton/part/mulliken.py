@@ -56,7 +56,7 @@ def partition_mulliken(operator, obasis, index):
             mask[begin:end] = True
         begin = end
     operator._array[mask] = 0.0
-    operator._array[:] = 0.5*(operator._array + operator._array.T)
+    operator._array[:] = 0.5 * (operator._array + operator._array.T)
 
 
 def get_mulliken_operators(obasis, lf):

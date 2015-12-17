@@ -36,7 +36,7 @@ __all__ = ['Part', 'WPart', 'CPart']
 
 class Part(JustOnceClass):
     name = None
-    linear = False # whether the populations are linear in the density matrix.
+    linear = False  # whether the populations are linear in the density matrix.
 
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens, spindens, local, lmax):
         '''
@@ -73,7 +73,8 @@ class Part(JustOnceClass):
         JustOnceClass.__init__(self)
 
         # Some type checking for first three arguments
-        natom, coordinates, numbers, pseudo_numbers = typecheck_geo(coordinates, numbers, pseudo_numbers)
+        natom, coordinates, numbers, pseudo_numbers = typecheck_geo(
+            coordinates, numbers, pseudo_numbers)
         self._natom = natom
         self._coordinates = coordinates
         self._numbers = numbers
@@ -197,8 +198,8 @@ class Part(JustOnceClass):
     def _init_log_memory(self):
         if log.do_medium:
             # precompute arrays sizes for certain grids
-            nbyte_global = self.grid.size*8
-            nbyte_locals = np.array([self.get_grid(i).size*8 for i in xrange(self.natom)])
+            nbyte_global = self.grid.size * 8
+            nbyte_locals = np.array([self.get_grid(i).size * 8 for i in xrange(self.natom)])
 
             # compute and report usage
             estimates = self.get_memory_estimates()
@@ -207,10 +208,10 @@ class Part(JustOnceClass):
             log('                         Label  Memory[GB]')
             log.hline()
             for label, nlocals, nglobal in estimates:
-                nbyte = np.dot(nlocals, nbyte_locals) + nglobal*nbyte_global
-                log('%30s  %10.3f' % (label, nbyte/1024.0**3))
+                nbyte = np.dot(nlocals, nbyte_locals) + nglobal * nbyte_global
+                log('%30s  %10.3f' % (label, nbyte / 1024.0 ** 3))
                 nbyte_total += nbyte
-            log('%30s  %10.3f' % ('Total', nbyte_total/1024.0**3))
+            log('%30s  %10.3f' % ('Total', nbyte_total / 1024.0 ** 3))
             log.hline()
             log.blank()
 
@@ -245,7 +246,8 @@ class Part(JustOnceClass):
         populations, new = self.cache.load('populations', alloc=self.natom, tags='o')
         if new:
             self.do_partitioning()
-            pseudo_populations = self.cache.load('pseudo_populations', alloc=self.natom, tags='o')[0]
+            pseudo_populations = self.cache.load(
+                'pseudo_populations', alloc=self.natom, tags='o')[0]
             if log.do_medium:
                 log('Computing atomic populations.')
             for i in xrange(self.natom):
@@ -280,13 +282,16 @@ class Part(JustOnceClass):
     @just_once
     def do_moments(self):
         ncart = get_ncart_cumul(self.lmax)
-        cartesian_multipoles, new1 = self._cache.load('cartesian_multipoles', alloc=(self.natom, ncart), tags='o')
+        cartesian_multipoles, new1 = self._cache.load(
+            'cartesian_multipoles', alloc=(self.natom, ncart), tags='o')
 
         npure = get_npure_cumul(self.lmax)
-        pure_multipoles, new1 = self._cache.load('pure_multipoles', alloc=(self.natom, npure), tags='o')
+        pure_multipoles, new1 = self._cache.load(
+            'pure_multipoles', alloc=(self.natom, npure), tags='o')
 
-        nrad = self.lmax+1
-        radial_moments, new2 = self._cache.load('radial_moments', alloc=(self.natom, nrad), tags='o')
+        nrad = self.lmax + 1
+        radial_moments, new2 = self._cache.load(
+            'radial_moments', alloc=(self.natom, nrad), tags='o')
 
         if new1 or new2:
             self.do_partitioning()
@@ -299,7 +304,7 @@ class Part(JustOnceClass):
                 grid = self.get_grid(i)
 
                 # 2) Compute the AIM
-                aim = self.get_moldens(i)*self.cache.load('at_weights', i)
+                aim = self.get_moldens(i) * self.cache.load('at_weights', i)
 
                 # 3) Compute weight corrections
                 wcor = self.get_wcor(i)
@@ -307,19 +312,22 @@ class Part(JustOnceClass):
                 # 4) Compute Cartesian multipole moments
                 # The minus sign is present to account for the negative electron
                 # charge.
-                cartesian_multipoles[i] = -grid.integrate(aim, wcor, center=center, lmax=self.lmax, mtype=1)
+                cartesian_multipoles[
+                    i] = -grid.integrate(aim, wcor, center=center, lmax=self.lmax, mtype=1)
                 cartesian_multipoles[i, 0] += self.pseudo_numbers[i]
 
                 # 5) Compute Pure multipole moments
                 # The minus sign is present to account for the negative electron
                 # charge.
-                pure_multipoles[i] = -grid.integrate(aim, wcor, center=center, lmax=self.lmax, mtype=2)
+                pure_multipoles[i] = - \
+                    grid.integrate(aim, wcor, center=center, lmax=self.lmax, mtype=2)
                 pure_multipoles[i, 0] += self.pseudo_numbers[i]
 
                 # 6) Compute Radial moments
                 # For the radial moments, it is not common to put a minus sign
                 # for the negative electron charge.
-                radial_moments[i] = grid.integrate(aim, wcor, center=center, lmax=self.lmax, mtype=3)
+                radial_moments[i] = grid.integrate(
+                    aim, wcor, center=center, lmax=self.lmax, mtype=3)
 
     def do_all(self):
         '''Computes all properties and return a list of their keys.'''
@@ -331,7 +339,9 @@ class Part(JustOnceClass):
 
 
 class WPart(Part):
+
     '''Base class for density partitioning schemes'''
+
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,
                  spindens=None, local=True, lmax=3):
         '''
@@ -367,8 +377,10 @@ class WPart(Part):
                 The maximum angular momentum in multipole expansions.
         '''
         if local and grid.subgrids is None:
-            raise ValueError('Atomic grids are discarded from molecular grid object, but are needed for local integrations.')
-        Part.__init__(self, coordinates, numbers, pseudo_numbers, grid, moldens, spindens, local, lmax)
+            raise ValueError(
+                'Atomic grids are discarded from molecular grid object, but are needed for local integrations.')
+        Part.__init__(self, coordinates, numbers, pseudo_numbers,
+                      grid, moldens, spindens, local, lmax)
 
     def _init_log_base(self):
         if log.do_medium:
@@ -409,7 +421,8 @@ class WPart(Part):
                     log('Computing density decomposition for atom %i' % index)
                 at_weights = self.cache.load('at_weights', index)
                 splines = atgrid.get_spherical_decomposition(moldens, at_weights, lmax=self.lmax)
-                density_decomposition = dict(('spline_%05i' % j, spline) for j, spline in enumerate(splines))
+                density_decomposition = dict(('spline_%05i' % j, spline)
+                                             for j, spline in enumerate(splines))
                 self.cache.dump(key, density_decomposition, tags='o')
 
     @just_once
@@ -428,12 +441,15 @@ class WPart(Part):
                 density_decomposition = self.cache.load('density_decomposition', index)
                 rho_splines = [spline for foo, spline in sorted(density_decomposition.iteritems())]
                 v_splines = solve_poisson_becke(rho_splines)
-                hartree_decomposition = dict(('spline_%05i' % j, spline) for j, spline in enumerate(v_splines))
+                hartree_decomposition = dict(('spline_%05i' % j, spline)
+                                             for j, spline in enumerate(v_splines))
                 self.cache.dump(key, hartree_decomposition, tags='o')
 
 
 class CPart(Part):
+
     '''Base class for density partitioning schemes of cube files'''
+
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,
                  spindens=None, local=True, lmax=3, wcor_numbers=None,
                  wcor_rcut_max=2.0, wcor_rcond=0.1):
@@ -474,7 +490,8 @@ class CPart(Part):
             self._wcor_numbers = wcor_numbers
         self._wcor_rcut_max = wcor_rcut_max
         self._wcor_rcond = wcor_rcond
-        Part.__init__(self, coordinates, numbers, pseudo_numbers, grid, moldens, spindens, local, lmax)
+        Part.__init__(self, coordinates, numbers, pseudo_numbers,
+                      grid, moldens, spindens, local, lmax)
 
     def _get_wcor_numbers(self):
         return self._wcor_numbers
@@ -496,7 +513,7 @@ class CPart(Part):
                 ('Uniform Integration Grid', self.grid),
                 ('Grid shape', self.grid.shape),
                 ('Using local grids', self._local),
-                ('Mean spacing', '%10.5e' % (self.grid.get_grid_cell().volume**(1.0/3.0))),
+                ('Mean spacing', '%10.5e' % (self.grid.get_grid_cell().volume ** (1.0 / 3.0))),
                 ('Weight corr. numbers', ' '.join(str(n) for n in self.wcor_numbers)),
                 ('Weight corr. max rcut', '%10.5f' % self._wcor_rcut_max),
                 ('Weight corr. rcond', '%10.5e' % self._wcor_rcond),
@@ -504,7 +521,8 @@ class CPart(Part):
 
     def get_memory_estimates(self):
         if self.local:
-            row = [('Weight corrections', np.array([n in self._wcor_numbers for n in self.numbers]), 0)]
+            row = [
+                ('Weight corrections', np.array([n in self._wcor_numbers for n in self.numbers]), 0)]
         else:
             row = [('Weight corrections', np.zeros(self.natom), 1)]
         return Part.get_memory_estimates(self) + row

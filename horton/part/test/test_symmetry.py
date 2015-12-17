@@ -51,11 +51,11 @@ def test_symmetry_scalar():
     sym_results = symmetry_analysis(coordinates, cell, symmetry, aim_results)
     assert len(sym_results) == 2
     stats = sym_results['charges']
-    assert abs(stats[:,0] - [0.3, -0.6]).max() < 1e-10
-    assert abs(stats[:,1] - [np.std([0.29, 0.31]), 0.0]).max() < 1e-10
+    assert abs(stats[:, 0] - [0.3, -0.6]).max() < 1e-10
+    assert abs(stats[:, 1] - [np.std([0.29, 0.31]), 0.0]).max() < 1e-10
     stats = sym_results['volumes']
-    assert abs(stats[:,0] - [1.3, 3.4]).max() < 1e-10
-    assert abs(stats[:,1] - [np.std([1.2, 1.4]), 0.0]).max() < 1e-10
+    assert abs(stats[:, 0] - [1.3, 3.4]).max() < 1e-10
+    assert abs(stats[:, 1] - [np.std([1.2, 1.4]), 0.0]).max() < 1e-10
 
 
 def test_symmetry_moments():
@@ -64,7 +64,7 @@ def test_symmetry_moments():
     # setup rotated multipole moments
     m0 = get_pentagon_moments()
     m00 = m0.copy()
-    m01 = rotate_cartesian_moments_all(symmetry.generators[1][:,:3], m0)
+    m01 = rotate_cartesian_moments_all(symmetry.generators[1][:, :3], m0)
     m1 = get_pentagon_moments(get_random_rotation())
 
     # perturb them in a controlled way
@@ -82,7 +82,7 @@ def test_symmetry_moments():
     # check results
     assert len(sym_results) == 1
     stats = sym_results['cartesian_multipoles']
-    assert abs(stats[:,0] - [m0, m1]).max() < 1e-10
-    assert abs(stats[1,1]).max() < 1e-10
-    assert abs(stats[0,1,:2] - np.std([-0.1, 0.1])).max() < 1e-10
-    assert abs(stats[0,1,2:]).max() < 1e-10
+    assert abs(stats[:, 0] - [m0, m1]).max() < 1e-10
+    assert abs(stats[1, 1]).max() < 1e-10
+    assert abs(stats[0, 1, :2] - np.std([-0.1, 0.1])).max() < 1e-10
+    assert abs(stats[0, 1, 2:]).max() < 1e-10

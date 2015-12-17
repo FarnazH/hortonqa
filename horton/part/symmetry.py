@@ -66,9 +66,9 @@ def symmetry_analysis(coordinates, cell, symmetry, aim_results):
     masks = []
     generators = []
     for iprim in xrange(symmetry.natom):
-        mask = links[:,0] == iprim
+        mask = links[:, 0] == iprim
         masks.append(mask)
-        generators.append([symmetry.generators[j] for j in links[:,1][mask]])
+        generators.append([symmetry.generators[j] for j in links[:, 1][mask]])
 
     # define analysis helpers for scalar and cartesian multipole quantities:
     def scalar_analysis(equiv_values, equiv_generators):
@@ -79,7 +79,7 @@ def symmetry_analysis(coordinates, cell, symmetry, aim_results):
         for i, generator in enumerate(equiv_generators):
             # The multipole moments are rotated back to the primitive unit,
             # so we need to take the transpose.
-            rotated.append(rotate_cartesian_moments_all(generator[:,:3].T, equiv_values[i]))
+            rotated.append(rotate_cartesian_moments_all(generator[:, :3].T, equiv_values[i]))
         return np.mean(rotated, axis=0), np.std(rotated, axis=0)
 
     # associate analysis functions with certain fields

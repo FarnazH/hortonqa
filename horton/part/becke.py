@@ -34,6 +34,7 @@ __all__ = ['BeckeWPart']
 
 
 class BeckeWPart(WPart):
+
     '''Becke partitioning with Becke-Lebedev grids'''
 
     name = 'b'
@@ -71,10 +72,10 @@ class BeckeWPart(WPart):
         radii = []
         for number in self.numbers:
             if number == 1:
-                radius = 0.35*angstrom # exception defined in Becke's paper
+                radius = 0.35 * angstrom  # exception defined in Becke's paper
             else:
                 radius = periodic[number].becke_radius
-                if radius is None: # for cases not covered by Brag-Slater
+                if radius is None:  # for cases not covered by Brag-Slater
                     radius = periodic[number].cov_radius
             radii.append(radius)
         radii = np.array(radii)

@@ -30,7 +30,7 @@ def test_hebasis():
     padb = get_proatomdb_cp2k()
     numbers = np.array([8, 14, 14, 8, 8])
     hebasis = HEBasis(numbers, padb)
-    assert hebasis.get_nbasis() == 9 # 3 for every oxygen atom
+    assert hebasis.get_nbasis() == 9  # 3 for every oxygen atom
     assert hebasis.get_atom_nbasis(0) == 3
     assert hebasis.get_atom_nbasis(1) == 0
     assert hebasis.get_atom_nbasis(2) == 0

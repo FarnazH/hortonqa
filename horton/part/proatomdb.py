@@ -22,7 +22,8 @@
 
 
 import os
-import h5py as h5, numpy as np
+import h5py as h5
+import numpy as np
 
 from horton.context import context
 from horton.grid.atgrid import AtomicGrid, AtomicGridSpec
@@ -37,6 +38,7 @@ __all__ = ['ProAtomRecord', 'ProAtomDB']
 
 
 class ProAtomRecord(object):
+
     '''A single proatomic density record'''
 
     @classmethod
@@ -110,7 +112,7 @@ class ProAtomRecord(object):
         overlap = dm_full.new()
         obasis.compute_overlap(overlap)
         nel = overlap.contract_two('ab,ba', dm_full)
-        assert abs(nel - int(np.round(nel))) < 1e-4 # only integer nel are supported
+        assert abs(nel - int(np.round(nel))) < 1e-4  # only integer nel are supported
         nel = int(np.round(nel))
         charge = pseudo_number - nel
 
@@ -256,7 +258,7 @@ class ProAtomRecord(object):
         '''
         # compute the running integral of the density (popint)
         radii = self.rgrid.radii
-        tmp = (4*np.pi) * radii**2 * self.rho * self.rgrid.rtransform.get_deriv()
+        tmp = (4 * np.pi) * radii ** 2 * self.rho * self.rgrid.rtransform.get_deriv()
         popint = []
         for i in xrange(len(tmp)):
             if i >= self.rgrid.int1d.npoint_min:
@@ -274,13 +276,13 @@ class ProAtomRecord(object):
                 result.append(radii[-1])
             else:
                 # linear interpolation
-                x = (populations[i] - popint[index])/(popint[index-1] - popint[index])
-                result.append(x*radii[index-1]+(1-x)*radii[index])
+                x = (populations[i] - popint[index]) / (popint[index - 1] - popint[index])
+                result.append(x * radii[index - 1] + (1 - x) * radii[index])
         return indexes, result
 
     def get_moment(self, order):
         '''Return the integral of rho*r**order'''
-        return self.rgrid.integrate(self.rho, self.rgrid.radii**order)
+        return self.rgrid.integrate(self.rho, self.rgrid.radii ** order)
 
     def chop(self, npoint):
         '''Reduce the proatom to the given number of radial grid points.'''
@@ -304,6 +306,7 @@ class ProAtomRecord(object):
 
 
 class ProAtomDB(object):
+
     def __init__(self, records):
         '''
            **Arguments:**
@@ -340,7 +343,8 @@ class ProAtomDB(object):
             else:
                 # compare
                 if rgrid != r.rgrid:
-                    raise ValueError('All proatoms of a given element must have the same radial grid')
+                    raise ValueError(
+                        'All proatoms of a given element must have the same radial grid')
 
         # Update the safe flags based on the energies of other pro_atoms
         for number in self.get_numbers():
@@ -567,23 +571,23 @@ class ProAtomDB(object):
                 for charge, coeff in parameters.iteritems():
                     if coeff != 0.0:
                         record = self.get_record(number, charge)
-                        rho += coeff*record.rho
+                        rho += coeff * record.rho
                         if do_deriv and record.deriv is not None and deriv is not None:
-                            deriv += coeff*record.deriv
+                            deriv += coeff * record.deriv
                         else:
                             deriv = None
             elif combine == 'geometric':
                 for charge, coeff in parameters.iteritems():
                     if coeff != 0.0:
                         record = self.get_record(number, charge)
-                        rho += coeff*np.log(record.rho)
+                        rho += coeff * np.log(record.rho)
                         if do_deriv and record.deriv is not None and deriv is not None:
-                            deriv += coeff*record.deriv/record.rho
+                            deriv += coeff * record.deriv / record.rho
                         else:
                             deriv = None
                 rho = np.exp(rho)
                 if do_deriv and deriv is not None:
-                    deriv = rho*deriv
+                    deriv = rho * deriv
             else:
                 raise ValueError('Combine argument "%s" not supported.' % combine)
             if not isinstance(rho, np.ndarray):
@@ -627,8 +631,8 @@ class ProAtomDB(object):
             npoint = 0
             for charge in self.get_charges(number, safe=True):
                 r = self.get_record(number, charge)
-                nel = r.pseudo_number-charge
-                npoint = max(npoint, r.compute_radii([nel-nel_lost])[0][0]+1)
+                nel = r.pseudo_number - charge
+                npoint = max(npoint, r.compute_radii([nel - nel_lost])[0][0] + 1)
             for charge in self.get_charges(number):
                 r = self.get_record(number, charge)
                 r.chop(npoint)
@@ -653,7 +657,7 @@ class ProAtomDB(object):
                 r = self.get_record(number, charge)
                 nel_before = rgrid.integrate(r.rho)
                 nel_integer = r.pseudo_number - charge
-                r.rho[:] *= nel_integer/nel_before
+                r.rho[:] *= nel_integer / nel_before
                 nel_after = rgrid.integrate(r.rho)
                 if log.do_medium:
                     log('%4i     %+3i    %15.8e   %15.8e' % (
@@ -710,7 +714,7 @@ def load_proatom_records_atdens(filename):
         # Construct a radial grid
         r1 = radii[1]
         r2 = radii[-1]
-        rtf = ExpRTransform(r1, r2, npoint-1)
+        rtf = ExpRTransform(r1, r2, npoint - 1)
         rgrid = RadialGrid(rtf)
         # load the proatoms
         while True:

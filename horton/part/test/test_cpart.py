@@ -40,7 +40,7 @@ def check_jbw_coarse(local):
     ugrid = mol.grid
 
     # Load some pro-atoms
-    proatomdb = ProAtomDB.from_refatoms(numbers=[8,14], max_kation=0, max_anion=0)
+    proatomdb = ProAtomDB.from_refatoms(numbers=[8, 14], max_kation=0, max_anion=0)
 
     # Run the partitioning
     cpart = HirshfeldCPart(mol.coordinates, mol.numbers, mol.pseudo_numbers,
@@ -87,7 +87,7 @@ def check_fake(scheme, pseudo, dowcor, local, absmean, **kwargs):
     assert cpart.local == local
     cpart.do_charges()
     charges = cpart['charges']
-    #print abs(charges.sum()), abs(charges).mean(), abs(abs(charges).mean() - absmean)
+    # print abs(charges.sum()), abs(charges).mean(), abs(abs(charges).mean() - absmean)
     assert abs(charges.sum()) < 1e-2
     assert abs(abs(charges).mean() - absmean) < 1e-3
 
@@ -124,7 +124,6 @@ def test_hirshfeld_fake_pseudo_nowcor_global():
     check_fake('h', pseudo=True, dowcor=True, local=False, absmean=0.213)
 
 
-
 @attr('slow')
 def test_hirshfeld_i_fake_local():
     check_fake('hi', pseudo=False, dowcor=True, local=True, absmean=0.428, threshold=1e-5)
@@ -155,32 +154,36 @@ def test_hirshfeld_i_fake_pseudo_nowcor_global():
 
 @attr('slow')
 def test_hirshfeld_i_fake_local_greedy():
-    check_fake('hi', pseudo=False, dowcor=True, local=True, absmean=0.428, threshold=1e-5, greedy=True)
+    check_fake('hi', pseudo=False, dowcor=True, local=True,
+               absmean=0.428, threshold=1e-5, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_i_fake_global_greedy():
-    check_fake('hi', pseudo=False, dowcor=True, local=False, absmean=0.428, threshold=1e-5, greedy=True)
+    check_fake('hi', pseudo=False, dowcor=True, local=False,
+               absmean=0.428, threshold=1e-5, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_i_fake_pseudo_local_greedy():
-    check_fake('hi', pseudo=True, dowcor=True, local=True, absmean=0.400, threshold=1e-4, greedy=True)
+    check_fake('hi', pseudo=True, dowcor=True, local=True,
+               absmean=0.400, threshold=1e-4, greedy=True)
 
 
 def test_hirshfeld_i_fake_pseudo_global_greedy():
-    check_fake('hi', pseudo=True, dowcor=True, local=False, absmean=0.400, threshold=1e-4, greedy=True)
+    check_fake('hi', pseudo=True, dowcor=True, local=False,
+               absmean=0.400, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_i_fake_pseudo_nowcor_local_greedy():
-    check_fake('hi', pseudo=True, dowcor=True, local=True, absmean=0.400, threshold=1e-4, greedy=True)
+    check_fake('hi', pseudo=True, dowcor=True, local=True,
+               absmean=0.400, threshold=1e-4, greedy=True)
 
 
 def test_hirshfeld_i_fake_pseudo_nowcor_global_greedy():
-    check_fake('hi', pseudo=True, dowcor=True, local=False, absmean=0.400, threshold=1e-4, greedy=True)
-
-
+    check_fake('hi', pseudo=True, dowcor=True, local=False,
+               absmean=0.400, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
@@ -215,29 +218,35 @@ def test_hirshfeld_e_fake_pseudo_nowcor_global():
 
 @attr('slow')
 def test_hirshfeld_e_fake_local_greedy():
-    check_fake('he', pseudo=False, dowcor=True, local=True, absmean=0.323, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=False, dowcor=True, local=True,
+               absmean=0.323, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_e_fake_global_greedy():
-    check_fake('he', pseudo=False, dowcor=True, local=False, absmean=0.374, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=False, dowcor=True, local=False,
+               absmean=0.374, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_e_fake_pseudo_local_greedy():
-    check_fake('he', pseudo=True, dowcor=True, local=True, absmean=0.396, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=True, dowcor=True, local=True,
+               absmean=0.396, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_e_fake_pseudo_global_greedy():
-    check_fake('he', pseudo=True, dowcor=True, local=False, absmean=0.396, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=True, dowcor=True, local=False,
+               absmean=0.396, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_e_fake_pseudo_nowcor_local_greedy():
-    check_fake('he', pseudo=True, dowcor=True, local=True, absmean=0.396, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=True, dowcor=True, local=True,
+               absmean=0.396, threshold=1e-4, greedy=True)
 
 
 @attr('slow')
 def test_hirshfeld_e_fake_pseudo_nowcor_global_greedy():
-    check_fake('he', pseudo=True, dowcor=True, local=False, absmean=0.396, threshold=1e-4, greedy=True)
+    check_fake('he', pseudo=True, dowcor=True, local=False,
+               absmean=0.396, threshold=1e-4, greedy=True)

@@ -34,5 +34,5 @@ def test_mulliken_operators_water_sto3g():
     dm_full = mol.get_dm_full()
     populations = np.array([operator.contract_two('ab,ba', dm_full) for operator in operators])
     charges = mol.numbers - populations
-    assert charges[0] < 0 # oxygen atom
+    assert charges[0] < 0  # oxygen atom
     assert abs(charges.sum()) < 1e-3

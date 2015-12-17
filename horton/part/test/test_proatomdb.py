@@ -20,7 +20,8 @@
 #--
 
 
-import numpy as np, h5py as h5
+import numpy as np
+import h5py as h5
 
 from horton import *
 from horton.part.test.common import get_proatomdb_cp2k
@@ -48,7 +49,8 @@ def test_db_basics():
     assert r1 != r3
     assert padb.get_rgrid(8) is r1.rgrid
     assert padb.get_record(8, +1).ipot_energy is None
-    assert padb.get_record(8, -1).ipot_energy == padb.get_record(8, 0).energy - padb.get_record(8, -1).energy
+    assert padb.get_record(
+        8, -1).ipot_energy == padb.get_record(8, 0).energy - padb.get_record(8, -1).energy
     assert padb.get_record(1, 0).ipot_energy == -padb.get_record(1, 0).energy
 
 
@@ -138,8 +140,8 @@ def test_moments():
     m0 = record0.get_moment(3)
     m1 = record1.get_moment(3)
     assert m0 > m1
-    assert abs(m0-21.84) < 1e-2
-    assert abs(m1-12.17) < 1e-2
+    assert abs(m0 - 21.84) < 1e-2
+    assert abs(m1 - 12.17) < 1e-2
 
 
 def check_spline_record(spline, record):
@@ -150,9 +152,9 @@ def check_spline_record(spline, record):
 def check_spline_pop(spline, pop):
     rtf = spline.rtransform
     int1d = spline.rtransform.get_default_int1d()
-    check_pop = 4*np.pi*dot_multi(
+    check_pop = 4 * np.pi * dot_multi(
         rtf.get_deriv(),
-        rtf.get_radii()**2,
+        rtf.get_radii() ** 2,
         spline.y,
         int1d.get_weights(rtf.npoint),
     )
@@ -165,7 +167,7 @@ def check_spline_mono_decr(spline):
     y = spline(x)
     i = (abs(y) < 1e-10).nonzero()[0][0]
     y = y[:i]
-    assert ((y[1:] - y[:-1])/y[:-1]).min() < 1e-9
+    assert ((y[1:] - y[:-1]) / y[:-1]).min() < 1e-9
 
 
 def test_get_spline():
@@ -181,11 +183,11 @@ def test_get_spline():
     check_spline_record(spline, padb.get_record(6, -1))
     check_spline_mono_decr(spline)
 
-    spline = padb.get_spline(6, {0:0.5, -1:0.5})
+    spline = padb.get_spline(6, {0: 0.5, -1: 0.5})
     check_spline_pop(spline, 6.5)
     check_spline_mono_decr(spline)
 
-    spline = padb.get_spline(1, {0:0.5})
+    spline = padb.get_spline(1, {0: 0.5})
     check_spline_pop(spline, 0.5)
     check_spline_mono_decr(spline)
 
@@ -201,7 +203,7 @@ def test_get_spline_pseudo():
     check_spline_pop(spline, 7.0)
     check_spline_record(spline, padb.get_record(8, -1))
 
-    spline = padb.get_spline(8, {0:0.5, -1:0.5})
+    spline = padb.get_spline(8, {0: 0.5, -1: 0.5})
     check_spline_pop(spline, 6.5)
 
     spline = padb.get_spline(14)
@@ -254,7 +256,7 @@ def test_io_atdens():
     assert (rho1 == rho2).all()
     assert deriv is None
     # check the basics of the get_rho method (dict)
-    rho1 = padb.get_rho(16, {3:1})
-    rho2, deriv = padb.get_rho(16, {3:1}, do_deriv=True)
+    rho1 = padb.get_rho(16, {3: 1})
+    rho2, deriv = padb.get_rho(16, {3: 1}, do_deriv=True)
     assert (rho1 == rho2).all()
     assert deriv is None

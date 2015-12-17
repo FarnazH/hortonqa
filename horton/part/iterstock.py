@@ -31,15 +31,16 @@ __all__ = ['IterativeProatomMixin', 'IterativeStockholderWPart']
 
 
 class IterativeProatomMixin():
+
     def compute_change(self, propars1, propars2):
         '''Compute the difference between an old and a new proatoms'''
-        msd = 0.0 # mean-square deviation
+        msd = 0.0  # mean-square deviation
         for index in xrange(self.natom):
             rgrid = self.get_rgrid(index)
             rho1, deriv1 = self.get_proatom_rho(index, propars1)
             rho2, deriv2 = self.get_proatom_rho(index, propars2)
             delta = rho1 - rho2
-            msd +=  rgrid.integrate(delta, delta)
+            msd += rgrid.integrate(delta, delta)
         return np.sqrt(msd)
 
     def _init_propars(self):
@@ -109,6 +110,7 @@ class IterativeProatomMixin():
 
 
 class IterativeStockholderWPart(IterativeProatomMixin, StockholderWPart):
+
     '''Iterative Stockholder Partitioning with Becke-Lebedev grids'''
     name = 'is'
     options = ['lmax', 'threshold', 'maxiter']
@@ -149,14 +151,14 @@ class IterativeStockholderWPart(IterativeProatomMixin, StockholderWPart):
     def get_proatom_rho(self, index, propars=None):
         if propars is None:
             propars = self.cache.load('propars')
-        return propars[self._ranges[index]:self._ranges[index+1]], None
+        return propars[self._ranges[index]:self._ranges[index + 1]], None
 
     def _init_propars(self):
         IterativeProatomMixin._init_propars(self)
         self._ranges = [0]
         for index in xrange(self.natom):
             npoint = self.get_rgrid(index).size
-            self._ranges.append(self._ranges[-1]+npoint)
+            self._ranges.append(self._ranges[-1] + npoint)
         ntotal = self._ranges[-1]
         return self.cache.load('propars', alloc=ntotal, tags='o')[0]
 
@@ -169,7 +171,7 @@ class IterativeStockholderWPart(IterativeProatomMixin, StockholderWPart):
 
         # assign as new propars
         propars = self.cache.load('propars')
-        propars[self._ranges[index]:self._ranges[index+1]] = spherical_average
+        propars[self._ranges[index]:self._ranges[index + 1]] = spherical_average
 
         # compute the new charge
         pseudo_population = atgrid.rgrid.integrate(spherical_average)

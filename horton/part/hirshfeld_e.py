@@ -34,12 +34,14 @@ __all__ = ['HEBasis', 'HirshfeldEWPart', 'HirshfeldECPart']
 
 
 class HEBasis(object):
+
     '''Defines the basis set for the promolecule in Hirshfeld-E
 
        This implementation is based on deviations from the neutral atom. This
        allows one to eliminate basis functions corresponding to very positive
        kations.
     '''
+
     def __init__(self, numbers, proatomdb):
         self.numbers = numbers
         self.proatomdb = proatomdb
@@ -56,7 +58,7 @@ class HEBasis(object):
             #complete = proatomdb.get_record(number, padb_charges[0]).pseudo_population == 1
 
             # remove redundant basis functions
-            for j in xrange(len(licos)-1, -1, -1):
+            for j in xrange(len(licos) - 1, -1, -1):
                 # test if this lico is redundant with respect to earlier ones
                 redundant = False
                 rho = self.proatomdb.get_rho(number, licos[j])
@@ -98,9 +100,9 @@ class HEBasis(object):
                 if j == 0:
                     lico = {padb_charges[j]: 1}
                 else:
-                    lico = {padb_charges[j]: 1, padb_charges[j-1]: -1}
+                    lico = {padb_charges[j]: 1, padb_charges[j - 1]: -1}
             else:
-                lico = {padb_charges[j+1]: 1, padb_charges[j]: -1}
+                lico = {padb_charges[j + 1]: 1, padb_charges[j]: -1}
             licos.append(lico)
         return licos
 
@@ -138,10 +140,10 @@ class HEBasis(object):
         begin = self.get_atom_begin(i)
         nbasis = self.get_atom_nbasis(i)
         for j in xrange(nbasis):
-            coeff = propars[j+begin]
+            coeff = propars[j + begin]
             lico = self.get_basis_lico(i, j)
             for icharge, factor in lico.iteritems():
-                total_lico[icharge] = total_lico.get(icharge, 0) + coeff*factor
+                total_lico[icharge] = total_lico.get(icharge, 0) + coeff * factor
         return total_lico
 
     def get_lower_bound(self, i, j):
@@ -185,7 +187,7 @@ class HirshfeldEMixin(object):
                 ('Scheme', 'Hirshfeld-E'),
                 ('Convergence threshold', '%.1e' % self._threshold),
                 ('Maximum iterations', self._maxiter),
-                ('Proatomic DB',  self._proatomdb),
+                ('Proatomic DB', self._proatomdb),
             ])
             log.cite('verstraelen2013', 'the use of Hirshfeld-E partitioning')
 
@@ -198,7 +200,8 @@ class HirshfeldEMixin(object):
         if self._greedy:
             return [
                 ('Constant', np.ones(self.natom), 0),
-                ('Basis', np.array([self.hebasis.get_atom_nbasis(i) for i in xrange(self.natom)]), 0),
+                ('Basis', np.array([self.hebasis.get_atom_nbasis(i)
+                                    for i in xrange(self.natom)]), 0),
             ]
         else:
             return []
@@ -226,12 +229,12 @@ class HirshfeldEMixin(object):
         #
         propars = self._cache.load('propars')
         begin = self.hebasis.get_atom_begin(index)
-        nbasis =  self.hebasis.get_atom_nbasis(index)
+        nbasis = self.hebasis.get_atom_nbasis(index)
 
         for j in xrange(nbasis):
-            coeff = propars[j+begin]
+            coeff = propars[j + begin]
             if coeff != 0.0:
-                output += coeff*self.get_basis(index, j, grid)
+                output += coeff * self.get_basis(index, j, grid)
 
         # correct if the proatom is negative in some parts
         if output.min() < 0:
@@ -276,28 +279,29 @@ class HirshfeldEMixin(object):
 
         # Preliminary check
         if charges[index] > nbasis:
-            raise RuntimeError('The charge on atom %i becomes too positive: %f > %i. (infeasible)' % (index, charges[index], nbasis))
+            raise RuntimeError('The charge on atom %i becomes too positive: %f > %i. (infeasible)' % (
+                index, charges[index], nbasis))
 
         # Define the least-squares system
         A, B, C = self._get_he_system(index, delta_aim)
 
         # preconditioning
         scales = np.sqrt(np.diag(A))
-        A = A/scales/scales.reshape(-1,1)
+        A = A / scales / scales.reshape(-1, 1)
         B /= scales
 
         # resymmetrize A due to potential round-off errors after rescaling
         # (minor thing)
-        A = 0.5*(A + A.T)
+        A = 0.5 * (A + A.T)
 
         # Find solution
         #    constraint for total population of pro-atom
-        qp_r = np.array([np.ones(nbasis)/scales])
+        qp_r = np.array([np.ones(nbasis) / scales])
         qp_s = np.array([-charges[index]])
         #    inequality constraints to keep coefficients larger than -1 or 0.
         lower_bounds = np.zeros(nbasis)
         for j0 in xrange(nbasis):
-            lower_bounds[j0] = self.hebasis.get_lower_bound(index, j0)*scales[j0]
+            lower_bounds[j0] = self.hebasis.get_lower_bound(index, j0) * scales[j0]
         #    call the quadratic solver with modified b due to non-zero lower bound
         qp_a = A
         qp_b = B - np.dot(A, lower_bounds)
@@ -307,7 +311,7 @@ class HirshfeldEMixin(object):
         # convert back to atom_pars
         atom_propars = qp_x + lower_bounds
 
-        rrms = np.dot(np.dot(A, atom_propars) - 2*B, atom_propars)/C + 1
+        rrms = np.dot(np.dot(A, atom_propars) - 2 * B, atom_propars) / C + 1
         if rrms > 0:
             rrmsd = np.sqrt(rrms)
         else:
@@ -317,16 +321,17 @@ class HirshfeldEMixin(object):
         atom_propars /= scales
 
         if log.do_high:
-            log('            %10i (%.0f%%):&%s' % (index, rrmsd*100, ' '.join('% 6.3f' % c for c in atom_propars)))
+            log('            %10i (%.0f%%):&%s' %
+                (index, rrmsd * 100, ' '.join('% 6.3f' % c for c in atom_propars)))
 
-        self.cache.load('propars')[begin:begin+nbasis] = atom_propars
+        self.cache.load('propars')[begin:begin + nbasis] = atom_propars
 
     def _get_charge_and_delta_aim(self, index):
         # evaluate the constant function, to subtract it from the AIM
         constant = self.get_constant(index)
 
         # compute delta_aim
-        delta_aim = self.get_moldens(index)*self.cache.load('at_weights', index) - constant
+        delta_aim = self.get_moldens(index) * self.cache.load('at_weights', index) - constant
 
         # Integrate out
         grid = self.get_grid(index)
@@ -352,7 +357,7 @@ class HirshfeldEMixin(object):
                 rgrid = self.get_rgrid(index)
                 for j0 in xrange(nbasis):
                     rho0 = self.hebasis.get_basis_rho(index, j0)
-                    for j1 in xrange(j0+1):
+                    for j1 in xrange(j0 + 1):
                         rho1 = self.hebasis.get_basis_rho(index, j1)
                         A[j0, j1] = rgrid.integrate(rho0, rho1)
                         A[j1, j0] = A[j0, j1]
@@ -366,7 +371,7 @@ class HirshfeldEMixin(object):
                     basis0[:] = 0.0
                     spline0 = self.hebasis.get_basis_spline(index, j0)
                     self.eval_spline(index, spline0, basis0, label='basis %i' % j0)
-                    for j1 in xrange(j0+1):
+                    for j1 in xrange(j0 + 1):
                         basis1[:] = 0.0
                         spline1 = self.hebasis.get_basis_spline(index, j1)
                         self.eval_spline(index, spline1, basis1, label='basis %i' % j1)
@@ -394,7 +399,9 @@ class HirshfeldEMixin(object):
 
 
 class HirshfeldEWPart(HirshfeldEMixin, HirshfeldIWPart):
+
     '''Extended Hirshfeld partitioning with Becke-Lebedev grids'''
+
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,
                  proatomdb, spindens=None, local=True, lmax=3, threshold=1e-6,
                  maxiter=500, greedy=False):
@@ -442,6 +449,7 @@ class HirshfeldEWPart(HirshfeldEMixin, HirshfeldIWPart):
 
 
 class HirshfeldECPart(HirshfeldEMixin, HirshfeldICPart):
+
     '''Extended Hirshfeld partitioning with uniform grids'''
 
     def __init__(self, coordinates, numbers, pseudo_numbers, grid, moldens,
@@ -478,7 +486,8 @@ class HirshfeldECPart(HirshfeldEMixin, HirshfeldICPart):
 
     def get_memory_estimates(self):
         if self.local:
-            row = [('Weight corrections (fit)', np.array([n in self._wcor_numbers for n in self.numbers]), 0)]
+            row = [
+                ('Weight corrections (fit)', np.array([n in self._wcor_numbers for n in self.numbers]), 0)]
         else:
             row = [('Weight corrections (fit)', np.zeros(self.natom), 1)]
         return (
@@ -499,9 +508,9 @@ class HirshfeldECPart(HirshfeldEMixin, HirshfeldICPart):
         for j0 in xrange(atom_nbasis):
             rho0 = self.hebasis.get_basis_rho(index, j0)
             splines.append(CubicSpline(rho0, rtransform=rtf))
-            for j1 in xrange(j0+1):
+            for j1 in xrange(j0 + 1):
                 rho1 = self.hebasis.get_basis_rho(index, j1)
-                splines.append(CubicSpline(rho0*rho1, rtransform=rtf))
+                splines.append(CubicSpline(rho0 * rho1, rtransform=rtf))
         return [(center, splines)]
 
     def get_wcor_fit(self, index=None):

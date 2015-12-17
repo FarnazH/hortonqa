@@ -62,8 +62,8 @@ def get_fake_co():
 
     # Make fake cube data
     origin = np.array([-3.0, -3.0, -3.0])
-    rvecs = np.identity(3, float)*0.2
-    shape = np.array([30, 30, 30+11])
+    rvecs = np.identity(3, float) * 0.2
+    shape = np.array([30, 30, 30 + 11])
     ugrid = UniformGrid(origin, rvecs, shape, np.ones(3, int))
 
     moldens = np.zeros(ugrid.shape)
@@ -92,8 +92,8 @@ def get_fake_pseudo_oo():
 
     # Make fake cube data
     origin = np.array([-3.0, -3.0, -3.0])
-    rvecs = np.identity(3, float)*0.2
-    shape = np.array([30, 30, 30+11])
+    rvecs = np.identity(3, float) * 0.2
+    shape = np.array([30, 30, 30 + 11])
     ugrid = UniformGrid(origin, rvecs, shape, np.ones(3, int))
 
     moldens = np.zeros(ugrid.shape)
