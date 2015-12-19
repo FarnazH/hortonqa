@@ -44,8 +44,8 @@ from horton.units import angstrom, amu
 __all__ = ['periodic', 'Element', 'Periodic']
 
 
-
 class Element(object):
+
     '''Represents an element from the periodic table.
 
        The following attributes are supported for all elements:
@@ -207,7 +207,9 @@ class Element(object):
 
 
 class Periodic(object):
+
     '''A periodic table data structure.'''
+
     def __init__(self, elements):
         '''**Arguments:**
 
@@ -241,21 +243,22 @@ class Periodic(object):
                     raise KeyError('Could not find element %s.' % index)
         return result
 
+
 def load_periodic():
     import csv
 
     convertor_types = {
         'int': (lambda s: int(s)),
-        'float': (lambda s : float(s)),
-        'au': (lambda s : float(s)),    # just for clarity, atomic units
+        'float': (lambda s: float(s)),
+        'au': (lambda s: float(s)),    # just for clarity, atomic units
         'str': (lambda s: s.strip()),
-        'angstrom': (lambda s: float(s)*angstrom),
-        '2angstrom': (lambda s: float(s)*angstrom/2),
-        'angstrom**3': (lambda s: float(s)*angstrom**3),
-        'amu': (lambda s: float(s)*amu),
+        'angstrom': (lambda s: float(s) * angstrom),
+        '2angstrom': (lambda s: float(s) * angstrom / 2),
+        'angstrom**3': (lambda s: float(s) * angstrom ** 3),
+        'amu': (lambda s: float(s) * amu),
     }
 
-    with open(context.get_fn('elements.csv'),'r') as f:
+    with open(context.get_fn('elements.csv'), 'r') as f:
         r = csv.reader(f)
         # go to the actual data
         for row in r:
