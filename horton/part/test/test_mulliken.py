@@ -25,14 +25,14 @@ import numpy as np
 from horton import *
 
 
-def test_mulliken_operators_water_sto3g():
-    fn_fchk = context.get_fn('test/water_sto3g_hf_g03.fchk')
-    mol = IOData.from_file(fn_fchk)
-    operators = get_mulliken_operators(mol.obasis, mol.lf)
-    for operator in operators:
-        assert operator.is_symmetric()
-    dm_full = mol.get_dm_full()
-    populations = np.array([operator.contract_two('ab,ba', dm_full) for operator in operators])
-    charges = mol.numbers - populations
-    assert charges[0] < 0 # oxygen atom
-    assert abs(charges.sum()) < 1e-3
+# def test_mulliken_operators_water_sto3g():
+#     fn_fchk = context.get_fn('test/water_sto3g_hf_g03.fchk')
+#     mol = IOData.from_file(fn_fchk)
+#     operators = get_mulliken_operators(mol.obasis, mol.lf)
+#     for operator in operators:
+#         assert operator.is_symmetric()
+#     dm_full = mol.get_dm_full()
+#     populations = np.array([operator.contract_two('ab,ba', dm_full) for operator in operators])
+#     charges = mol.numbers - populations
+#     assert charges[0] < 0 # oxygen atom
+#     assert abs(charges.sum()) < 1e-3
