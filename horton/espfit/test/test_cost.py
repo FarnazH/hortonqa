@@ -24,7 +24,7 @@ import numpy as np, h5py as h5
 from nose.plugins.attrib import attr
 
 from horton import *
-from horton.test.common import check_delta
+# from horton.test.common import check_delta
 
 
 def get_random_esp_cost_cube3d_args():

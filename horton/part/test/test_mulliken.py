@@ -20,9 +20,9 @@
 #--
 
 
-import numpy as np
+# import numpy as np
 
-from horton import *
+# from horton import *
 
 
 # def test_mulliken_operators_water_sto3g():
