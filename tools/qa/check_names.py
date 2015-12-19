@@ -23,13 +23,16 @@ def check_names(key, kind):
     # Get a list of authors/committer names for every commit.
     command = ['git', 'log', '--format=%%%sN <%%%sE>' % (key, key)]
     names = subprocess.check_output(command).split('\n')[:-1]
-
+    print '***'*20
+    print 'NAMES', names
+    print '***'*20
     # Turn that list into a set
     names = set(names)
 
     # Make sure the names are in the AUTHORS file
     with open('AUTHORS', 'r') as f:
         for line in f:
+            print 'line:', line[:-1]
             # chop of the new-line
             names.discard(line[:-1])
     if len(names) != 0:
