@@ -174,6 +174,7 @@ class Element(object):
        c6:
             | c6_chu
     '''
+
     def __init__(self, number=None, symbol=None, **kwargs):
         self.number = number
         self.symbol = symbol
@@ -213,6 +214,7 @@ class Periodic(object):
            elements
                 A list of :class:`Element` instances.
         '''
+
         self.elements = elements
         self._lookup = {}
         for element in elements:
