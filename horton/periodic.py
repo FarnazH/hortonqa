@@ -1,4 +1,4 @@
-47# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # HORTON: Helpful Open-source Research TOol for N-fermion systems.
 # Copyright (C) 2011-2015 The HORTON Development Team
 #
