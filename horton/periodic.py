@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+47# -*- coding: utf-8 -*-
 # HORTON: Helpful Open-source Research TOol for N-fermion systems.
 # Copyright (C) 2011-2015 The HORTON Development Team
 #
@@ -45,7 +45,6 @@ __all__ = ['periodic', 'Element', 'Periodic']
 
 
 class Element(object):
-
     '''Represents an element from the periodic table.
 
        The following attributes are supported for all elements:
@@ -175,7 +174,6 @@ class Element(object):
        c6:
             | c6_chu
     '''
-
     def __init__(self, number=None, symbol=None, **kwargs):
         self.number = number
         self.symbol = symbol
@@ -207,11 +205,10 @@ class Element(object):
 
 
 class Periodic(object):
-
     '''A periodic table data structure.'''
-
     def __init__(self, elements):
-        '''**Arguments:**
+        '''
+        **Arguments:**
 
            elements
                 A list of :class:`Element` instances.
